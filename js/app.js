@@ -134,7 +134,7 @@ var stage, world;
     function tick(){
         //console.log("tick");
         stage.update();
-        //world.DrawDebugData();
+        world.DrawDebugData();
         world.Step(1/60, 10, 10);
         world.ClearForces();
     }

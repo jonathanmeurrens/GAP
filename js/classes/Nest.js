@@ -14,9 +14,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var Leaf = (function(){
+var Nest = (function(){
 
-    function Leaf(x, y, width, height){
+    function Nest(x, y, width, height){
 
         this.x = x;
         this.y = y;
@@ -35,12 +35,11 @@ var Leaf = (function(){
         bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
-        bodyDef.userData = "leaf";
+        bodyDef.userData = "nest";
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
-
         $(this.view).on('tick', $.proxy( tick, this ));
     }
 
@@ -50,6 +49,6 @@ var Leaf = (function(){
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     }
 
-    return Leaf;
+    return Nest;
 
 })();

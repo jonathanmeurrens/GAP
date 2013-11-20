@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+
 var box2d = {
     b2Vec2 : Box2D.Common.Math.b2Vec2,
     b2BodyDef : Box2D.Dynamics.b2BodyDef,
@@ -23,20 +24,33 @@ var stage, world;
 
 (function(){
 
+
+    //var former = console.log;
+    console.log = function(msg){
+        //former(msg);  //maintains existing logging via the console.
+        $("#mylog").prepend("<div>" + msg + "</div>");
+    }
+
+    window.onerror = function(message, url, linenumber) {
+        console.log("JavaScript error: " + message + " on line " +
+            linenumber + " for " + url);
+    }
+
+    var self;
+
+
     function init(){
+        self = this;
+
         stage = new createjs.Stage(document.getElementById("game"));
+
         setupPhysics();
+
+        createGround();
+        createNest();
         createLeafs();
         createBird();
-
-        /*document.addEventListener("click",function(e){
-            console.log("mousedown");
-            // create ball
-
-
-        });*/
-
-
+        createStatistics();
 
         createjs.Ticker.addEventListener("tick",tick);
         createjs.Ticker.setFPS(60);
@@ -46,19 +60,7 @@ var stage, world;
     function setupPhysics(){
 
         // create world
-        world = new box2d.b2World(new box2d.b2Vec2(0,9.8), true);
-
-        // create ground
-        var fixDef = new box2d.b2FixtureDef();
-        fixDef.density = 1;
-        fixDef.friction = 0.5;
-        var bodyDef = new box2d.b2BodyDef();
-        bodyDef.type = box2d.b2Body.b2_staticBody;
-        bodyDef.position.x = 400/SCALE;
-        bodyDef.position.y = 600/SCALE;
-        fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(400 / SCALE, 20 / SCALE);
-        world.CreateBody(bodyDef).CreateFixture(fixDef);
+        world = new box2d.b2World(new box2d.b2Vec2(0,20), true);
 
         // setup debug draw
         var debugDraw = new box2d.b2DebugDraw();
@@ -66,24 +68,73 @@ var stage, world;
         debugDraw.SetDrawScale(SCALE);
         debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
         world.SetDebugDraw(debugDraw);
+
+        var listener = new Box2D.Dynamics.b2ContactListener;
+        listener.BeginContact = function(contact) {
+            //console.log(contact);
+            var colliderA = contact.GetFixtureA().GetBody().GetUserData();
+            var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+            //console.log("[App] BeginContact: "+colliderA + " collided with " + colliderB);
+
+            if(colliderA == "ground" || colliderB=="ground"){
+                console.log("[App] Game Over!");
+            }
+            else if(colliderA == "leaf" && colliderB == "bird" || colliderB=="bird" && colliderA=="leaf"){
+                console.log("[App] "+contact.GetFixtureB().GetUserData());
+            }
+            else if(colliderA == "nest" || colliderB == "nest"){
+                console.log("[App] Level up! ");
+                self.stats.levelUp();
+            }
+        }
+        listener.EndContact = function(contact) {
+            //console.log("[App] EndContact: "+contact.GetFixtureB().GetBody().GetUserData() + " collided with " + contact.GetFixtureA().GetBody().GetUserData());
+        }
+        listener.PostSolve = function(contact, impulse) {
+
+        }
+        listener.PreSolve = function(contact, oldManifold) {
+
+        }
+        world.SetContactListener(listener);
+    }
+
+    function createGround(){
+        var ground = new Ground(0,stage.canvas.height - 40, stage.canvas.width, 40);
+        stage.addChild(ground.view);
     }
 
     function createLeafs(){
-        for(var i=0; i<3; i++){
+        var leaf = new Leaf(stage.canvas.width/4.5, stage.canvas.height/2, 20, 20);
+        stage.addChild(leaf.view);
+        var leaf2 = new Leaf(stage.canvas.width/1.5, stage.canvas.height/2, 20, 20);
+        stage.addChild(leaf2.view);
+
+        /*for(var i=0; i<3; i++){
             var leaf = new Leaf(Math.random() * 800, Math.random()*600, 20, 20);
             stage.addChild(leaf.view);
-        }
+        }*/
     }
 
     function createBird(){
-        var bird = new Bird(Math.random() * 800, 0, 100, 100);
+        var bird = new Bird(0, 0, 50, 50);
         stage.addChild(bird.view);
+    }
+
+    function createNest(){
+        var nest = new Nest(stage.canvas.width-20, stage.canvas.height/4, 20, 20);
+        stage.addChild(nest.view);
+    }
+
+    function createStatistics(){
+        this.stats = new Statistics(20, 20);
+        stage.addChild(stats.view);
     }
 
     function tick(){
         //console.log("tick");
         stage.update();
-        world.DrawDebugData();
+        //world.DrawDebugData();
         world.Step(1/60, 10, 10);
         world.ClearForces();
     }

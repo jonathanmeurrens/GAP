@@ -1,9 +1,12 @@
-
-body{
-    text-align: center;
-}
-
 #game{
     background-color: #eeeeee;
-    margin-top: 5%;
+    position: absolute;
+    top:0;
+    left:0;
+}
+
+#debug{
+    position: absolute;
+    top:0;
+    left:0;
 }

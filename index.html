@@ -7,16 +7,31 @@
 </head>
 <body>
     <canvas id="game" width="1000" height="600"></canvas>
-    <div id="mylog">------- logs -------</div>
+    <!--<canvas id="debug" width="1000" height="600"></canvas>-->
+
+    <!--<div id="mylog">------- logs -------</div>-->
+
     <script type="text/javascript" src="js/vendor/jquery-1.10.2.js"></script>
-    <script type="text/javascript" src="js/vendor/easeljs-0.7.0.min.js"></script>
+    <script type="text/javascript" src="js/vendor/createjs/easeljs-0.7.0.min.js"></script>
+    <script type="text/javascript" src="js/vendor/createjs/events/Event.js"></script>
+    <script type="text/javascript" src="js/vendor/createjs/events/EventDispatcher.js"></script>
     <script type="text/javascript" src="js/vendor/Box2dWeb-2.1.a.3.js"></script>
 
+
+    <script type="text/javascript" src="js/classes/model/GameData.js"></script>
+    <script type="text/javascript" src="js/classes/World.js"></script>
     <script type="text/javascript" src="js/classes/Statistics.js"></script>
-    <script type="text/javascript" src="js/classes/Nest.js"></script>
-    <script type="text/javascript" src="js/classes/Ground.js"></script>
-    <script type="text/javascript" src="js/classes/Bird.js"></script>
-    <script type="text/javascript" src="js/classes/Leaf.js"></script>
+    <script type="text/javascript" src="js/classes/objects/Nest.js"></script>
+    <script type="text/javascript" src="js/classes/objects/Rock.js"></script>
+    <script type="text/javascript" src="js/classes/objects/Ground.js"></script>
+    <script type="text/javascript" src="js/classes/objects/Bird.js"></script>
+    <script type="text/javascript" src="js/classes/objects/Leaf.js"></script>
+    <script type="text/javascript" src="js/classes/GameContainer.js"></script>
+
+    <script type="text/javascript" src="js/classes/screens/ScreenManager.js"></script>
+    <script type="text/javascript" src="js/classes/screens/GameOverScreen.js"></script>
+    <script type="text/javascript" src="js/classes/screens/NextLevelScreen.js"></script>
+    <script type="text/javascript" src="js/classes/screens/InstructionsScreen.js"></script>
 
     <script type="text/javascript" src="js/app.js"></script>
 </body>

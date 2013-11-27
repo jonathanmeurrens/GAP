@@ -1,0 +1,15 @@
+<?xml version= "1.0"?>
+<levels>
+    <level nr="1">
+        <!--<leaf x="180" y="290"></leaf>-->
+        <leaf x="650" y="300"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="2200" y="200"></leaf>
+        <nest x="180" y="290"></nest>
+    </level>
+    <level nr="2">
+        <leaf x="200" y="175"></leaf>
+        <leaf x="600" y="200"></leaf>
+        <nest y="200"></nest>
+    </level>
+</levels>

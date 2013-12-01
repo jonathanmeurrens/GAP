@@ -14,13 +14,14 @@ var ScreenManager = (function(){
 
         self = this;
 
-        //createjs.EventDispatcher.initialize(ScreenManager.prototype);
         this.view = new createjs.Container();
         this.screen = null;
 
         ScreenManager.GAME_OVER = "GAME_OVER";
         ScreenManager.INSTRUCTIONS = "INSTRUCTIONS";
         ScreenManager.NEXT_LEVEL = "NEXT_LEVEL";
+        ScreenManager.LEVELS = "LEVELS";
+        ScreenManager.START = "START";
     }
 
     ScreenManager.prototype.showScreen = function(screenType){
@@ -48,6 +49,15 @@ var ScreenManager = (function(){
         }
         this.view.addChild(this.screen.view);
         console.log("[ScreenManager] added screen "+screenType);
+    }
+
+    ScreenManager.prototype.showLevelsScreen = function(gameData){
+        this.screen = new LevelsScreen(gameData);
+        this.view.addChild(this.screen.view);
+        this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
+            console.log("[ScreenManager] SELECTED LEVEL"+ e.levelIndex);
+            self.removeScreen();
+        });
     }
 
     ScreenManager.prototype.removeScreen = function(){

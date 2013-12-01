@@ -35,10 +35,11 @@ var Rock = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        this.updateView()
+        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
-    function tick(e){
+    Rock.prototype.updateView = function(){
         this.view.x = this.view.body.GetPosition().x * SCALE - 20;
         this.view.y = this.view.body.GetPosition().y * SCALE - 20;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);

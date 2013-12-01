@@ -1,12 +1,22 @@
 #game{
     background-color: #eeeeee;
     position: absolute;
-    top:0;
     left:0;
+    top:0;
 }
 
 #debug{
+   /* display: block;
+    background-color: #999999;
+    display: none;*/
     position: absolute;
     top:0;
     left:0;
+
+}
+
+#fb-login{
+    position: absolute;
+    z-index: 100;
+    right:0;
 }

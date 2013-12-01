@@ -1,15 +1,43 @@
 <?xml version= "1.0"?>
 <levels>
-    <level nr="1">
-        <!--<leaf x="180" y="290"></leaf>-->
+    <level nr="1" title="" description="">
+        <egg maxRotations="100" evolution="1"></egg>
+        <leaf x="180" y="290"></leaf>
         <leaf x="650" y="300"></leaf>
         <rock x="330" y="100"></rock>
-        <leaf x="2200" y="200"></leaf>
-        <nest x="180" y="290"></nest>
+        <!--<tornado x="530" y="500"></tornado>-->
+        <nest y="300"></nest>
     </level>
     <level nr="2">
+        <egg maxRotations="3" evolution="2"></egg>
         <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
         <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+    <level nr="3">
+        <egg maxRotations="3" evolution="2"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+    <level nr="2">
+        <egg maxRotations="3" evolution="2"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+    <level nr="2">
+        <egg maxRotations="3" evolution="2"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
         <nest y="200"></nest>
     </level>
 </levels>

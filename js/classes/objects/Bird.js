@@ -14,14 +14,32 @@ var Bird = (function(){
 
         self = this;
 
+        // EVENT TYPES
+        Bird.DIED = "DIED";
+
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.impulse = 140;
+        this.maxRotations = 0;
+        this.evolution = 0;
+        this.isDead = false;
 
-        this.view = new createjs.Bitmap("img/egg.png");
-        this.view.regX = this.view.regY = this.width/2; // put registration point in center
+        //this.view = new createjs.Bitmap("img/egg.png");
+        //this.view.regX = this.view.regY = this.width/2; // put registration point in center
+
+        this.view = new createjs.Container();
+        var data = {
+            images: ["img/egg-spritesheet.png"],
+            frames: {width:51, height:55},
+            animations: {one:[0], two:[1], three:[2], fly:[3,4,5,6]}
+        };
+        var spritesheet = new createjs.SpriteSheet(data);
+        this.sprite = new createjs.Sprite(spritesheet, "one");
+        this.view.addChild(this.sprite);
+        this.view.regX = 51/2;
+        this.view.regY = 55/2;
 
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
@@ -69,6 +87,9 @@ var Bird = (function(){
                 self.view.body.ApplyTorque(-self.impulse);
                 //applyImpulse(self.view.body, 45, -self.impulse);
             }
+            else if(e.which == 38){ // naar beneden
+               self.fly();
+            }
            /* else if(e.which == 38){ // naar boven
                 self.view.body.ApplyTorque(80);
                 applyImpulse(self.view.body, -90, self.impulse);
@@ -81,21 +102,67 @@ var Bird = (function(){
         $(this.view).on('tick', $.proxy( tick, this ));
     }
 
+    function tick(e){
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
+
+        if(this.view.rotation/360 > this.maxRotations && !this.isDead){
+            var event = new createjs.Event(Bird.DIED);
+            this.view.dispatchEvent(event);
+            this.isDead = true;
+        }
+    }
+
     Bird.prototype.push = function(){
         this.view.body.SetAngularVelocity(2);
         applyImpulse(self.view.body, -45, 20);
+    }
+
+    Bird.prototype.tornadoFly = function(){
+        applyImpulse(self.view.body, -90, 20);
+    }
+
+    Bird.prototype.fly = function(){
+        if(this.evolution == 2){
+            self.view.body.SetLinearDamping(10);
+            applyImpulse(self.view.body, -90, self.impulse);
+            this.sprite.gotoAndPlay("fly");
+            setInterval(this.stopFly,2000);
+        }
+    }
+
+    Bird.prototype.stopFly = function(){
+        console.log("[BIRD] stop flying");
+        self.view.body.SetLinearDamping(0);
+    }
+
+
+    Bird.prototype.setEvolution = function(evolution){
+        this.evolution = parseInt(evolution);
+        switch(this.evolution){
+            case 1:
+                this.sprite.gotoAndStop("one");
+                break;
+            case 2:
+                this.sprite.gotoAndStop("two");
+                break;
+            case 3:
+                this.sprite.gotoAndStop("three");
+                break;
+            default :
+                this.sprite.gotoAndStop("one");
+        }
+    }
+
+    Bird.prototype.setMaxRotations = function(maxRotations){
+        this.maxRotations = maxRotations;
     }
 
     function applyImpulse(body, degrees, power) {
         body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
             Math.sin(degrees * (Math.PI / 180)) * power),
             body.GetWorldCenter());
-    }
-
-    function tick(e){
-        this.view.x = this.view.body.GetPosition().x * SCALE;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
-        this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
     }
 
     return Bird;

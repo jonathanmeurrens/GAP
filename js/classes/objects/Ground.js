@@ -37,16 +37,12 @@ var Ground = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
-        adjustView();
+        updateView();
 
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
-    function tick(e){
-
-    }
-
-    function adjustView(){
+    function updateView(){
         self.view.x = self.view.body.GetPosition().x * SCALE;
         self.view.y = self.view.body.GetPosition().y * SCALE;
         self.view.rotation = self.view.body.GetAngle * (180 / Math.PI);

@@ -10,7 +10,7 @@ var GameContainer = (function(){
 
     var self;
 
-    function GameContainer(){
+    function GameContainer(gameData){
 
         self = this;
 
@@ -50,6 +50,11 @@ var GameContainer = (function(){
         this.view.addChild(this.nest.view);
     }
 
+    GameContainer.prototype.createTornado = function(xPos, yPos){
+        var tornado = new Tornado(xPos, translateYPos(yPos), 150, 150);
+        this.view.addChild(tornado.view);
+        this.obstacles.push(tornado);
+    }
 
     GameContainer.prototype.removeBird = function(){
         if(this.bird != null){

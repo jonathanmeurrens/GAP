@@ -16,7 +16,9 @@ var box2d = {
     b2MassData : Box2D.Collision.Shapes.b2MassData,
     b2PolygonShape : Box2D.Collision.Shapes.b2PolygonShape,
     b2CircleShape : Box2D.Collision.Shapes.b2CircleShape,
-    b2DebugDraw : Box2D.Dynamics.b2DebugDraw
+    b2DebugDraw : Box2D.Dynamics.b2DebugDraw,
+    b2DistanceJointDef : Box2D.Dynamics.Joints.b2DistanceJointDef,
+    b2BuoyancyController : Box2D.Dynamics.Controllers.b2BuoyancyController
 };
 var SCALE = 30;
 var stage, world, debug;
@@ -45,6 +47,7 @@ var stage, world, debug;
         this.height = stage.canvas.height;
         this.levelStarted = false;
         this.collisionDetected = false;
+        this.isPaused = true;
 
         this.gameData = new GameData('data/game.xml');
         $(this.gameData).on("parsed", gameDataLoadedHandler);
@@ -62,12 +65,12 @@ var stage, world, debug;
         world = new box2d.b2World(new box2d.b2Vec2(0,20), true);
 
         // setup debug draw
-        /*var debugDraw = new box2d.b2DebugDraw();
+        var debugDraw = new box2d.b2DebugDraw();
         debugDraw.SetSprite(debug.getContext('2d'));
         debugDraw.SetDrawScale(SCALE);
         debugDraw.SetFillAlpha(0.2);
         debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
-        world.SetDebugDraw(debugDraw);*/
+        world.SetDebugDraw(debugDraw);
 
         var listener = new Box2D.Dynamics.b2ContactListener;
         listener.BeginContact = function(contact) {
@@ -75,27 +78,26 @@ var stage, world, debug;
             var colliderB = contact.GetFixtureB().GetBody().GetUserData();
 
             if(colliderA == "ground" || colliderB=="ground"){
-                //console.log("[App] Game Over!");
-                //var screenManager = new ScreenManager();
                 if(!self.collisionDetected){
-                    self.screenManager.showScreen(ScreenManager.GAME_OVER);
-                    self.screenManager.view.on(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+                    showGameOverScreen();
                     self.collisionDetected = true;
                 }
             }
             else if(colliderA == "leaf" && colliderB == "bird" || colliderB=="bird" && colliderA=="leaf"){
                 if(!self.collisionDetected){
-                    console.log("[App] "+contact.GetFixtureB().GetUserData());
-                    self.collisionDetected = true;
+                    // make leaf move a bit
+                    console.log("[APP] leaf collided "+colliderA, colliderB);
                 }
             }
             else if(colliderA == "nest" || colliderB == "nest"){
-                //console.log("[App] Level up! ");
                 if(!self.collisionDetected){
-                    self.screenManager.showScreen(ScreenManager.NEXT_LEVEL);
-                    self.screenManager.view.on(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+                    showNextLevelScreen();
                     self.collisionDetected = true;
                 }
+            }
+            else if(colliderA == "tornado" || colliderB == "tornado"){
+                console.log("[APP] egg passed tornado");
+                self.gameContainer.bird.tornadoFly();
             }
         }
         listener.EndContact = function(contact) {
@@ -110,10 +112,16 @@ var stage, world, debug;
         world.SetContactListener(listener);
     }
 
+
+    // --------------- STARTER FUNCTIONS
+
     function gameDataLoadedHandler(){
-        drawGameInfo();
+
         drawLevel();
         addListeners();
+        drawGameInfo();
+
+        showLevelsScreen();
     }
 
     function addListeners(){
@@ -122,17 +130,15 @@ var stage, world, debug;
         createjs.Ticker.setFPS(60);
         createjs.Ticker.useRAF = true;
 
-        // LAUNCH EGG ON SPACEBAR
         $(document).on("keydown",function(e){
             console.log("[APP] keycode: "+e.which);
-            if(e.which == 32){ // SPACEBAR =  START GAME
+            if(e.which == 32){
                 launchEgg();
             }
         });
     }
 
     function drawGameInfo(){
-        // slechts 1 keer aanmaken
         if(this.stats == null){
             createStatistics();
         }
@@ -151,9 +157,11 @@ var stage, world, debug;
         }
 
         this.gameContainer.resetContainer();
-        console.log(self.gameContainer);
 
-        var level = self.gameData.getLevel(self.stats.level);
+        var level=0;
+        if(self.stats!=null)
+            level = self.gameData.getLevel(self.stats.level);
+
 
         $(level).find('leaf').each(function(i, obj){
             self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"));
@@ -163,6 +171,9 @@ var stage, world, debug;
         });
         $(level).find('rock').each(function(i, obj){
             self.gameContainer.createRock($(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('tornado').each(function(i, obj){
+            self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
         });
         self.gameContainer.createGround(0, this.height - 40, this.width, 40);
     }
@@ -183,10 +194,37 @@ var stage, world, debug;
 
     // --------------- GAME NAVIGATION HANDLERS
 
+    function showLevelsScreen(){
+        this.isPaused = true;
+        self.screenManager.showLevelsScreen(self.gameData);
+        self.screenManager.view.on(LevelNest.LEVEL_SELECTED, function(e){
+            self.stats.setLevel(e.levelIndex);
+            drawLevel();
+            self.isPaused = false;
+        });
+    }
+
+    function showGameOverScreen(){
+        self.screenManager.showScreen(ScreenManager.GAME_OVER);
+        self.screenManager.view.on(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+    }
+
+    function showNextLevelScreen(){
+        self.gameData.storeGamerData(this.stats.level, this.stats.stars); // KEEP GAMER DATA STORED
+        self.screenManager.showScreen(ScreenManager.NEXT_LEVEL);
+        self.screenManager.view.on(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+    }
+
     function launchEgg(){
-        if(this.levelStarted)
+        if(this.levelStarted || this.isPaused)
             return;
         this.gameContainer.createBird();
+        this.gameContainer.bird.setMaxRotations(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("maxRotations"));
+        this.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
+        this.gameContainer.bird.view.on(Bird.DIED, function(){
+            console.log("[APP] bird died");
+            showGameOverScreen();
+        });
         this.levelStarted = true;
     }
 
@@ -214,7 +252,7 @@ var stage, world, debug;
             }
         }
         stage.update();
-        //world.DrawDebugData();
+        world.DrawDebugData();
         world.Step(1/60, 10, 10);
         world.ClearForces();
     }

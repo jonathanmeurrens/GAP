@@ -19,7 +19,7 @@ var Ground = (function(){
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap("img/grass.png");
+        this.view = new createjs.Bitmap(preload.getResult("grass"));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 

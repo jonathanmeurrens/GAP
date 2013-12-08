@@ -20,9 +20,11 @@ var Statistics = (function(){
         this.stars = 1;
         this.level = 0;
 
+        // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
         this.view.addChild(this.levelTxt);
 
+        // STARS IND
         var data = {
             images: ["img/stars-spritesheet.png"],
             frames: {width:76, height:20},
@@ -31,6 +33,21 @@ var Statistics = (function(){
         var spritesheet = new createjs.SpriteSheet(data);
         this.starsSprite = new createjs.Sprite(spritesheet, "none");
         this.view.addChild(this.starsSprite);
+
+        // SOUND MUTE
+        var data = {
+            images: ["img/mute-spritesheet.png"],
+            frames: {width:50, height:50},
+            animations: {on:[0], mute:[1]}
+        };
+        var muteBtnspritesheet = new createjs.SpriteSheet(data);
+        this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
+        this.view.addChild(this.muteBtnSprite);
+        this.muteBtnSprite.addEventListener("click", function(e){
+            console.log("[Statistics] mute sound");
+            SoundManager.togglePlayBackgroundMusic();
+            SoundManager.isPlayingMusic?self.muteBtnSprite.gotoAndStop("on") : self.muteBtnSprite.gotoAndStop("mute");
+        });
 
         updateStats();
     }

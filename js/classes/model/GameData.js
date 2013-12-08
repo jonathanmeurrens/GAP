@@ -45,6 +45,11 @@ var GameData = (function(){
         return this.getLevel(i).getElementsByTagName("egg")[0];
     }
 
+    GameData.prototype.getLevelInstructionsForLevel = function(i){
+        console.log(this.getLevel(i).getElementsByTagName("instruction"));
+        return this.getLevel(i).getElementsByTagName("instruction");
+    }
+
     GameData.prototype.getStoredGamerData = function(){
         var data = localStorage.getItem("tjilp_game");
         if(data != "undefined"){

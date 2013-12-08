@@ -21,7 +21,7 @@ var box2d = {
     b2BuoyancyController : Box2D.Dynamics.Controllers.b2BuoyancyController
 };
 var SCALE = 30;
-var stage, world, debug;
+var stage, world, debug, preload;
 
 (function(){
 
@@ -56,7 +56,6 @@ var stage, world, debug;
         setupPhysics();
     }
 
-
     // ------------------- START UP FUNCTIONS
 
     function setupPhysics(){
@@ -74,6 +73,9 @@ var stage, world, debug;
 
         var listener = new Box2D.Dynamics.b2ContactListener;
         listener.BeginContact = function(contact) {
+
+            self.gameContainer.handleBeginContact(contact);
+
             var colliderA = contact.GetFixtureA().GetBody().GetUserData();
             var colliderB = contact.GetFixtureB().GetBody().GetUserData();
 
@@ -83,14 +85,22 @@ var stage, world, debug;
                     self.collisionDetected = true;
                 }
             }
+            else if(colliderA == "rock" || colliderB=="rock"){
+                if(!self.collisionDetected){
+                    showGameOverScreen();
+                    self.collisionDetected = true;
+                }
+            }
             else if(colliderA == "leaf" && colliderB == "bird" || colliderB=="bird" && colliderA=="leaf"){
                 if(!self.collisionDetected){
                     // make leaf move a bit
                     console.log("[APP] leaf collided "+colliderA, colliderB);
+                    SoundManager.playBounce();
                 }
             }
             else if(colliderA == "nest" || colliderB == "nest"){
                 if(!self.collisionDetected){
+                    this.gameContainer.bird.rest();
                     showNextLevelScreen();
                     self.collisionDetected = true;
                 }
@@ -101,7 +111,7 @@ var stage, world, debug;
             }
         }
         listener.EndContact = function(contact) {
-
+            self.gameContainer.handleEndContact(contact);
         }
         listener.PostSolve = function(contact, impulse) {
 
@@ -121,7 +131,8 @@ var stage, world, debug;
         addListeners();
         drawGameInfo();
 
-        showLevelsScreen();
+        //showLevelsScreen();
+        showStartScreen();
     }
 
     function addListeners(){
@@ -164,7 +175,7 @@ var stage, world, debug;
 
 
         $(level).find('leaf').each(function(i, obj){
-            self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("rotation"));
         });
         $(level).find('nest').each(function(i, obj){
             self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
@@ -175,7 +186,17 @@ var stage, world, debug;
         $(level).find('tornado').each(function(i, obj){
             self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
         });
-        self.gameContainer.createGround(0, this.height - 40, this.width, 40);
+        $(level).find('cloud').each(function(i, obj){
+            self.gameContainer.createCloud($(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('egg').each(function(i, obj){
+            self.gameContainer.createBird($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.bird.setMaxRotations(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("maxRotations"));
+            self.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
+        });
+        $(level).find('ground').each(function(i, obj){
+            self.gameContainer.createGround(0, self.height - 40, self.width, 40);
+        });
     }
 
 
@@ -194,38 +215,67 @@ var stage, world, debug;
 
     // --------------- GAME NAVIGATION HANDLERS
 
+    function showStartScreen(){
+        self.screenManager.showScreen(ScreenManager.START);
+        self.screenManager.view.on(StartScreen.START, function(e){
+            showLevelsScreen();
+        });
+    }
+
     function showLevelsScreen(){
-        this.isPaused = true;
+        self.isPaused = true;
         self.screenManager.showLevelsScreen(self.gameData);
         self.screenManager.view.on(LevelNest.LEVEL_SELECTED, function(e){
             self.stats.setLevel(e.levelIndex);
             drawLevel();
+            var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
+            console.log(instructionsData);
+            if(instructionsData.length > 0){
+                showInstructionsScreen(instructionsData);
+            }
+            else{
+                self.isPaused = false;
+            }
+        });
+    }
+
+    function showInstructionsScreen(instructionsData){
+        console.log(instructionsData);
+        self.isPaused = true;
+        self.screenManager.showInstructionsScreen(instructionsData);
+        //self.screenManager.showLevelsScreen(self.gameData);
+        self.screenManager.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
+            console.log("[APP] instructions done!");
             self.isPaused = false;
+            SoundManager.togglePlayBackgroundMusic();
         });
     }
 
     function showGameOverScreen(){
+        SoundManager.playGameOver();
         self.screenManager.showScreen(ScreenManager.GAME_OVER);
         self.screenManager.view.on(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
     }
 
     function showNextLevelScreen(){
+        SoundManager.playSuccess();
         self.gameData.storeGamerData(this.stats.level, this.stats.stars); // KEEP GAMER DATA STORED
         self.screenManager.showScreen(ScreenManager.NEXT_LEVEL);
         self.screenManager.view.on(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
     }
 
     function launchEgg(){
-        if(this.levelStarted || this.isPaused)
+        console.log("[APP] game paused: " + self.isPaused);
+        if(self.levelStarted || self.isPaused)
             return;
-        this.gameContainer.createBird();
-        this.gameContainer.bird.setMaxRotations(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("maxRotations"));
-        this.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
+
+        this.gameContainer.bird.push();
+
         this.gameContainer.bird.view.on(Bird.DIED, function(){
             console.log("[APP] bird died");
             showGameOverScreen();
         });
-        this.levelStarted = true;
+        self.levelStarted = true;
     }
 
     function restartLevelHandler(e){

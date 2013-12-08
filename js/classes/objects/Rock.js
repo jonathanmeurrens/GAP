@@ -16,7 +16,7 @@ var Rock = (function(){
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap("img/rock.png");
+        this.view = new createjs.Bitmap(preload.getResult("rock"));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
@@ -28,14 +28,14 @@ var Rock = (function(){
         bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
-        bodyDef.userData = "leaf";
+        bodyDef.userData = "rock";
 
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
-        this.updateView()
+        this.updateView();
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 

@@ -47,7 +47,7 @@ var Bird = (function(){
         fixDef.restitution = 0;
 
         var bodyDef = new box2d.b2BodyDef();
-        bodyDef.type = box2d.b2Body.b2_dynamicBody;
+        bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
         bodyDef.userData = 'bird';
@@ -67,7 +67,7 @@ var Bird = (function(){
         fixDef.userData = "top-egg";
         this.view.body.CreateFixture(fixDef);
 
-        this.push();
+        //this.push();
 
         $("body").on("keydown",function(e){
             console.log("[Bird] keycode: "+e.which);
@@ -115,6 +115,8 @@ var Bird = (function(){
     }
 
     Bird.prototype.push = function(){
+        //this.view.body.type = box2d.b2Body.b2_dynamicBody;
+        this.view.body.SetType(box2d.b2Body.b2_dynamicBody);
         this.view.body.SetAngularVelocity(2);
         applyImpulse(self.view.body, -45, 20);
     }
@@ -130,6 +132,10 @@ var Bird = (function(){
             this.sprite.gotoAndPlay("fly");
             setInterval(this.stopFly,2000);
         }
+    }
+
+    Bird.prototype.rest = function(){
+        this.view.body.SetType(box2d.b2Body.b2_staticBody);
     }
 
     Bird.prototype.stopFly = function(){

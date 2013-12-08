@@ -1,23 +1,29 @@
 <?xml version= "1.0"?>
 <levels>
     <level nr="1" title="" description="">
-        <egg maxRotations="100" evolution="1"></egg>
-        <leaf x="180" y="290"></leaf>
-        <leaf x="650" y="300"></leaf>
-        <rock x="330" y="100"></rock>
+        <instructions>
+            <instruction img="1.1.png"/>
+            <instruction img="1.2.png"/>
+        </instructions>
+        <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
+        <leaf x="200" y="300" rotation="30"></leaf>
+        <leaf x="650" y="300" rotation="0"></leaf>
+        <rock x="360" y="100"></rock>
         <!--<tornado x="530" y="500"></tornado>-->
-        <nest y="300"></nest>
+        <nest y="290"></nest>
+        <cloud x="300" y="500"></cloud>
+        <ground></ground>
     </level>
     <level nr="2">
-        <egg maxRotations="3" evolution="2"></egg>
-        <leaf x="200" y="175"></leaf>
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
+        <leaf x="190" y="250"></leaf>
         <rock x="330" y="100"></rock>
         <leaf x="600" y="200"></leaf>
         <rock x="730" y="100"></rock>
         <nest y="200"></nest>
     </level>
     <level nr="3">
-        <egg maxRotations="3" evolution="2"></egg>
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
         <leaf x="200" y="175"></leaf>
         <rock x="330" y="100"></rock>
         <leaf x="600" y="200"></leaf>
@@ -25,7 +31,7 @@
         <nest y="200"></nest>
     </level>
     <level nr="2">
-        <egg maxRotations="3" evolution="2"></egg>
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
         <leaf x="200" y="175"></leaf>
         <rock x="330" y="100"></rock>
         <leaf x="600" y="200"></leaf>
@@ -33,7 +39,7 @@
         <nest y="200"></nest>
     </level>
     <level nr="2">
-        <egg maxRotations="3" evolution="2"></egg>
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
         <leaf x="200" y="175"></leaf>
         <rock x="330" y="100"></rock>
         <leaf x="600" y="200"></leaf>

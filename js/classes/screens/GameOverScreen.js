@@ -13,6 +13,8 @@ var GameOverScreen = (function(){
     function GameOverScreen(){
 
         self = this;
+        this.width = 500;
+        this.height = 400;
 
         // EVENT TYPES
         GameOverScreen.RESTART_LEVEL = "RESTART_LEVEL";
@@ -23,7 +25,7 @@ var GameOverScreen = (function(){
 
         var colorPanel = new createjs.Shape();
         colorPanel.graphics.beginFill(createjs.Graphics.getRGB(255,0,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
+        colorPanel.graphics.drawRect(this.width/2, this.height/2 - 100, this.width , this.height);
         colorPanel.mouseEnabled = true;
 
         this.view.addChild(colorPanel);

@@ -15,7 +15,7 @@ var Tornado = (function(){
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap("img/tornado.png");
+        this.view = new createjs.Bitmap(preload.getResult("tornado"));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 

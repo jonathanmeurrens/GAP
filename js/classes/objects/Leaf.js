@@ -18,28 +18,56 @@ var Leaf = (function(){
 
     var buoyancyController;
 
-    function Leaf(x, y, width, height){
+    function Leaf(x, y, width, height, rotation){
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.rotation = rotation;
 
-        this.view = new createjs.Bitmap("img/leaf.png");
+        this.view = new createjs.Bitmap(preload.getResult("leaf"));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
+
+        //WATER
+
+       /* var fixDefWater = new box2d.b2FixtureDef();
+        fixDefWater.density = 1;
+        fixDefWater.friction = 0;
+        fixDefWater.restitution = 0;
+        fixDefWater.isSensor = true;
+
+        var bodyDefWater = new box2d.b2BodyDef();
+        bodyDefWater.type = box2d.b2Body.b2_staticBody;
+        bodyDefWater.position.x = this.x / SCALE;
+        bodyDefWater.position.y = (this.y + this.height*2) / SCALE;
+        bodyDefWater.userData = "water";
+        fixDefWater.shape = new box2d.b2PolygonShape();
+        fixDefWater.shape.SetAsBox((this.width * 1.5) / SCALE, (this.height * 1.5) / SCALE);
+        this.view.body = world.CreateBody(bodyDefWater);
+        this.view.body.CreateFixture(fixDefWater);*/
+
+
+        // BLAADJE
+
         var fixDef = new box2d.b2FixtureDef();
-        fixDef.density = 1;
+        fixDef.density = 0.1;
         fixDef.friction = 0.4;
-        fixDef.restitution = 0.8;
-        //fixDef.isSensor = true;
+        fixDef.restitution = 1;
 
         var bodyDef = new box2d.b2BodyDef();
         bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
         bodyDef.userData = "leaf";
+
+        fixDef.shape = new box2d.b2PolygonShape();
+        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+        this.view.body = world.CreateBody(bodyDef);
+        this.view.body.CreateFixture(fixDef);
+        //this.view.body.SetAngle(rotation);
 
         /*fixDef.shape = new box2d.b2CircleShape(0.6);
         var topg = world.CreateBody(bodyDef);
@@ -62,29 +90,57 @@ var Leaf = (function(){
         //distanceJointDef.localAnchorA.Set(0.0, 0.0);
         //distanceJointDef.localAnchorB.Set(0.0, 0.0);*/
 
-        fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
-        this.view.body = world.CreateBody(bodyDef);
-        this.view.body.CreateFixture(fixDef);
+
+
+
+        //
         //this.view.body.SetLinearDamping(10);
 
 
-        /*buoyancyController = new box2d.b2BuoyancyController();
+       /* buoyancyController = new box2d.b2BuoyancyController();
         buoyancyController.normal.Set(0,-1);
         buoyancyController.offset=-180/SCALE;
-        buoyancyController.useDensity=true;
-        buoyancyController.density=2.0;
-        buoyancyController.linearDrag=5;
-        buoyancyController.angularDrag=2;
-        world.AddController(buoyancyController);
+        buoyancyController.density=1;
+        buoyancyController.linearDrag=1;
+        buoyancyController.angularDrag=1;
+        world.AddController(buoyancyController);*/
+        //buoyancyController.AddBody(fixDefWater.body);
 
-        listenForContact();*/
+        //listenForContact();
         //buoyancyController.AddBody(fixDef.body);
         //this.view.body = world.CreateBody(bodyDef);
         //this.view.body.CreateFixture(fixDef);
 
         $(this.view).on('tick', $.proxy( tick, this ));
         //this.updateView();
+    }
+
+    Leaf.prototype.handleBeginContact = function(contact){
+        var fixtureA = contact.GetFixtureA();
+        var fixtureB = contact.GetFixtureB();
+        if(fixtureA.IsSensor()){
+            var bodyB = fixtureB.GetBody();
+            //console.log("contact with cloud" + bodyB);
+            if(!bodyB.GetControllerList()) buoyancyController.AddBody(bodyB);
+        }else if(fixtureB.IsSensor()){
+            var bodyA = fixtureA.GetBody();
+            //console.log("contact with cloud" + bodyA);
+            if(!bodyA.GetControllerList()) buoyancyController.AddBody(bodyA);
+        }
+    }
+
+    Leaf.prototype.handleEndContact = function(contact){
+        var fixtureA = contact.GetFixtureA();
+        var fixtureB = contact.GetFixtureB();
+        if(fixtureA.IsSensor()){
+            var bodyB = fixtureB.GetBody();
+            //console.log("end contact with cloud" + bodyB);
+            if(bodyB.GetControllerList()) buoyancyController.RemoveBody(bodyB);
+        }else if(fixtureB.IsSensor()){
+            var bodyA = fixtureA.GetBody();
+            //console.log("end contact with cloud" + bodyA);
+            if(bodyA.GetControllerList()) buoyancyController.RemoveBody(bodyA);
+        }
     }
 
     function tick(e){
@@ -95,34 +151,6 @@ var Leaf = (function(){
         this.view.x = this.view.body.GetPosition().x * SCALE - 20;
         this.view.y = this.view.body.GetPosition().y * SCALE - 20;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
-    }
-
-    function listenForContact(){
-        var listener = new Box2D.Dynamics.b2ContactListener;
-        listener.BeginContact = function(contact){
-            var fixtureA = contact.GetFixtureA();
-            var fixtureB = contact.GetFixtureB();
-            if(fixtureA.IsSensor()){
-                var bodyB = fixtureB.GetBody();
-                if(!bodyB.GetControllerList()) buoyancyController.AddBody(bodyB);
-            }else if(fixtureB.IsSensor()){
-                var bodyA = fixtureA.GetBody();
-                if(!bodyA.GetControllerList()) buoyancyController.AddBody(bodyA);
-            }
-        }
-        listener.EndContact = function(contact){
-            var fixtureA = contact.GetFixtureA();
-            var fixtureB = contact.GetFixtureB();
-            if(fixtureA.IsSensor()){
-                var bodyB = fixtureB.GetBody();
-                console.log(bodyB);
-                if(bodyB.GetControllerList()) buoyancyController.RemoveBody(bodyB);
-            }else if(fixtureB.IsSensor()){
-                var bodyA = fixtureA.GetBody();
-                if(bodyA.GetControllerList()) buoyancyController.RemoveBody(bodyA);
-            }
-        }
-        world.SetContactListener(listener);
     }
 
     return Leaf;

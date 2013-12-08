@@ -18,6 +18,7 @@ var GameContainer = (function(){
 
         this.leafs = new Array();
         this.obstacles = new Array();
+        this.clouds = new Array();
     }
 
     GameContainer.prototype.createGround = function(xPos, yPos, width, height){
@@ -31,14 +32,14 @@ var GameContainer = (function(){
         this.obstacles.push(obstacle);
     }
 
-    GameContainer.prototype.createLeaf = function(xPos, yPos){
-        var leaf = new Leaf(xPos, yPos, 20, 20);
+    GameContainer.prototype.createLeaf = function(xPos, yPos, angle){
+        var leaf = new Leaf(xPos, translateYPos(yPos), 20, 20, angle);
         this.view.addChild(leaf.view);
         this.leafs.push(leaf);
     }
 
-    GameContainer.prototype.createBird = function(){
-        this.bird = new Bird(-20, -20, 40, 40);
+    GameContainer.prototype.createBird = function(xPos, yPos){
+        this.bird = new Bird(xPos, translateYPos(yPos), 40, 40);
         this.view.addChild(this.bird.view);
     }
 
@@ -54,6 +55,12 @@ var GameContainer = (function(){
         var tornado = new Tornado(xPos, translateYPos(yPos), 150, 150);
         this.view.addChild(tornado.view);
         this.obstacles.push(tornado);
+    }
+
+    GameContainer.prototype.createCloud = function(xPos, yPos){
+        var cloud = new Cloud(xPos, translateYPos(yPos), 150, 150);
+        this.view.addChild(cloud.view);
+        this.clouds.push(cloud);
     }
 
     GameContainer.prototype.removeBird = function(){
@@ -93,9 +100,54 @@ var GameContainer = (function(){
             this.view.removeChild(obstacle.view);
             this.obstacles.splice(i,1);
         }
+        for(var i=0; i < this.clouds.length; i++){
+            var cloud = this.clouds[i];
+            world.DestroyBody(cloud.view.body);
+            this.view.removeChild(cloud.view);
+            this.clouds.splice(i,1);
+        }
         this.removeBird();
         this.removeGround();
         this.removeNest();
+    }
+
+    GameContainer.prototype.handleBeginContact = function(contact){
+        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
+        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+
+        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
+
+        if(colliderA == "leaf" || colliderB == "leaf"){
+            for(var i=0; i < this.leafs.length; i++){
+                var leaf = this.leafs[i];
+                leaf.handleBeginContact(contact);
+            }
+        }
+        else if(colliderA == "cloud" || colliderB == "cloud"){
+            for(var i=0; i < this.clouds.length; i++){
+                var cloud = this.clouds[i];
+                cloud.handleBeginContact(contact);
+            }
+        }
+    }
+
+    GameContainer.prototype.handleEndContact = function(contact){
+        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
+        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
+
+        if(colliderA == "leaf" || colliderB == "leaf"){
+            for(var i=0; i < this.leafs.length; i++){
+                var leaf = this.leafs[i];
+                leaf.handleEndContact(contact);
+            }
+        }
+        else if(colliderA == "cloud" || colliderB == "cloud"){
+            for(var i=0; i < this.clouds.length; i++){
+                var cloud = this.clouds[i];
+                cloud.handleEndContact(contact);
+            }
+        }
     }
 
 

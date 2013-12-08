@@ -23,7 +23,7 @@ var Nest = (function(){
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap("img/nest.png");
+        this.view = new createjs.Bitmap(preload.getResult("nest"));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 

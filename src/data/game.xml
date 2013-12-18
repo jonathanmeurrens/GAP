@@ -1,0 +1,55 @@
+<?xml version= "1.0"?>
+<levels>
+    <level nr="1" title="" description="">
+        <instructions>
+            <instruction img="1.1.png"/>
+            <instruction img="1.2.png"/>
+        </instructions>
+        <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
+        <tree img="img/levels/level1/tree_left.png" x="20" width="284" height="608"></tree>
+        <leaf x="230" y="300" rotation="10" restitution="1.2"></leaf>
+        <leaf x="560" y="240" rotation="0" restitution="1"></leaf>
+        <!--<rock x="360" y="100"></rock>-->
+        <!--<tornado x="530" y="500"></tornado>-->
+        <nest y="290"></nest>
+       <!-- <enemyBird x="30" y="400" direction="right"></enemyBird>
+        <enemyBird y="400" x="700" direction="left"></enemyBird>
+        <balloon x="0" y="500" direction="right"></balloon>-->
+        <!--<cloud x="100" y="500"></cloud>-->
+        <ground img="img/levels/level1/ground.png" height="162"></ground>
+        <background img="img/levels/level1/background.png"></background>
+    </level>
+    <level nr="2" title="" description="">
+        <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
+        <leaf x="200" y="300" rotation="45" restitution="2"></leaf>
+        <leaf x="450" y="420" rotation="-45" restitution="1"></leaf>
+        <nest y="290"></nest>
+        <ground img="img/levels/level1/ground.png" height="162"></ground>
+        <background img="img/levels/level1/background.png"></background>
+        <background img="img/levels/level1/background2.png"></background>
+    </level>
+    <level nr="3">
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+    <level nr="2">
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+    <level nr="2">
+        <egg maxRotations="3" evolution="2" x="40" y="500"></egg>
+        <leaf x="200" y="175"></leaf>
+        <rock x="330" y="100"></rock>
+        <leaf x="600" y="200"></leaf>
+        <rock x="730" y="100"></rock>
+        <nest y="200"></nest>
+    </level>
+</levels>

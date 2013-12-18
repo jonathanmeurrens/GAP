@@ -1,0 +1,66 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "compass";
+
+body{
+	font-size:62.5%;
+	font-family: "Helvetica neueu", Helvetica, Arial, sans-serif;
+}
+
+#container{
+
+	header{
+		h1{
+			font-size:2.2em;
+		}
+		h2{
+			margin-top:5px;
+		}
+		margin-bottom: 10px;
+	}
+
+	.tweet{
+		p{
+			width:350px;
+		}
+		font-size:0.9em;
+		margin-bottom:20px;
+		.meta{
+			margin-top:5px;
+			font-style:italic;
+			font-size:0.8em;
+		}
+	}
+
+	form{
+		legend{
+			display:none;
+		}
+		input[type='text'], label{
+			display:inline-block;
+			width:100px;
+		}
+		input[type=submit]{
+			float:right;
+		}
+		#chars{
+			font-size:0.7em;
+		}
+		width:350px;
+		margin-bottom:20px;
+	}
+
+	font-size:1.8em;
+	width:900px;
+	margin:0 auto;
+	padding-top:30px;
+
+}
+
+.error{
+	background-color: #FCB;
+}

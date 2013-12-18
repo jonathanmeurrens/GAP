@@ -1,0 +1,23 @@
+#game{
+    background-image: url('../img/levels/level1/background2.png');
+    background-repeat: no-repeat;
+    position: absolute;
+    left:0;
+    top:0;
+}
+
+#debug{
+   /* display: block;
+    background-color: #999999;
+    display: none;*/
+    position: absolute;
+    top:0;
+    left:0;
+    display: none;
+}
+
+#fb-login{
+    position: absolute;
+    z-index: 100;
+    right:0;
+}

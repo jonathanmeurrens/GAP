@@ -10,76 +10,91 @@
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
 /* globals publishScoreToFB:true  */
+/* globals Button:true  */
+/* globals LevelNest:true  */
+/* globals preload:true  */
 
 var NextLevelScreen = (function(){
 
     var self;
 
-    function NextLevelScreen(){
+    function NextLevelScreen(level, stars){
 
         self = this;
 
         // EVENT TYPES
         NextLevelScreen.NEXT_LEVEL = "NEXT_LEVEL";
+        NextLevelScreen.PLAY_AGAIN = "PLAY_AGAIN";
 
         this.screenType = ScreenManager.NEXT_LEVEL;
-
+        this.stars = stars;
+        this.level = level;
+        this.width = 351;
+        this.height = 233;
         this.view = new createjs.Container();
 
+        this.container = new createjs.Container();
+        this.container.regX = this.width/2;
+        this.container.regY = this.height/2;
+        this.container.x = stage.canvas.width/2;
+        this.container.y = stage.canvas.height/2 - 35;
+
         var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,255,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
         this.view.addChild(colorPanel);
-        colorPanel.addEventListener("click", nextLevelHandler);
 
-        var postOnFb = new createjs.Bitmap('img/post-on-fb-btn.png');
-        postOnFb.x = stage.canvas.width/2 - Math.round(57/2);
-        postOnFb.y = stage.canvas.height/2 - Math.round(18/2);
-        postOnFb.addEventListener("click", postOnFbHandler);
-        this.view.addChild(postOnFb);
+        this.view.addChild(this.container);
+        var background = new createjs.Bitmap(preload.getResult("success-background"));
+        this.container.addChild(background);
 
-        var assetsPath = "img/";
+        // FACEBOOK
+        var facebookBtn = new Button(Button.FACEBOOK);
+        facebookBtn.view.x = 225;
+        facebookBtn.view.y = 20;
+        facebookBtn.view.y = facebookBtn.view.y;
+        this.container.addChild(facebookBtn.view);
+        facebookBtn.view.on("click", postOnFbHandler);
 
-        var manifest = [];
 
-        /*var manifest = [
-            {src:"egg-spritesheet.png", id:"egg-spritesheet"},
-            {src:"cloud.png", id:"cloud"},
-            {src:"grass.png", id:"grass"},
-            {src:"leaf.png", id:"leaf"},
-            {src:"nest.png", id:"nest"},
-            {src:"rock.png", id:"rock"},
-            {src:"stars-spritesheet.png", id:"stars-spritesheet"},
-            {src:"bounce.mp3", id:"bounce_sound"},
-            {src:"music.mp3|music.ogg", id:"music"},
-            {src:"gameover.mp3|gameover.ogg", id:"gameover_sound"},
-            {src:"success.mp3|success.ogg", id:"success_sound"}
-        ];
+        // PLAY AGAIN BTN
+        var playAgainBtn = new Button(Button.PLAY_AGAIN);
+        playAgainBtn.view.x = 60;
+        playAgainBtn.view.y = this.height - 42;
+        this.container.addChild(playAgainBtn.view);
+        playAgainBtn.view.on("click", function(){
+            var event = new createjs.Event(NextLevelScreen.PLAY_AGAIN, true);
+            self.view.dispatchEvent(event);
+        });
 
-        preload = new createjs.LoadQueue();
-        preload.installPlugin(createjs.Sound);
-        preload.addEventListener("progress", handleProgress);
-        preload.addEventListener("complete", handleComplete);
-        preload.addEventListener("fileload", handleFileLoad);
-        preload.addEventListener("error", handleError);
-        preload.loadManifest(manifest, true, assetsPath);*/
+        // NEXT LEVEL
+        var nextLevelBtn = new Button(Button.NEXT_LEVEL);
+        nextLevelBtn.view.x = 220;
+        nextLevelBtn.view.y = playAgainBtn.view.y - 10;
+        this.container.addChild(nextLevelBtn.view);
+        nextLevelBtn.view.on("click", function(){
+            var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
+            self.view.dispatchEvent(event);
+        });
+
+
+        // STARS
+        var levelNest = new LevelNest(0, stars, true);
+        this.container.addChild(levelNest.view);
+        levelNest.view.x = 125;
+        levelNest.view.y = 20;
 
         // TEMP
-        $("body").on("keydown", function(e){
+        /*$("body").on("keydown", function(e){
             if(e.which === 13){
                 nextLevelHandler(e);
             }
-        });
-    }
-
-    function nextLevelHandler(e){
-        var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
-        self.view.dispatchEvent(event);
+        });*/
     }
 
     function postOnFbHandler(e){
-        console.log("[NextLevelScreen] post on fb");
-        publishScoreToFB(1,3);
+        publishScoreToFB(self.level + 1, self.stars);
     }
 
     return NextLevelScreen;

@@ -26,25 +26,22 @@ var LevelNest = (function(){
 
         this.view = new createjs.Container();
 
-        var backgroundColor = new createjs.Shape();
-        backgroundColor.graphics.beginFill(createjs.Graphics.getRGB(200,200,200));
-        backgroundColor.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
-        backgroundColor.mouseEnabled = false;
-
-        this.view.addChild(backgroundColor);
-
-        var nest = new createjs.Bitmap("img/nest.png");
+        var nest = new createjs.Bitmap("assets/common/nest.png");
         this.view.addChild(nest);
+        nest.y = 25;
 
         if(this.starsCount != null && this.starsCount > 0){
-            var stars = new createjs.Bitmap("img/stars_"+this.starsCount+".png");
+            var stars = new createjs.Bitmap("assets/common/stars_"+this.starsCount+".png");
             this.view.addChild(stars);
+            stars.x = 12;
         }
 
-        this.view.on("click", $.proxy( clickHandler, this ));
+        this.view.cursor = 'pointer';
+        this.view.addEventListener("click", $.proxy( clickHandler, this ));
     }
 
     function clickHandler(e){
+        self.view.off();
         var event = new createjs.Event(LevelNest.LEVEL_SELECTED, true);
         event.levelIndex =  this.levelIndex;
         self.view.dispatchEvent(event);

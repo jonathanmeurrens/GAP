@@ -64,6 +64,7 @@ var Leaf = (function(){
 
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+        fixDef.userData = "leaf";
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
         this.view.body.SetAngle(rotation/180 * Math.PI);

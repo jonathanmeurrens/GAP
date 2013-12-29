@@ -23,6 +23,8 @@
 /* globals Tree:true  */
 /* globals EnemyBird:true  */
 /* globals Balloon:true  */
+/* globals TimeCoin:true  */
+/* globals MiniTree:true  */
 
 var GameContainer = (function(){
 
@@ -31,6 +33,8 @@ var GameContainer = (function(){
     function GameContainer(gameData){
 
         self = this;
+
+        GameContainer.COIN_REMOVED = "COIN_REMOVED";
 
         this.gameData = gameData;
 
@@ -41,6 +45,9 @@ var GameContainer = (function(){
         this.clouds = [];
         this.trees = [];
         this.backgrounds = [];
+        this.timeCoins = [];
+
+        $(this.view).on('tick', $.proxy(tick, this));
     }
 
     GameContainer.prototype.createBackground = function(url){
@@ -55,7 +62,7 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.createRock = function(xPos, yPos){
-        var obstacle = new Rock(xPos, translateYPos(yPos), 40, 240);
+        var obstacle = new Rock(xPos, translateYPos(yPos), 475, 358);
         this.view.addChild(obstacle.view);
         this.obstacles.push(obstacle);
     };
@@ -75,7 +82,7 @@ var GameContainer = (function(){
         if(xPos==null){
             xPos = stage.canvas.width - 20;
         }
-        this.nest = new Nest(xPos, translateYPos(yPos), 50, 16);
+        this.nest = new Nest(xPos, translateYPos(yPos), 30, 12);
         this.view.addChild(this.nest.view);
     };
 
@@ -85,20 +92,20 @@ var GameContainer = (function(){
         this.obstacles.push(tornado);
     };
 
-    GameContainer.prototype.createCloud = function(xPos, yPos){
-        var cloud = new Cloud(xPos, translateYPos(yPos), 150, 150);
+    GameContainer.prototype.createCloud = function(url, xPos, yPos){
+        var cloud = new Cloud(url, xPos, translateYPos(yPos), 150, 150);
         this.view.addChild(cloud.view);
         this.clouds.push(cloud);
     };
 
-    GameContainer.prototype.createEnemyBird = function(xPos, yPos, direction){
-        var enemyBird = new EnemyBird(xPos, translateYPos(yPos), 150, 150, direction);
+    GameContainer.prototype.createEnemyBird = function(url, xPos, yPos, direction){
+        var enemyBird = new EnemyBird(url, xPos, translateYPos(yPos), direction);
         this.view.addChild(enemyBird.view);
         this.obstacles.push(enemyBird);
     };
 
-    GameContainer.prototype.createBalloon = function(xPos, yPos, direction){
-        var balloon = new Balloon(xPos, translateYPos(yPos), 150, 150, direction);
+    GameContainer.prototype.createBalloon = function(url, xPos, yPos, direction){
+        var balloon = new Balloon(url, xPos, translateYPos(yPos), 93, 157, direction);
         this.view.addChild(balloon.view);
         this.obstacles.push(balloon);
     };
@@ -109,18 +116,38 @@ var GameContainer = (function(){
         this.trees.push(tree);
     };
 
+    GameContainer.prototype.createTimeCoin = function(xPos, yPos, worth, index){
+        var timeCoin = new TimeCoin(xPos, translateYPos(yPos), worth, index);
+        this.view.addChild(timeCoin.view);
+        this.timeCoins.push(timeCoin);
+    };
+
+    GameContainer.prototype.createMiniTree = function(url, xPos){
+        var miniTree = new MiniTree(url, xPos, translateYPos(0), 20, 245);
+        this.view.addChild(miniTree.view);
+        this.obstacles.push(miniTree);
+    };
+
+
+
+    GameContainer.prototype.removeTimeCoinWithUserData = function(userData){
+        for(var n=0; n < this.timeCoins.length; n++){
+            var timeCoin = this.timeCoins[n];
+            if(timeCoin.view.body.GetUserData() === userData){
+                world.DestroyBody(timeCoin.view.body);
+                this.view.removeChild(timeCoin.view);
+                this.timeCoins.splice(n,1);
+                var event = new createjs.Event(GameContainer.COIN_REMOVED);
+                self.view.dispatchEvent(event);
+            }
+        }
+    };
+
     GameContainer.prototype.removeBird = function(){
         if(this.bird != null){
             world.DestroyBody(this.bird.view.body);
             this.view.removeChild(this.bird.view);
             this.bird = null;
-        }
-    };
-
-    GameContainer.prototype.removeBackground = function(){
-        if(this.background != null){
-            this.view.removeChild(this.background.view);
-            this.background = null;
         }
     };
 
@@ -141,38 +168,57 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.resetContainer = function(){
-        for(var i=0; i < this.leafs.length; i++){
-            var leaf = this.leafs[i];
+
+        var length = this.leafs.length;
+        for(var q=0; q < length; q++){
+            var leaf = this.leafs.pop();
             world.DestroyBody(leaf.view.body);
             this.view.removeChild(leaf.view);
-            this.leafs.splice(i,1);
         }
-        for(var j=0; j < this.obstacles.length; j++){
-            var obstacle = this.obstacles[j];
+
+        length = this.obstacles.length;
+        for(var j=0; j < length; j++){
+            var obstacle = this.obstacles.pop();
             world.DestroyBody(obstacle.view.body);
             this.view.removeChild(obstacle.view);
-            this.obstacles.splice(j,1);
         }
-        for(var k=0; k < this.clouds.length; k++){
-            var cloud = this.clouds[k];
+        length = this.clouds.length;
+        for(var k=0; k < length; k++){
+            var cloud = this.clouds.pop();
             world.DestroyBody(cloud.view.body);
             this.view.removeChild(cloud.view);
-            this.clouds.splice(k,1);
         }
-        for(var l=0; l < this.trees.length; l++){
-            var tree = this.trees[l];
+        length = this.trees.length;
+        for(var l=0; l < length; l++){
+            var tree = this.trees.pop();
             this.view.removeChild(tree.view);
-            this.trees.splice(l,1);
         }
-        for(var m=0; m < this.backgrounds.length; m++){
-            var background = this.backgrounds[m];
+        length = this.backgrounds.length;
+        for(var m=0; m < length; m++){
+            var background = this.backgrounds.pop();
             this.view.removeChild(background.view);
-            this.backgrounds.splice(m,1);
+        }
+        length = this.timeCoins.length;
+        for(var n=0; n < length; n++){
+            var timeCoin = this.timeCoins.pop();
+            world.DestroyBody(timeCoin.view.body);
+            this.view.removeChild(timeCoin.view);
         }
         this.removeBird();
         this.removeGround();
         this.removeNest();
-        //this.removeBackground();
+    };
+
+    GameContainer.prototype.parallaxLeft = function(){
+        var bg = this.backgrounds[1].view;
+        createjs.Tween.removeTweens(bg);
+        createjs.Tween.get(bg).to({x:bg.x+10}, 1000);
+    };
+
+    GameContainer.prototype.parallaxRight = function(){
+        var bg = this.backgrounds[1].view;
+        createjs.Tween.removeTweens(bg);
+        createjs.Tween.get(bg).to({x:bg.x-10}, 1000);
     };
 
     GameContainer.prototype.handleBeginContact = function(contact){
@@ -181,7 +227,7 @@ var GameContainer = (function(){
 
         //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 
-        if(colliderA === "leaf" || colliderB === "leaf"){
+        /*if(colliderA === "leaf" || colliderB === "leaf"){
             for(var i=0; i < this.leafs.length; i++){
                 var leaf = this.leafs[i];
                 leaf.handleBeginContact(contact);
@@ -192,7 +238,7 @@ var GameContainer = (function(){
                 var cloud = this.clouds[j];
                 cloud.handleBeginContact(contact);
             }
-        }
+        }*/
     };
 
     GameContainer.prototype.handleEndContact = function(contact){
@@ -213,6 +259,18 @@ var GameContainer = (function(){
             }
         }
     };
+
+
+    function tick(e){
+        if(self.bird != null){
+            if(self.bird.view.y  < 80){
+                self.view.y = -self.bird.view.y + 80;
+            }
+            else{
+                self.view.y=0;
+            }
+        }
+    }
 
 
     // --------------- HELPERS
@@ -279,14 +337,18 @@ var Background = (function(){
 
 var Balloon = (function(){
 
-    function Balloon(x, y, width, height, direction){
+    var self;
+
+    function Balloon(url, x, y, width, height, direction){
+
+        self = this;
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap(preload.getResult("balloon"));
+        this.view = new createjs.Bitmap(preload.getResult(url));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
@@ -305,20 +367,34 @@ var Balloon = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("balloon");
 
-        var circle1 = new box2d.b2CircleShape(this.width/3 / SCALE);
-        circle1.m_p.Set(0,0);
+        var circle1 = new box2d.b2CircleShape(this.width/2 / SCALE);
+        circle1.m_p.Set(0,-1);
         fixDef.shape = circle1;
         fixDef.userData = "balloon";
         this.view.body.CreateFixture(fixDef);
 
-        if(direction === "right"){
+        var circle2 = new box2d.b2CircleShape(this.width/4 / SCALE);
+        circle2.m_p.Set(0,0.5);
+        fixDef.shape = circle2;
+        fixDef.userData = "balloon";
+        this.view.body.CreateFixture(fixDef);
+
+        var circle3 = new box2d.b2CircleShape(this.width/8 / SCALE);
+        circle3.m_p.Set(0,2.2);
+        fixDef.shape = circle3;
+        fixDef.userData = "balloon";
+        this.view.body.CreateFixture(fixDef);
+
+        /*if(direction === "right"){
             this.view.body.SetLinearVelocity(new box2d.b2Vec2(1,0));
             this.view.scaleX = -1;
         }else{
             this.view.body.SetLinearVelocity(new box2d.b2Vec2(-1,0));
-        }
+        }*/
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        //$(this.view).on('tick', $.proxy( tick, this ));
+        this.updateView();
+        animate();
     }
 
     function tick(e){
@@ -326,10 +402,19 @@ var Balloon = (function(){
     }
 
     Balloon.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 70;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 60;
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
+
+    function animate(){
+        createjs.Tween.removeTweens(self.view);
+        createjs.Tween.get(self.view).to({y:self.view.y + 30}, 1700).call(function(){
+            createjs.Tween.get(self.view).to({y:self.view.y - 30}, 1700).call(function(){
+                animate();
+            });
+        });
+    }
 
     function applyImpulse(body, degrees, power) {
         body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
@@ -361,7 +446,6 @@ var Bird = (function(){
 
     function Bird(x, y, width, height){
 
-        self = null;
         self = this;
 
         // EVENT TYPES
@@ -371,7 +455,7 @@ var Bird = (function(){
         this.y = y;
         this.width = width;
         this.height = height;
-        this.impulse = 10;
+        this.impulse = 7;
         this.maxRotations = 0;
         this.evolution = 0;
         this.isDead = false;
@@ -381,8 +465,8 @@ var Bird = (function(){
 
         this.view = new createjs.Container();
         var data = {
-            images: ["img/egg-spritesheet.png"],
-            frames: {width:51, height:55},
+            images: ["assets/common/egg-spritesheet.png"],
+            frames: {width:45, height:55},
             animations: {one:[0], two:[1], three:[2], fly:[3,4,5,6]}
         };
         var spritesheet = new createjs.SpriteSheet(data);
@@ -406,16 +490,16 @@ var Bird = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("bird");
 
-        var circle1 = new box2d.b2CircleShape(this.width/2 / SCALE);
-        circle1.m_p.Set(0,0.5);
-        fixDef.shape = circle1;
-        fixDef.userData = "center-egg";
+        var circle3 = new box2d.b2CircleShape(((this.width/2.3)-4) / SCALE);
+        circle3.m_p.Set(-0.2,-0.5);
+        fixDef.shape = circle3;
+        fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
 
-        var circle3 = new box2d.b2CircleShape(((this.width/2)-2) / SCALE);
-        circle3.m_p.Set(0,0);
-        fixDef.shape = circle3;
-        fixDef.userData = "top-egg";
+        var circle1 = new box2d.b2CircleShape(this.width/2.3 / SCALE);
+        circle1.m_p.Set(-0.2,0.1);
+        fixDef.shape = circle1;
+        fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
 
         //this.push();
@@ -455,9 +539,9 @@ var Bird = (function(){
         this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
 
-        if(!self.isDead && (this.view.rotation/360 > this.maxRotations && !this.isDead)){
+        /*if(!self.isDead && (this.view.rotation/360 > this.maxRotations && !this.isDead)){
             birdDied();
-        }
+        }*/
 
         if(!self.isDead && (this.view.x > stage.canvas.width || this.view.x < 0 || this.view.y > stage.canvas.height)){
             birdDied();
@@ -473,18 +557,20 @@ var Bird = (function(){
     Bird.prototype.push = function(){
         //this.view.body.type = box2d.b2Body.b2_dynamicBody;
         this.view.body.SetType(box2d.b2Body.b2_dynamicBody);
-        applyImpulse(self.view.body, -45, 20);
-        //this.view.body.SetAngularVelocity(0);
+        applyImpulse(self.view.body, -45, 15);
+        this.view.body.SetAngularVelocity(-1);
     };
 
     Bird.prototype.moveRight = function(){
-        applyImpulse(self.view.body, -5, self.impulse);
-        self.view.body.ApplyTorque(self.impulse/2);
+        self.view.body.ApplyTorque(self.impulse);
+        applyImpulse(self.view.body, 0, self.impulse);
+        self.view.body.SetAngularVelocity(1);
     };
 
     Bird.prototype.moveLeft = function(){
-        self.view.body.ApplyTorque(-self.impulse/2);
-        applyImpulse(self.view.body, 5, -self.impulse);
+        self.view.body.ApplyTorque(-self.impulse);
+        applyImpulse(self.view.body, 0, -self.impulse);
+        self.view.body.SetAngularVelocity(-1);
     };
 
     Bird.prototype.fly = function(){
@@ -500,8 +586,12 @@ var Bird = (function(){
         applyImpulse(self.view.body, -90, 20);
     };
 
-    Bird.prototype.rest = function(){
+    Bird.prototype.rest = function(nestPosition){
         this.view.body.SetType(box2d.b2Body.b2_staticBody);
+        this.view.removeAllEventListeners();
+        console.log(this.view.rotation%90, this.view.rotation, 90*(this.view.rotation%180));
+        createjs.Tween.get(this.view).to({rotation:360, x:nestPosition.x+35, y:nestPosition.y-20},300);
+        //this.view.rotation = 0;
     };
 
     Bird.prototype.stopFly = function(){
@@ -543,6 +633,89 @@ var Bird = (function(){
 /**
  * Created with JetBrains PhpStorm.
  * User: Jonathan
+ * Date: 26/12/13
+ * Time: 14:14
+ * To change this template use File | Settings | File Templates.
+ */
+
+/* globals stage:true  */
+/* globals createjs:true  */
+
+var Button = (function(){
+
+    var self;
+
+    function Button(button_type){
+
+        self = this;
+
+        this.view = new createjs.Container();
+
+        console.log(button_type);
+        var url = 'assets/common/buttons/' + button_type.toLowerCase()+".png";
+        this.clickTimeout = null;
+
+        this.width = 50;
+        this.height = 50;
+
+        if(button_type === Button.LEVELS){
+            this.width = 87;
+            this.height = 78;
+        }
+        else if(button_type === Button.NEXT_LEVEL){
+            this.width = 99;
+            this.height = 92;
+        }
+        else if(button_type === Button.PLAY_AGAIN){
+            this.width = 83;
+            this.height = 76;
+        }
+        else if(button_type === Button.FACEBOOK){
+            this.width = 80;
+            this.height = 72;
+        }
+        else if(button_type === Button.START){
+            this.width = 70;
+            this.height = 40;
+        }
+
+        var button_data = {
+            images: [url],
+            frames: {width:this.width, height:this.height},
+            animations: {default:[0], active:[1], hover:[2]}
+        };
+        var btnSpritesheet = new createjs.SpriteSheet(button_data);
+        this.btn = new createjs.Sprite(btnSpritesheet, "default");
+        this.view.addChild(this.btn);
+        this.btn.on("click", function(e){
+            self.btn.gotoAndStop("active");
+            this.clickTimeout = setTimeout(function(){
+                self.btn.gotoAndStop("default");
+                clearTimeout(self.clickTimeout);
+            },100);
+        });
+
+        this.view.cursor = 'pointer';
+        /*this.btn.on("mouseup", function(e){
+            self.btn.gotoAndStop("default");
+        });*/
+    }
+
+    return Button;
+
+})();
+
+// BUTTON TYPES
+Button.PLAY_AGAIN = "PLAY_AGAIN";
+Button.NEXT_LEVEL = "NEXT_LEVEL";
+Button.FACEBOOK = "FACEBOOK";
+Button.MUTE = "MUTE";
+Button.LEVELS = "LEVELS";
+Button.START = "START";
+
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Jonathan
  * Date: 01/12/13
  * Time: 21:59
  * To change this template use File | Settings | File Templates.
@@ -559,15 +732,18 @@ var Bird = (function(){
 var Cloud = (function(){
 
     var buoyancyController;
+    var self;
 
-    function Cloud(x, y, width, height){
+    function Cloud(url, x, y, width, height){
+
+        self = this;
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap(preload.getResult("cloud"));
+        this.view = new createjs.Bitmap(preload.getResult(url));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
@@ -586,26 +762,26 @@ var Cloud = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("cloud");
 
-        var circle1 = new box2d.b2CircleShape(this.width/3 / SCALE);
+        var circle1 = new box2d.b2CircleShape(this.width/3.5 / SCALE);
         circle1.m_p.Set(0,0);
         fixDef.shape = circle1;
-        fixDef.userData = "cloud-part-one";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        var circle2 = new box2d.b2CircleShape(((this.width/3)-10) / SCALE);
+        var circle2 = new box2d.b2CircleShape(((this.width/3.5)-15) / SCALE);
         circle2.m_p.Set(2,0);
         fixDef.shape = circle2;
-        fixDef.userData = "cloud-part-two";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        var circle3 = new box2d.b2CircleShape(((this.width/3)-6) / SCALE);
+        var circle3 = new box2d.b2CircleShape(((this.width/3.5)-10) / SCALE);
         circle3.m_p.Set(-2,0);
         fixDef.shape = circle3;
-        fixDef.userData = "cloud-part-three";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
         //applyImpulse(this.view.body, 0, 200);
-        this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
+        //this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
         //this.view.body.SetLinearDamping(10);
 
 
@@ -619,17 +795,28 @@ var Cloud = (function(){
          world.AddController(buoyancyController);
 
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        //$(this.view).on('tick', $.proxy( tick, this ));
         //this.updateView();
+        this.updateView();
+        animate();
     }
 
     function tick(e){
         this.updateView();
     }
 
+    function animate(){
+        createjs.Tween.removeTweens(self.view);
+        createjs.Tween.get(self.view).to({y:self.view.y + 20}, 2700).call(function(){
+            createjs.Tween.get(self.view).to({y:self.view.y - 20}, 2700).call(function(){
+                animate();
+            });
+        });
+    }
+
     Cloud.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 70;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 60;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 20;
+        this.view.y = this.view.body.GetPosition().y * SCALE + 32;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
@@ -693,16 +880,29 @@ var Cloud = (function(){
 
 var EnemyBird = (function(){
 
-    function EnemyBird(x, y, width, height, direction){
+    function EnemyBird(url, x, y, direction){
 
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = 46;
+        this.height = 32;
 
-        this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
+      /*  this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
         this.view.regX = this.width/2;
-        this.view.regY = this.height/2;
+        this.view.regY = this.height/2;*/
+
+        this.view = new createjs.Container();
+        var data = {
+            framerate: 8,
+            images: [url],
+            frames: {width:46, height:32},
+            animations: {fly:[0,1]}
+        };
+        var spritesheet = new createjs.SpriteSheet(data);
+        this.sprite = new createjs.Sprite(spritesheet, "fly");
+        this.view.addChild(this.sprite);
+        this.view.regX = 46/2;
+        this.view.regY = 32/2;
 
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 2;
@@ -719,10 +919,10 @@ var EnemyBird = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("enemyBird");
 
-        var circle1 = new box2d.b2CircleShape(this.width/3 / SCALE);
+        var circle1 = new box2d.b2CircleShape(this.width/3.2 / SCALE);
         circle1.m_p.Set(0,0);
         fixDef.shape = circle1;
-        fixDef.userData = "enemy";
+        fixDef.userData = "enemyBird";
         this.view.body.CreateFixture(fixDef);
 
         if(direction === "right"){
@@ -740,8 +940,8 @@ var EnemyBird = (function(){
     }
 
     EnemyBird.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 70;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 60;
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
@@ -802,6 +1002,7 @@ var Ground = (function(){
         bodyDef.userData = "ground";
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, realHeight / SCALE);
+        fixDef.userData = "ground";
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
     }
@@ -876,6 +1077,7 @@ var Leaf = (function(){
 
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+        fixDef.userData = "leaf";
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
         this.view.body.SetAngle(rotation/180 * Math.PI);
@@ -975,6 +1177,63 @@ var Leaf = (function(){
 /**
  * Created with JetBrains PhpStorm.
  * User: Jonathan
+ * Date: 21/11/13
+ * Time: 14:39
+ * To change this template use File | Settings | File Templates.
+ */
+/* globals preload:true  */
+/* globals SCALE:true  */
+/* globals world:true  */
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals box2d:true  */
+
+var MiniTree = (function(){
+
+    function MiniTree(url, x, y, width, height){
+
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+
+        this.view = new createjs.Bitmap(preload.getResult(url));
+        this.view.regX = this.width/2;
+        this.view.regY = this.height;
+
+        var fixDef = new box2d.b2FixtureDef();
+        fixDef.density = 1;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.1;
+
+        var bodyDef = new box2d.b2BodyDef();
+        bodyDef.type = box2d.b2Body.b2_staticBody;
+        bodyDef.position.x = this.x / SCALE;
+        bodyDef.position.y = this.y / SCALE;
+        bodyDef.userData = "miniTree";
+
+        fixDef.shape = new box2d.b2PolygonShape();
+        fixDef.shape.SetAsBox(this.width / SCALE, (this.height - 20) / SCALE);
+        fixDef.userData = "miniTree";
+        this.view.body = world.CreateBody(bodyDef);
+        this.view.body.CreateFixture(fixDef);
+
+        this.updateView();
+    }
+
+    MiniTree.prototype.updateView = function(){
+        this.view.x = this.view.body.GetPosition().x * SCALE - 50;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
+    };
+
+    return MiniTree;
+
+})();
+
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Jonathan
  * Date: 05/11/13
  * Time: 14:49
  * To change this template use File | Settings | File Templates.
@@ -1014,13 +1273,21 @@ var Nest = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
+        var top_nest = new box2d.b2PolygonShape();
+        top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
+        //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
+        //console.log("[Nest] position:"+top_nest.GetPosition());
+        fixDef.shape = top_nest;
+        fixDef.userData = "top-nest";
+        this.view.body.CreateFixture(fixDef);
+
         this.updateView();
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Nest.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 25;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 10;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 32;
+        this.view.y = this.view.body.GetPosition().y * SCALE - 13;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
@@ -1058,7 +1325,8 @@ var Rock = (function(){
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
         fixDef.friction = 0.5;
-        fixDef.restitution = 1;
+        fixDef.restitution = 0.1;
+
         var bodyDef = new box2d.b2BodyDef();
         bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
@@ -1066,12 +1334,18 @@ var Rock = (function(){
         bodyDef.userData = "rock";
 
         fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+        var vertices = [];
+        vertices.push(new box2d.b2Vec2(-0.7, -7));
+        vertices.push(new box2d.b2Vec2(7, 3.3));
+        vertices.push(new box2d.b2Vec2(-7, 3.3));
+        fixDef.shape.SetAsVector(vertices, 3);
+        fixDef.userData = "rock";
+        /*fixDef.shape = new box2d.b2PolygonShape();
+        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);*/
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
         this.updateView();
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Rock.prototype.updateView = function(){
@@ -1081,6 +1355,71 @@ var Rock = (function(){
     };
 
     return Rock;
+
+})();
+
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Jonathan
+ * Date: 27/12/13
+ * Time: 10:34
+ * To change this template use File | Settings | File Templates.
+ */
+
+/* globals preload:true  */
+/* globals SCALE:true  */
+
+/* globals world:true  */
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals box2d:true  */
+
+var TimeCoin = (function(){
+
+    function TimeCoin(x, y, worth, index){
+
+        this.x = x;
+        this.y = y;
+        this.width = 31;
+        this.height = 31;
+        this.worth = worth;
+
+        this.view = new createjs.Bitmap(preload.getResult("time-coin"));
+        this.view.regX = this.width/2;
+        this.view.regY = this.height/2;
+
+        var fixDef = new box2d.b2FixtureDef();
+        fixDef.isSensor = true;
+
+        var bodyDef = new box2d.b2BodyDef();
+        bodyDef.type = box2d.b2Body.b2_kinematicBody;
+        bodyDef.position.x = this.x / SCALE;
+        bodyDef.position.y = this.y / SCALE;
+        //bodyDef.userData = 'timeCoin'+index;
+
+        this.view.body = world.CreateBody(bodyDef);
+        this.view.body.SetUserData('timeCoin'+index);
+
+        var circle1 = new box2d.b2CircleShape(this.width/2 / SCALE);
+        circle1.m_p.Set(0,0);
+        fixDef.shape = circle1;
+        fixDef.userData = "timeCoin"+index;
+        this.view.body.CreateFixture(fixDef);
+
+        $(this.view).on('tick', $.proxy( tick, this ));
+    }
+
+    function tick(e){
+        this.updateView();
+    }
+
+    TimeCoin.prototype.updateView = function(){
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
+    };
+
+    return TimeCoin;
 
 })();
 
@@ -1207,25 +1546,22 @@ var LevelNest = (function(){
 
         this.view = new createjs.Container();
 
-        var backgroundColor = new createjs.Shape();
-        backgroundColor.graphics.beginFill(createjs.Graphics.getRGB(200,200,200));
-        backgroundColor.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
-        backgroundColor.mouseEnabled = false;
-
-        this.view.addChild(backgroundColor);
-
-        var nest = new createjs.Bitmap("img/nest.png");
+        var nest = new createjs.Bitmap("assets/common/nest.png");
         this.view.addChild(nest);
+        nest.y = 25;
 
         if(this.starsCount != null && this.starsCount > 0){
-            var stars = new createjs.Bitmap("img/stars_"+this.starsCount+".png");
+            var stars = new createjs.Bitmap("assets/common/stars_"+this.starsCount+".png");
             this.view.addChild(stars);
+            stars.x = 12;
         }
 
-        this.view.on("click", $.proxy( clickHandler, this ));
+        this.view.cursor = 'pointer';
+        this.view.addEventListener("click", $.proxy( clickHandler, this ));
     }
 
     function clickHandler(e){
+        self.view.off();
         var event = new createjs.Event(LevelNest.LEVEL_SELECTED, true);
         event.levelIndex =  this.levelIndex;
         self.view.dispatchEvent(event);
@@ -1245,6 +1581,7 @@ var LevelNest = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals SoundManager:true  */
+/* globals Button:true  */
 
 var Statistics = (function(){
 
@@ -1255,6 +1592,7 @@ var Statistics = (function(){
         self = this;
 
         Statistics.LEVELS_CLICKED = "LEVELS_CLICKED";
+        Statistics.TIME_OUT = "TIME_OUT";
 
         this.view = new createjs.Container();
         this.view.x = x;
@@ -1262,34 +1600,32 @@ var Statistics = (function(){
 
         this.stars = 1;
         this.level = 0;
-        this.bounces = 1;
+        this.bounces = 0;
         this.leafsCount = 1;
+        this.timeCount = 0;
 
         // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
         this.view.addChild(this.levelTxt);
+        this.levelTxt.x = stage.canvas.width/2 - 122/2;
+        this.levelTxt.y = 10;
 
-        // STARS IND
-        var stars_data = {
-            images: ["img/stars-spritesheet.png"],
-            frames: {width:76, height:20},
-            animations: {none:[3], one:[0], two:[1], three:[2]}
-        };
-        var spritesheet = new createjs.SpriteSheet(stars_data );
-        this.starsSprite = new createjs.Sprite(spritesheet, "none");
-        this.view.addChild(this.starsSprite);
+        // TIME IND
+        this.timeTxt = new createjs.Text("", "14px Arial", "#000000");
+        this.view.addChild(this.timeTxt);
+        this.timeTxt.x = stage.canvas.width/2 - 170/2;
+        this.timeTxt.y = 40;
 
         // SOUND MUTE
         var mute_data = {
-            images: ["img/mute-spritesheet.png"],
-            frames: {width:50, height:50},
+            images: ["assets/common/buttons/mute.png"],
+            frames: {width:27, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
-            console.log("[Statistics] mute sound");
             SoundManager.togglePlayBackgroundMusic();
             if(SoundManager.isPlayingMusic){
                 self.muteBtnSprite.gotoAndStop("on");
@@ -1300,16 +1636,10 @@ var Statistics = (function(){
 
 
         // LEVELS PANEL BTN
-        var levelsBtn_data = {
-            images: ["img/mute-spritesheet.png"],
-            frames: {width:50, height:50},
-            animations: {on:[0], mute:[1]}
-        };
-        var levelsBtnspritesheet = new createjs.SpriteSheet(levelsBtn_data);
-        this.levelsBtnSprite = new createjs.Sprite(levelsBtnspritesheet, "on");
-        this.levelsBtnSprite.x = 100;
-        this.view.addChild(this.levelsBtnSprite);
-        this.levelsBtnSprite.addEventListener("click", function(e){
+        var levelsBtn = new Button(Button.LEVELS);
+        levelsBtn.view.x = 100;
+        this.view.addChild(levelsBtn.view);
+        levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
             self.view.dispatchEvent(event);
         });
@@ -1332,37 +1662,37 @@ var Statistics = (function(){
         updateStats();
     };
 
-    /*Statistics.prototype.starUp = function(){
-        if(this.stars <= 2){
-            this.stars++;
-            updateStats();
-        }
-    };
-
-    Statistics.prototype.starDown = function(){
-        this.stars--;
-        updateStats();
-    };*/
-
     Statistics.prototype.increaseBounce = function(){
         this.bounces++;
-        console.log("[bounces] "+this.bounces);
         updateStats();
     };
 
-    Statistics.prototype.resetBounces = function(){
-        this.bounces = 1;
+    Statistics.prototype.earnTime = function(){
+        this.timeCount += 10;
+    };
+
+    Statistics.prototype.resetStats = function(){
+        clearInterval(this.timer);
+        this.timer = null;
+        this.timeCount = 59;
+        this.timer = setInterval(updateTime, 1000);
+        this.bounces = 0;
+        updateTime();
     };
 
     Statistics.prototype.getStars = function(){
-        return (self.bounces / self.leafsCount) * 3;
+        if(self.bounces<0)
+        {
+            self.bounces = 0;
+        }
+        return (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
     };
 
     function updateStats(){
 
         self.levelTxt.text = "level: " + (self.level + 1);
 
-        var frame = "none";
+        /*var frame = "none";
         switch(this.self.starsSprite){
             case 0:
                 frame = "none";
@@ -1379,7 +1709,25 @@ var Statistics = (function(){
             default:
                 frame = "none";
         }
-        self.starsSprite.gotoAndStop(frame);
+        self.starsSprite.gotoAndStop(frame);*/
+    }
+
+    function updateTime(){
+        var timeTxt = "time left: 00:";
+        if(self.timeCount<10){
+            timeTxt += "0";
+        }
+        timeTxt +=self.timeCount;
+        self.timeTxt.text = timeTxt;
+
+        self.timeCount--;
+
+        if(self.timeCount < 0){
+            clearInterval(self.timer);
+            self.timer = null;
+            var event = new createjs.Event(Statistics.TIME_OUT);
+            self.view.dispatchEvent(event);
+        }
     }
 
     return Statistics;
@@ -1397,6 +1745,9 @@ var Statistics = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
+/* globals Button:true  */
+/* globals preload:true  */
+/* globals publishScoreToFB:true  */
 
 var GameOverScreen = (function(){
 
@@ -1405,29 +1756,54 @@ var GameOverScreen = (function(){
     function GameOverScreen(){
 
         self = this;
-        this.width = 500;
-        this.height = 400;
 
         // EVENT TYPES
-        GameOverScreen.RESTART_LEVEL = "RESTART_LEVEL";
+        GameOverScreen.MENU = "MENU";
+        GameOverScreen.PLAY_AGAIN = "PLAY_AGAIN";
 
-        this.screenType = ScreenManager.GAME_OVER;
-
+        this.width = 352;
+        this.height = 234;
         this.view = new createjs.Container();
 
-        var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(255,0,0));
-        colorPanel.graphics.drawRect(this.width/2, this.height/2 - 100, this.width , this.height);
-        colorPanel.mouseEnabled = true;
+        this.container = new createjs.Container();
+        this.container.regX = this.width/2;
+        this.container.regY = this.height/2;
+        this.container.x = stage.canvas.width/2;
+        this.container.y = stage.canvas.height/2 - 35;
 
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
         this.view.addChild(colorPanel);
 
-        colorPanel.addEventListener("click", restartHandler);
+        this.view.addChild(this.container);
+
+        var background = new createjs.Bitmap(preload.getResult("failed-background"));
+        this.container.addChild(background);
+
+        // FACEBOOK
+        var facebookBtn = new Button(Button.FACEBOOK);
+        facebookBtn.view.x = 225;
+        facebookBtn.view.y = 20;
+        facebookBtn.view.y = facebookBtn.view.y;
+        this.container.addChild(facebookBtn.view);
+        facebookBtn.view.on("click", postOnFbHandler);
+
+
+        // PLAY AGAIN BTN
+        var playAgainBtn = new Button(Button.PLAY_AGAIN);
+        playAgainBtn.view.x = 60;
+        playAgainBtn.view.y = this.height - 42;
+        this.container.addChild(playAgainBtn.view);
+        playAgainBtn.view.on("click", function(){
+            var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
+            self.view.dispatchEvent(event);
+        });
     }
 
-    function restartHandler(e){
-        var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
-        self.view.dispatchEvent(event);
+    function postOnFbHandler(e){
+        publishScoreToFB(1,3);
     }
 
     return GameOverScreen;
@@ -1444,6 +1820,7 @@ var GameOverScreen = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
+/* globals preload:true  */
 
 var InstructionsScreen = (function(){
 
@@ -1458,28 +1835,28 @@ var InstructionsScreen = (function(){
 
         this.instructionsData = instructionsData;
         this.currentInstruction = 0;
-        this.screenType = ScreenManager.INSTRUCTIONS;
-
         this.view = new createjs.Container();
 
         var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,255));
-        colorPanel.graphics.drawRect(0,0,200,200);
-
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
         this.view.addChild(colorPanel);
+
         showNextInstruction();
-        colorPanel.addEventListener("click",function(e){
+
+        this.view.cursor = 'pointer';
+        this.view.addEventListener("click",function(e){
             showNextInstruction();
         });
     }
 
     function showNextInstruction(){
-        //console.log(self.instructionsData);
         if(self.currentInstruction < self.instructionsData.length){
             removeCurrentInstruction();
-            self.instructionImg = new createjs.Bitmap("img/instructions/instruction-"+$(self.instructionsData[self.currentInstruction]).attr("img"));
+            self.instructionImg = new createjs.Bitmap(preload.getResult($(self.instructionsData[self.currentInstruction]).attr("img")));
             self.view.addChild(self.instructionImg);
-            //console.log($(self.instructionsData[self.currentInstruction]).attr("img"));
+            console.log($(self.instructionsData[self.currentInstruction]).attr("img"));
         }
         else{
             removeCurrentInstruction();
@@ -1521,11 +1898,15 @@ var LevelsScreen = (function(){
         self = this;
 
         this.gameData = gameData;
-        this.screenType = ScreenManager.LEVELS;
         this.view = new createjs.Container();
 
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
+        this.view.addChild(colorPanel);
+
         $("body").on("keydown",function(e){
-            console.log("[LevelsScreen] keycode: "+e.which);
             if(e.which === 49){ //1
                 levelSelected(0);
             }
@@ -1534,6 +1915,12 @@ var LevelsScreen = (function(){
             }
             else if(e.which === 222){ //3
                 levelSelected(2);
+            }
+            else if(e.which === 53){ //4
+                levelSelected(3);
+            }
+            else if(e.which === 54){ //5
+                levelSelected(4);
             }
         });
 
@@ -1547,11 +1934,15 @@ var LevelsScreen = (function(){
     }
 
     function showLevels(){
+        var levelsContainer = new createjs.Container();
+        self.view.addChild(levelsContainer);
         for(var i=0; i < this.gameData.getLevelCount(); i++){
             var nest = new LevelNest(i,this.gameData.gamerData.levels[i],true);
-            nest.view.x = i*130;
-            self.view.addChild(nest.view);
+            nest.view.x = (i)*120;
+            levelsContainer.addChild(nest.view);
         }
+        levelsContainer.x = 300;
+        levelsContainer.y = 200;
     }
 
     return LevelsScreen;
@@ -1570,76 +1961,91 @@ var LevelsScreen = (function(){
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
 /* globals publishScoreToFB:true  */
+/* globals Button:true  */
+/* globals LevelNest:true  */
+/* globals preload:true  */
 
 var NextLevelScreen = (function(){
 
     var self;
 
-    function NextLevelScreen(){
+    function NextLevelScreen(level, stars){
 
         self = this;
 
         // EVENT TYPES
         NextLevelScreen.NEXT_LEVEL = "NEXT_LEVEL";
+        NextLevelScreen.PLAY_AGAIN = "PLAY_AGAIN";
 
         this.screenType = ScreenManager.NEXT_LEVEL;
-
+        this.stars = stars;
+        this.level = level;
+        this.width = 351;
+        this.height = 233;
         this.view = new createjs.Container();
 
+        this.container = new createjs.Container();
+        this.container.regX = this.width/2;
+        this.container.regY = this.height/2;
+        this.container.x = stage.canvas.width/2;
+        this.container.y = stage.canvas.height/2 - 35;
+
         var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,255,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
         this.view.addChild(colorPanel);
-        colorPanel.addEventListener("click", nextLevelHandler);
 
-        var postOnFb = new createjs.Bitmap('img/post-on-fb-btn.png');
-        postOnFb.x = stage.canvas.width/2 - Math.round(57/2);
-        postOnFb.y = stage.canvas.height/2 - Math.round(18/2);
-        postOnFb.addEventListener("click", postOnFbHandler);
-        this.view.addChild(postOnFb);
+        this.view.addChild(this.container);
+        var background = new createjs.Bitmap(preload.getResult("success-background"));
+        this.container.addChild(background);
 
-        var assetsPath = "img/";
+        // FACEBOOK
+        var facebookBtn = new Button(Button.FACEBOOK);
+        facebookBtn.view.x = 225;
+        facebookBtn.view.y = 20;
+        facebookBtn.view.y = facebookBtn.view.y;
+        this.container.addChild(facebookBtn.view);
+        facebookBtn.view.on("click", postOnFbHandler);
 
-        var manifest = [];
 
-        /*var manifest = [
-            {src:"egg-spritesheet.png", id:"egg-spritesheet"},
-            {src:"cloud.png", id:"cloud"},
-            {src:"grass.png", id:"grass"},
-            {src:"leaf.png", id:"leaf"},
-            {src:"nest.png", id:"nest"},
-            {src:"rock.png", id:"rock"},
-            {src:"stars-spritesheet.png", id:"stars-spritesheet"},
-            {src:"bounce.mp3", id:"bounce_sound"},
-            {src:"music.mp3|music.ogg", id:"music"},
-            {src:"gameover.mp3|gameover.ogg", id:"gameover_sound"},
-            {src:"success.mp3|success.ogg", id:"success_sound"}
-        ];
+        // PLAY AGAIN BTN
+        var playAgainBtn = new Button(Button.PLAY_AGAIN);
+        playAgainBtn.view.x = 60;
+        playAgainBtn.view.y = this.height - 42;
+        this.container.addChild(playAgainBtn.view);
+        playAgainBtn.view.on("click", function(){
+            var event = new createjs.Event(NextLevelScreen.PLAY_AGAIN, true);
+            self.view.dispatchEvent(event);
+        });
 
-        preload = new createjs.LoadQueue();
-        preload.installPlugin(createjs.Sound);
-        preload.addEventListener("progress", handleProgress);
-        preload.addEventListener("complete", handleComplete);
-        preload.addEventListener("fileload", handleFileLoad);
-        preload.addEventListener("error", handleError);
-        preload.loadManifest(manifest, true, assetsPath);*/
+        // NEXT LEVEL
+        var nextLevelBtn = new Button(Button.NEXT_LEVEL);
+        nextLevelBtn.view.x = 220;
+        nextLevelBtn.view.y = playAgainBtn.view.y - 10;
+        this.container.addChild(nextLevelBtn.view);
+        nextLevelBtn.view.on("click", function(){
+            var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
+            self.view.dispatchEvent(event);
+        });
+
+
+        // STARS
+        var levelNest = new LevelNest(0, stars, true);
+        this.container.addChild(levelNest.view);
+        levelNest.view.x = 125;
+        levelNest.view.y = 20;
 
         // TEMP
-        $("body").on("keydown", function(e){
+        /*$("body").on("keydown", function(e){
             if(e.which === 13){
                 nextLevelHandler(e);
             }
-        });
-    }
-
-    function nextLevelHandler(e){
-        var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
-        self.view.dispatchEvent(event);
+        });*/
     }
 
     function postOnFbHandler(e){
-        console.log("[NextLevelScreen] post on fb");
-        publishScoreToFB(1,3);
+        publishScoreToFB(self.level + 1, self.stars);
     }
 
     return NextLevelScreen;
@@ -1657,6 +2063,7 @@ var NextLevelScreen = (function(){
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
 /* globals preload:true  */
+/* globals Button:true  */
 
 var StartScreen = (function(){
 
@@ -1669,82 +2076,32 @@ var StartScreen = (function(){
         // EVENT TYPES
         StartScreen.START = "START";
 
-        this.screenType = ScreenManager.START;
-
         this.view = new createjs.Container();
 
         var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(255,255,0));
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(200,200,200));
         colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
         this.view.addChild(colorPanel);
 
-        this.progressEgg = new createjs.Bitmap('img/egg.png');
-        this.progressEgg.regX = 41/2;
-        this.progressEgg.regY = 56/2;
-        this.progressEgg.x = stage.canvas.width/2;
-        this.progressEgg.y = stage.canvas.height/2;
-        this.view.addChild(this.progressEgg);
+       /* var background = new createjs.Bitmap(preload.getResult("failed-background"));
+        this.view.addChild(background);*/
 
-        var assetsPath = "img/";
+        var startBtn = new Button(Button.START);
+        this.view.addChild(startBtn.view);
+        startBtn.view.addEventListener("click", startHandler);
+        startBtn.view.x = stage.canvas.width/2 - 35;
+        startBtn.view.y = stage.canvas.height/2 - 20;
 
-        var manifest = [
-            {src:"egg-spritesheet.png", id:"egg-spritesheet"},
-            {src:"cloud.png", id:"cloud"},
-            {src:"grass.png", id:"grass"},
-            {src:"leaf.png", id:"leaf"},
-            {src:"nest.png", id:"nest"},
-            {src:"rock.png", id:"rock"},
-            {src:"balloon.png", id:"balloon"},
-            {src:"enemyBird.png", id:"enemyBird"},
-            {src:"stars-spritesheet.png", id:"stars-spritesheet"},
-            {src:"mute-spritesheet.png", id:"mute-spritesheet"},
-            {src:"bounce.mp3", id:"bounce_sound"},
-            {src:"music.mp3|music.ogg", id:"music"},
-            {src:"gameover.mp3|gameover.ogg", id:"gameover_sound"},
-            {src:"success.mp3|success.ogg", id:"success_sound"}
-        ];
-
-        preload = new createjs.LoadQueue();
-        preload.installPlugin(createjs.Sound);
-        preload.addEventListener("progress", handleProgress);
-        preload.addEventListener("complete", handleComplete);
-        preload.addEventListener("fileload", handleFileLoad);
-        preload.addEventListener("error", handleError);
-        preload.loadManifest(manifest, true, assetsPath);
-
-        // Use this instead to use tag loading
-        //preload = new createjs.PreloadJS(false);
-
-        colorPanel.addEventListener("click", startHandler);
+        $("body").on("keydown", function(e){
+            if(e.which === 83){
+                startHandler(e);
+            }
+        });
     }
-
-    // -------- START CLICKED
 
     function startHandler(e){
         var event = new createjs.Event(StartScreen.START, true);
         self.view.dispatchEvent(event);
-    }
-
-     // ------- PRELOADING
-
-    function handleProgress(event) {
-        //bar.scaleX = event.loaded * loaderWidth;
-        console.log(event.loaded);
-        self.progressEgg.rotation = event.loaded * 180;
-    }
-
-    function handleFileLoad(event) {
-        //console.log(event);
-    }
-
-    function handleComplete(e) {
-        console.log("preloading complete!");
-        var event = new createjs.Event(StartScreen.START, true);
-        self.view.dispatchEvent(event);
-    }
-
-    function handleError(event){
-        console.log("[StartScreen] error preload!"+event);
     }
 
     return StartScreen;
@@ -1758,6 +2115,103 @@ var StartScreen = (function(){
  * To change this template use File | Settings | File Templates.
  */
 
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals preload:true  */
+
+
+var PreloadManager = (function(){
+
+    var self;
+
+    function PreloadManager(){
+        self = this;
+
+        PreloadManager.LOADING_DONE = "LOADING_DONE";
+
+        this.isPreloadingGame = false;
+        this.view = new createjs.Container();
+
+        preload = new createjs.LoadQueue();
+        preload.installPlugin(createjs.Sound);
+        preload.addEventListener("progress", self.handleProgress);
+        preload.addEventListener("complete", self.handleComplete);
+        preload.addEventListener("fileload", self.handleFileLoad);
+
+        this.preloaderView = new createjs.Container();
+        this.progressEgg = new createjs.Bitmap('assets/common/leaf.png');
+        this.progressEgg.regX = 41/2;
+        this.progressEgg.regY = 56/2;
+        this.progressEgg.x = stage.canvas.width/2;
+        this.progressEgg.y = stage.canvas.height/2;
+        self.preloaderView.addChild(this.progressEgg);
+    }
+
+    PreloadManager.prototype.preloadGame = function(){
+        showPreloader();
+        self.isPreloadingGame = true;
+        var manifest = [
+            {src:"assets/common/succeed_1.png", id:"success-background"},
+            {src:"assets/common/failed.png", id:"failed-background"},
+            {src:"assets/common/time-coin.png", id:"time-coin"},
+            {src:"assets/common/egg-spritesheet.png"},
+            {src:"assets/common/leaf.png", id:"leaf"},
+            {src:"assets/common/nest.png", id:"nest"},
+            {src:"assets/common/rock.png", id:"rock"},
+            {src:"assets/common/stars-spritesheet.png"},
+
+            {src:"assets/common/buttons/facebook.png"},
+            {src:"assets/common/buttons/next_level.png"},
+            {src:"assets/common/buttons/play_again.png"},
+            {src:"assets/common/buttons/pause.png"},
+            {src:"assets/common/buttons/levels.png"},
+            {src:"assets/common/buttons/mute.png"},
+
+            {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
+            {src:"assets/sound/coin.mp3|coin.ogg", id:"coin_sound"},
+            {src:"assets/sound/music.mp3|music.ogg", id:"music"},
+            {src:"assets/sound/gameover.mp3|gameover.ogg", id:"gameover_sound"},
+            {src:"assets/sound/success.mp3|success.ogg", id:"success_sound"}
+        ];
+        preload.loadManifest(manifest, true);
+    };
+
+    PreloadManager.prototype.preloadLevel = function(manifest){
+        showPreloader();
+        self.isPreloadingGame = false;
+        preload.loadManifest(manifest, true);
+    };
+
+    PreloadManager.prototype.handleProgress = function(event) {
+        //console.log(event.loaded);
+        self.progressEgg.rotation = event.loaded * 180;
+    };
+
+    PreloadManager.prototype.handleFileLoad = function(event) {
+        //console.log(event);
+    };
+
+    PreloadManager.prototype.handleComplete = function(e) {
+        removePreloader();
+        var event = new createjs.Event(PreloadManager.LOADING_DONE, true);
+        self.view.dispatchEvent(event);
+    };
+
+    PreloadManager.prototype.handleError = function(event){
+        console.log("[StartScreen] error preload!"+event);
+    };
+
+    function showPreloader(){
+        stage.addChild(self.preloaderView);
+    }
+
+    function removePreloader(){
+        stage.removeChild(self.preloaderView);
+    }
+
+    return PreloadManager;
+
+})();
 
 /**
  * Created with JetBrains PhpStorm.
@@ -1802,6 +2256,7 @@ var ScreenManager = (function(){
 
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
+            console.log("[ScreenManager] show game over!");
             this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
                 console.log("[ScreenManager] RESTART LEVEL");
                     self.removeScreen();
@@ -1810,13 +2265,6 @@ var ScreenManager = (function(){
         else if(screenType === ScreenManager.INSTRUCTIONS){
             this.screen = new InstructionsScreen();
         }
-        /*else if(screenType == ScreenManager.NEXT_LEVEL){
-            this.screen = new NextLevelScreen();
-            this.screen.view.on(NextLevelScreen.NEXT_LEVEL, function(e){
-                console.log("[ScreenManager] NEXT LEVEL");
-                self.removeScreen();
-            });
-        }*/
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
             this.screen.view.on(StartScreen.START, function(e){
@@ -1825,7 +2273,7 @@ var ScreenManager = (function(){
             });
         }
         this.view.addChild(this.screen.view);
-        console.log("[ScreenManager] added screen "+screenType);
+        animateScreenIn();
     };
 
     ScreenManager.prototype.showLevelsScreen = function(gameData){
@@ -1834,6 +2282,7 @@ var ScreenManager = (function(){
         this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
     ScreenManager.prototype.showInstructionsScreen = function(instructionsData){
@@ -1842,23 +2291,33 @@ var ScreenManager = (function(){
         this.screen.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
-    ScreenManager.prototype.showNextLevelScreen = function(){
-        this.screen = new NextLevelScreen();
+    ScreenManager.prototype.showNextLevelScreen = function(level, stars){
+        this.screen = new NextLevelScreen(level, stars);
         this.view.addChild(this.screen.view);
         this.screen.view.on(NextLevelScreen.NEXT_LEVEL, function(e){
-            console.log("[ScreenManager] NEXT LEVEL");
+            self.removeScreen();
+
+        });
+        this.screen.view.on(NextLevelScreen.PLAY_AGAIN, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
     ScreenManager.prototype.removeScreen = function(){
-        if(this.screen != null){
-            this.view.removeChild(this.screen.view);
-            this.screen = null;
+        if(self.screen != null){
+            self.view.removeChild(self.screen.view);
+            self.screen = null;
         }
     };
+
+    function animateScreenIn(){
+        //self.screen.view.alpha = 0;
+        //createjs.Tween.get(self.screen.view).to({scaleX:1, scaleY:1, alpha:1},900, createjs.Ease.cubicInOut);
+    }
 
     return ScreenManager;
 })();
@@ -1916,6 +2375,12 @@ SoundManager.playSuccess = function(){
     }
 };
 
+SoundManager.playCoinCatched = function(){
+    if(SoundManager.playSounds){
+        createjs.Sound.play("coin_sound");
+    }
+};
+
 /**
  * Created with JetBrains PhpStorm.
  * User: Jonathan
@@ -1969,9 +2434,14 @@ var GameData = (function(){
         return this.getLevel(i).getElementsByTagName("instruction");
     };
 
-    GameData.prototype.getAssetsToPreloadForLevel = function(i){
-        console.log(this.getLevel(i).getElementsByTagName("instruction"));
-        return this.getLevel(i).getElementsByTagName("instruction");
+    GameData.prototype.getManifestForLevel = function(i){
+        var manifest = [];
+        $(this.getLevel(i)).find("*").each(function(i, obj){
+            if($(obj).attr("img")!=null){
+                manifest.push({src:$(obj).attr("img")});
+            }
+        });
+        return manifest;
     };
 
     GameData.prototype.getStoredGamerData = function(){
@@ -1983,7 +2453,6 @@ var GameData = (function(){
     };
 
     GameData.prototype.didUserGetInstructionForLevel = function(i){
-        //console.log("[GameData] didUserGetInstructionForLevel: "+self.gamerData.givenInstructions[i]);
         if(!self.gamerData.givenInstructions){
             return false;
         }
@@ -1991,8 +2460,6 @@ var GameData = (function(){
             return true;
         }
         return false;
-        //console.log(self.gamerData.givenInstructions[i]);
-        //return self.gamerData.givenInstructions[i]?true:false;
     };
 
     GameData.prototype.storeGamerLevelData = function(level, stars){
@@ -2121,7 +2588,7 @@ function publishScoreToFB(level, stars){
             name: 'Tjilp',
             caption: 'Check out my score!',
             description: (
-                'I got'+ stars +' stars on level '+level
+                'I got '+ stars +' stars on level '+level
                 ),
             link: 'http://tjilp.be',
             picture: 'http://www.baatsontwerp.nl/Styles/img/portfolio/illustraties/Tjilp/tjilp_web.jpg'
@@ -2150,6 +2617,7 @@ function publishScoreToFB(level, stars){
 /* globals Box2D:true  */
 /* globals createjs:true  */
 /* globals GameData:true  */
+/* globals PreloadManager:true  */
 /* globals SoundManager:true  */
 /* globals GameContainer:true  */
 /* globals Statistics:true  */
@@ -2187,6 +2655,7 @@ var stage, world, debug, preload;
         self = this;
 
         stage = new createjs.Stage(document.getElementById("game"));
+        stage.enableMouseOver();
         debug = document.getElementById('debug');
         this.width = stage.canvas.width;
         this.height = stage.canvas.height;
@@ -2201,7 +2670,7 @@ var stage, world, debug, preload;
         setupPhysics();
     }
 
-    // ------------------- START UP FUNCTIONS
+    // ------------------- PHYSICS FUNCTIONS
 
     function setupPhysics(){
 
@@ -2221,8 +2690,9 @@ var stage, world, debug, preload;
 
             self.gameContainer.handleBeginContact(contact);
 
-            var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-            var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+            var colliderA = contact.GetFixtureA().GetUserData();
+            var colliderB = contact.GetFixtureB().GetUserData();
+            //console.log("[MAIN] collision: ",contact.GetFixtureA().GetUserData(), contact.GetFixtureB().GetUserData());
 
             if(colliderA === "ground" || colliderB === "ground"){
                 if(!self.collisionDetected){
@@ -2239,31 +2709,40 @@ var stage, world, debug, preload;
             else if(colliderA === "leaf" && colliderB === "bird" || colliderB === "bird" && colliderA === "leaf"){
                 if(!self.collisionDetected){
                     // make leaf move a bit
-                    console.log("[APP] leaf collided "+colliderA, colliderB);
                     SoundManager.playBounce();
                     self.stats.increaseBounce();
                 }
             }
-            else if(colliderA === "nest" || colliderB === "nest"){
+            else if(colliderA === "top-nest" || colliderB === "top-nest"){
                 if(!self.collisionDetected){
-                    self.gameContainer.bird.rest();
+                    self.gameContainer.bird.rest({x:self.gameContainer.nest.view.x, y:self.gameContainer.nest.view.y});
                     showNextLevelScreen();
                     self.collisionDetected = true;
                 }
             }
             else if(colliderA === "tornado" || colliderB === "tornado"){
-                console.log("[APP] egg passed tornado");
                 self.gameContainer.bird.tornadoFly();
             }
             else if(colliderA === "enemyBird" || colliderB === "enemyBird"){
-                console.log("[APP] egg collided with enemybird");
                 showGameOverScreen();
                 self.collisionDetected = true;
             }
             else if(colliderA === "balloon" || colliderB === "balloon"){
-                console.log("[APP] egg collided with balloon");
                 showGameOverScreen();
                 self.collisionDetected = true;
+            }
+            else if(colliderA === "miniTree" || colliderB === "miniTree"){
+                showGameOverScreen();
+                self.collisionDetected = true;
+            }
+            else if(colliderA.indexOf("timeCoin") !== -1 || colliderB.indexOf("timeCoin") !== -1){
+                if(colliderA.indexOf("timeCoin") !== -1){
+                    self.gameContainer.removeTimeCoinWithUserData(colliderA);
+                }
+                else{
+                    self.gameContainer.removeTimeCoinWithUserData(colliderB);
+                }
+                self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
             }
         };
         listener.EndContact = function(contact) {
@@ -2279,16 +2758,34 @@ var stage, world, debug, preload;
     }
 
 
+    //**
+    //
+    //
     // --------------- STARTER FUNCTIONS
 
     function gameDataLoadedHandler(){
+        self.preloadManager = new PreloadManager();
+        self.preloadManager.view.addEventListener(PreloadManager.LOADING_DONE, preloadHandler);
+        self.preloadManager.preloadGame();
+    }
 
-        drawLevel();
-        addListeners();
-        drawGameInfo();
+    function preloadHandler(e){
+        if(self.preloadManager.isPreloadingGame){
+            drawLevel();
+            drawGameInfo();
+            showStartScreen();
+            addListeners();
 
-        //showLevelsScreen();
-        showStartScreen();
+        }else{
+            var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
+            if(instructionsData.length > 0 && !self.gameData.didUserGetInstructionForLevel(self.stats.level)){
+                drawLevel();
+                showInstructionsScreen(instructionsData);
+            }
+            else{
+                startGame();
+            }
+        }
     }
 
     function addListeners(){
@@ -2297,8 +2794,7 @@ var stage, world, debug, preload;
         createjs.Ticker.setFPS(60);
         createjs.Ticker.useRAF = true;
 
-        $(document).on("keyup",function(e){
-            console.log("[APP] keycode: "+e.which);
+        $(document).on("keydown",function(e){
             if(e.which === 32){
                 launchEgg();
             }
@@ -2313,6 +2809,11 @@ var stage, world, debug, preload;
             }
         });
     }
+
+    //**
+    //
+    //
+    // ------------------ MAIN DRAWING FUNCTIONS
 
     function drawGameInfo(){
         if(this.stats == null){
@@ -2337,12 +2838,16 @@ var stage, world, debug, preload;
         var level=0;
         if(self.stats!=null){
             level = self.gameData.getLevel(self.stats.level);
-            self.stats.resetBounces();
             self.stats.leafsCount = $(level).find('leaf').length;
         }
 
         $(level).find('background').each(function(i, obj){
-            self.gameContainer.createBackground($(obj).attr("img"));
+            if(i<=0){
+                $("#game").css('background-image','url('+$(obj).attr("img")+')');
+            }
+            else{
+                self.gameContainer.createBackground($(obj).attr("img"));
+            }
         });
         $(level).find('ground').each(function(i, obj){
             self.gameContainer.createGround($(obj).attr("img"), self.width/2, self.height - parseInt($(obj).attr("height")), self.width, parseInt($(obj).attr("height")));
@@ -2353,37 +2858,47 @@ var stage, world, debug, preload;
         $(level).find('leaf').each(function(i, obj){
             self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("rotation"), $(obj).attr("restitution"));
         });
-        $(level).find('nest').each(function(i, obj){
-            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
-        });
         $(level).find('rock').each(function(i, obj){
             self.gameContainer.createRock($(obj).attr("x"), $(obj).attr("y"));
         });
         $(level).find('tornado').each(function(i, obj){
             self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
         });
-        $(level).find('cloud').each(function(i, obj){
-            self.gameContainer.createCloud($(obj).attr("x"), $(obj).attr("y"));
-        });
         $(level).find('enemyBird').each(function(i, obj){
-            self.gameContainer.createEnemyBird($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
+            self.gameContainer.createEnemyBird($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
         });
         $(level).find('balloon').each(function(i, obj){
-            self.gameContainer.createBalloon($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
+            self.gameContainer.createBalloon($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
         });
         $(level).find('egg').each(function(i, obj){
             self.gameContainer.createBird($(obj).attr("x"), $(obj).attr("y"));
             self.gameContainer.bird.setMaxRotations(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("maxRotations"));
             self.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
         });
+        $(level).find('nest').each(function(i, obj){
+            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('miniTree').each(function(i, obj){
+            self.gameContainer.createMiniTree( $(obj).attr("img"), $(obj).attr("x"));
+        });
+        $(level).find('cloud').each(function(i, obj){
+            self.gameContainer.createCloud($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('timeCoin').each(function(i, obj){
+            self.gameContainer.createTimeCoin($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("worth"), i);
+        });
     }
 
 
+    //**
+    //
+    //
     // --------------- CREATE STATIC GAME INFO
 
     function createStatistics(){
         this.stats = new Statistics(20, 20);
         this.stats.view.addEventListener(Statistics.LEVELS_CLICKED, showLevelsScreen);
+        this.stats.view.addEventListener(Statistics.TIME_OUT, showGameOverScreen);
         stage.addChild(this.stats.view);
     }
 
@@ -2393,11 +2908,14 @@ var stage, world, debug, preload;
     }
 
 
+    //**
+    //
+    //
     // --------------- GAME NAVIGATION HANDLERS
 
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
-        self.screenManager.view.on(StartScreen.START, function(e){
+        self.screenManager.view.addEventListener(StartScreen.START, function(e){
             showLevelsScreen();
         });
     }
@@ -2405,90 +2923,95 @@ var stage, world, debug, preload;
     function showLevelsScreen(){
         self.isPaused = true;
         self.screenManager.showLevelsScreen(self.gameData);
-        self.screenManager.view.on(LevelNest.LEVEL_SELECTED, function(e){
+        self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             self.stats.setLevel(e.levelIndex);
-            drawLevel();
-            var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
-            if(instructionsData.length > 0 && !self.gameData.didUserGetInstructionForLevel(self.stats.level)){
-                console.log("[APP] show instructions");
-                showInstructionsScreen(instructionsData);
-            }
-            else{
-                console.log("[APP] start game");
-                startGame();
-            }
+            preloadLevel(e.levelIndex);
         });
+    }
+
+    function preloadLevel(levelIndex){
+        self.preloadManager.preloadLevel(self.gameData.getManifestForLevel(levelIndex));
     }
 
     function showInstructionsScreen(instructionsData){
         console.log(instructionsData);
         self.isPaused = true;
         self.screenManager.showInstructionsScreen(instructionsData);
-        //self.screenManager.showLevelsScreen(self.gameData);
-        self.screenManager.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
-            console.log("[APP] instructions done!");
+        self.screenManager.view.addEventListener(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.gameData.storeGamerInstructionGiven(self.stats.level);
             startGame();
         });
     }
 
     function startGame(){
+        drawLevel();
         self.isPaused = false;
+        self.collisionDetected = false;
+        self.stats.resetStats();
         SoundManager.togglePlayBackgroundMusic();
     }
 
     function showGameOverScreen(){
-        SoundManager.playGameOver();
-        self.screenManager.showScreen(ScreenManager.GAME_OVER);
-        self.screenManager.view.on(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+        if(!self.isPaused){
+            SoundManager.playGameOver();
+            self.screenManager.showScreen(ScreenManager.GAME_OVER);
+            self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+            self.isPaused = true;
+        }
     }
 
     function showNextLevelScreen(){
-        SoundManager.playSuccess();
-        self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-        console.log("[stars] "+this.stats.getStars());
-        self.screenManager.showNextLevelScreen();
-        self.screenManager.view.on(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+        if(!self.isPaused){
+            SoundManager.playSuccess();
+            self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
+            console.log("[level] "+this.stats.level);
+            self.isPaused = true;
+            self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
+            self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+            self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+        }
     }
 
+    function restartLevelHandler(e){
+        startGame();
+        self.isPaused = false;
+        self.collisionDetected = false;
+    }
+
+    function nextLevelHandler(e){
+        self.stats.levelUp();
+        preloadLevel(self.stats.level);
+    }
+
+
+    //**
+    //
+    //
+    // --------------- EGG
+
     function launchEgg(){
-        console.log("[APP] game paused: " + self.isPaused);
         if(self.levelStarted || self.isPaused)
         {
             return;
         }
         this.gameContainer.bird.push();
-
-        this.gameContainer.bird.view.on(Bird.DIED, function(){
+        this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
             console.log("[APP] bird died");
             showGameOverScreen();
         });
         self.levelStarted = true;
     }
 
-    function restartLevelHandler(e){
-        drawLevel();
-        self.collisionDetected = false;
-    }
-
-    function nextLevelHandler(e){
-        self.stats.levelUp();
-        drawLevel();
-        self.collisionDetected = false;
+    function catchedCoinHandler(e){
+        self.stats.earnTime();
+        self.gameContainer.view.removeEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
+        SoundManager.playCoinCatched();
     }
 
 
     // --------------- TICK
 
     function tick(){
-        if(this.levelStarted){
-            if(this.gameContainer.bird.view.y  < 80){
-                stage.y = - this.gameContainer.bird.view.y + 80;
-            }
-            else{
-                stage.y=0;
-            }
-        }
         stage.update();
         world.DrawDebugData();
         world.Step(1/60, 10, 10);

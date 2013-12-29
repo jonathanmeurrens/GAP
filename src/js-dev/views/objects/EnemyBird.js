@@ -16,16 +16,29 @@
 
 var EnemyBird = (function(){
 
-    function EnemyBird(x, y, width, height, direction){
+    function EnemyBird(url, x, y, direction){
 
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = 46;
+        this.height = 32;
 
-        this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
+      /*  this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
         this.view.regX = this.width/2;
-        this.view.regY = this.height/2;
+        this.view.regY = this.height/2;*/
+
+        this.view = new createjs.Container();
+        var data = {
+            framerate: 8,
+            images: [url],
+            frames: {width:46, height:32},
+            animations: {fly:[0,1]}
+        };
+        var spritesheet = new createjs.SpriteSheet(data);
+        this.sprite = new createjs.Sprite(spritesheet, "fly");
+        this.view.addChild(this.sprite);
+        this.view.regX = 46/2;
+        this.view.regY = 32/2;
 
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 2;
@@ -42,10 +55,10 @@ var EnemyBird = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("enemyBird");
 
-        var circle1 = new box2d.b2CircleShape(this.width/3 / SCALE);
+        var circle1 = new box2d.b2CircleShape(this.width/3.2 / SCALE);
         circle1.m_p.Set(0,0);
         fixDef.shape = circle1;
-        fixDef.userData = "enemy";
+        fixDef.userData = "enemyBird";
         this.view.body.CreateFixture(fixDef);
 
         if(direction === "right"){
@@ -63,8 +76,8 @@ var EnemyBird = (function(){
     }
 
     EnemyBird.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 70;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 60;
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 

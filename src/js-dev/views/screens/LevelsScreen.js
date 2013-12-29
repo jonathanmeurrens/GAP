@@ -20,11 +20,15 @@ var LevelsScreen = (function(){
         self = this;
 
         this.gameData = gameData;
-        this.screenType = ScreenManager.LEVELS;
         this.view = new createjs.Container();
 
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
+        this.view.addChild(colorPanel);
+
         $("body").on("keydown",function(e){
-            console.log("[LevelsScreen] keycode: "+e.which);
             if(e.which === 49){ //1
                 levelSelected(0);
             }
@@ -33,6 +37,12 @@ var LevelsScreen = (function(){
             }
             else if(e.which === 222){ //3
                 levelSelected(2);
+            }
+            else if(e.which === 53){ //4
+                levelSelected(3);
+            }
+            else if(e.which === 54){ //5
+                levelSelected(4);
             }
         });
 
@@ -46,11 +56,15 @@ var LevelsScreen = (function(){
     }
 
     function showLevels(){
+        var levelsContainer = new createjs.Container();
+        self.view.addChild(levelsContainer);
         for(var i=0; i < this.gameData.getLevelCount(); i++){
             var nest = new LevelNest(i,this.gameData.gamerData.levels[i],true);
-            nest.view.x = i*130;
-            self.view.addChild(nest.view);
+            nest.view.x = (i)*120;
+            levelsContainer.addChild(nest.view);
         }
+        levelsContainer.x = 300;
+        levelsContainer.y = 200;
     }
 
     return LevelsScreen;

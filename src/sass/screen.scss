@@ -8,59 +8,32 @@
 
 body{
 	font-size:62.5%;
-	font-family: "Helvetica neueu", Helvetica, Arial, sans-serif;
 }
+
 
 #container{
+  width: 1000px;
+  height: 600px;
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  margin: auto;
+}
 
-	header{
-		h1{
-			font-size:2.2em;
-		}
-		h2{
-			margin-top:5px;
-		}
-		margin-bottom: 10px;
-	}
-
-	.tweet{
-		p{
-			width:350px;
-		}
-		font-size:0.9em;
-		margin-bottom:20px;
-		.meta{
-			margin-top:5px;
-			font-style:italic;
-			font-size:0.8em;
-		}
-	}
-
-	form{
-		legend{
-			display:none;
-		}
-		input[type='text'], label{
-			display:inline-block;
-			width:100px;
-		}
-		input[type=submit]{
-			float:right;
-		}
-		#chars{
-			font-size:0.7em;
-		}
-		width:350px;
-		margin-bottom:20px;
-	}
-
-	font-size:1.8em;
-	width:900px;
-	margin:0 auto;
-	padding-top:30px;
+#game{
 
 }
 
-.error{
-	background-color: #FCB;
+#debug{
+  position: absolute;
+  top:0;
+  display: none;
+}
+
+#fb-login{
+  position: absolute;
+  top:17px;
+  right:0px;
 }

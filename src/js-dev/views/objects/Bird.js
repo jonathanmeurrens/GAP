@@ -18,7 +18,6 @@ var Bird = (function(){
 
     function Bird(x, y, width, height){
 
-        self = null;
         self = this;
 
         // EVENT TYPES
@@ -28,7 +27,7 @@ var Bird = (function(){
         this.y = y;
         this.width = width;
         this.height = height;
-        this.impulse = 10;
+        this.impulse = 7;
         this.maxRotations = 0;
         this.evolution = 0;
         this.isDead = false;
@@ -38,8 +37,8 @@ var Bird = (function(){
 
         this.view = new createjs.Container();
         var data = {
-            images: ["img/egg-spritesheet.png"],
-            frames: {width:51, height:55},
+            images: ["assets/common/egg-spritesheet.png"],
+            frames: {width:45, height:55},
             animations: {one:[0], two:[1], three:[2], fly:[3,4,5,6]}
         };
         var spritesheet = new createjs.SpriteSheet(data);
@@ -63,16 +62,16 @@ var Bird = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("bird");
 
-        var circle1 = new box2d.b2CircleShape(this.width/2 / SCALE);
-        circle1.m_p.Set(0,0.5);
-        fixDef.shape = circle1;
-        fixDef.userData = "center-egg";
+        var circle3 = new box2d.b2CircleShape(((this.width/2.3)-4) / SCALE);
+        circle3.m_p.Set(-0.2,-0.5);
+        fixDef.shape = circle3;
+        fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
 
-        var circle3 = new box2d.b2CircleShape(((this.width/2)-2) / SCALE);
-        circle3.m_p.Set(0,0);
-        fixDef.shape = circle3;
-        fixDef.userData = "top-egg";
+        var circle1 = new box2d.b2CircleShape(this.width/2.3 / SCALE);
+        circle1.m_p.Set(-0.2,0.1);
+        fixDef.shape = circle1;
+        fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
 
         //this.push();
@@ -112,9 +111,9 @@ var Bird = (function(){
         this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
 
-        if(!self.isDead && (this.view.rotation/360 > this.maxRotations && !this.isDead)){
+        /*if(!self.isDead && (this.view.rotation/360 > this.maxRotations && !this.isDead)){
             birdDied();
-        }
+        }*/
 
         if(!self.isDead && (this.view.x > stage.canvas.width || this.view.x < 0 || this.view.y > stage.canvas.height)){
             birdDied();
@@ -130,18 +129,20 @@ var Bird = (function(){
     Bird.prototype.push = function(){
         //this.view.body.type = box2d.b2Body.b2_dynamicBody;
         this.view.body.SetType(box2d.b2Body.b2_dynamicBody);
-        applyImpulse(self.view.body, -45, 20);
-        //this.view.body.SetAngularVelocity(0);
+        applyImpulse(self.view.body, -45, 15);
+        this.view.body.SetAngularVelocity(-1);
     };
 
     Bird.prototype.moveRight = function(){
-        applyImpulse(self.view.body, -5, self.impulse);
-        self.view.body.ApplyTorque(self.impulse/2);
+        self.view.body.ApplyTorque(self.impulse);
+        applyImpulse(self.view.body, 0, self.impulse);
+        self.view.body.SetAngularVelocity(1);
     };
 
     Bird.prototype.moveLeft = function(){
-        self.view.body.ApplyTorque(-self.impulse/2);
-        applyImpulse(self.view.body, 5, -self.impulse);
+        self.view.body.ApplyTorque(-self.impulse);
+        applyImpulse(self.view.body, 0, -self.impulse);
+        self.view.body.SetAngularVelocity(-1);
     };
 
     Bird.prototype.fly = function(){
@@ -157,8 +158,12 @@ var Bird = (function(){
         applyImpulse(self.view.body, -90, 20);
     };
 
-    Bird.prototype.rest = function(){
+    Bird.prototype.rest = function(nestPosition){
         this.view.body.SetType(box2d.b2Body.b2_staticBody);
+        this.view.removeAllEventListeners();
+        console.log(this.view.rotation%90, this.view.rotation, 90*(this.view.rotation%180));
+        createjs.Tween.get(this.view).to({rotation:360, x:nestPosition.x+35, y:nestPosition.y-20},300);
+        //this.view.rotation = 0;
     };
 
     Bird.prototype.stopFly = function(){

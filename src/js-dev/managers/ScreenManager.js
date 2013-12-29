@@ -41,6 +41,7 @@ var ScreenManager = (function(){
 
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
+            console.log("[ScreenManager] show game over!");
             this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
                 console.log("[ScreenManager] RESTART LEVEL");
                     self.removeScreen();
@@ -49,13 +50,6 @@ var ScreenManager = (function(){
         else if(screenType === ScreenManager.INSTRUCTIONS){
             this.screen = new InstructionsScreen();
         }
-        /*else if(screenType == ScreenManager.NEXT_LEVEL){
-            this.screen = new NextLevelScreen();
-            this.screen.view.on(NextLevelScreen.NEXT_LEVEL, function(e){
-                console.log("[ScreenManager] NEXT LEVEL");
-                self.removeScreen();
-            });
-        }*/
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
             this.screen.view.on(StartScreen.START, function(e){
@@ -64,7 +58,7 @@ var ScreenManager = (function(){
             });
         }
         this.view.addChild(this.screen.view);
-        console.log("[ScreenManager] added screen "+screenType);
+        animateScreenIn();
     };
 
     ScreenManager.prototype.showLevelsScreen = function(gameData){
@@ -73,6 +67,7 @@ var ScreenManager = (function(){
         this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
     ScreenManager.prototype.showInstructionsScreen = function(instructionsData){
@@ -81,23 +76,33 @@ var ScreenManager = (function(){
         this.screen.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
-    ScreenManager.prototype.showNextLevelScreen = function(){
-        this.screen = new NextLevelScreen();
+    ScreenManager.prototype.showNextLevelScreen = function(level, stars){
+        this.screen = new NextLevelScreen(level, stars);
         this.view.addChild(this.screen.view);
         this.screen.view.on(NextLevelScreen.NEXT_LEVEL, function(e){
-            console.log("[ScreenManager] NEXT LEVEL");
+            self.removeScreen();
+
+        });
+        this.screen.view.on(NextLevelScreen.PLAY_AGAIN, function(e){
             self.removeScreen();
         });
+        animateScreenIn();
     };
 
     ScreenManager.prototype.removeScreen = function(){
-        if(this.screen != null){
-            this.view.removeChild(this.screen.view);
-            this.screen = null;
+        if(self.screen != null){
+            self.view.removeChild(self.screen.view);
+            self.screen = null;
         }
     };
+
+    function animateScreenIn(){
+        //self.screen.view.alpha = 0;
+        //createjs.Tween.get(self.screen.view).to({scaleX:1, scaleY:1, alpha:1},900, createjs.Ease.cubicInOut);
+    }
 
     return ScreenManager;
 })();

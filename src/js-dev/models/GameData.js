@@ -51,9 +51,14 @@ var GameData = (function(){
         return this.getLevel(i).getElementsByTagName("instruction");
     };
 
-    GameData.prototype.getAssetsToPreloadForLevel = function(i){
-        console.log(this.getLevel(i).getElementsByTagName("instruction"));
-        return this.getLevel(i).getElementsByTagName("instruction");
+    GameData.prototype.getManifestForLevel = function(i){
+        var manifest = [];
+        $(this.getLevel(i)).find("*").each(function(i, obj){
+            if($(obj).attr("img")!=null){
+                manifest.push({src:$(obj).attr("img")});
+            }
+        });
+        return manifest;
     };
 
     GameData.prototype.getStoredGamerData = function(){
@@ -65,7 +70,6 @@ var GameData = (function(){
     };
 
     GameData.prototype.didUserGetInstructionForLevel = function(i){
-        //console.log("[GameData] didUserGetInstructionForLevel: "+self.gamerData.givenInstructions[i]);
         if(!self.gamerData.givenInstructions){
             return false;
         }
@@ -73,8 +77,6 @@ var GameData = (function(){
             return true;
         }
         return false;
-        //console.log(self.gamerData.givenInstructions[i]);
-        //return self.gamerData.givenInstructions[i]?true:false;
     };
 
     GameData.prototype.storeGamerLevelData = function(level, stars){

@@ -9,6 +9,7 @@
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals SoundManager:true  */
+/* globals Button:true  */
 
 var Statistics = (function(){
 
@@ -19,6 +20,7 @@ var Statistics = (function(){
         self = this;
 
         Statistics.LEVELS_CLICKED = "LEVELS_CLICKED";
+        Statistics.TIME_OUT = "TIME_OUT";
 
         this.view = new createjs.Container();
         this.view.x = x;
@@ -26,34 +28,32 @@ var Statistics = (function(){
 
         this.stars = 1;
         this.level = 0;
-        this.bounces = 1;
+        this.bounces = 0;
         this.leafsCount = 1;
+        this.timeCount = 0;
 
         // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
         this.view.addChild(this.levelTxt);
+        this.levelTxt.x = stage.canvas.width/2 - 122/2;
+        this.levelTxt.y = 10;
 
-        // STARS IND
-        var stars_data = {
-            images: ["img/stars-spritesheet.png"],
-            frames: {width:76, height:20},
-            animations: {none:[3], one:[0], two:[1], three:[2]}
-        };
-        var spritesheet = new createjs.SpriteSheet(stars_data );
-        this.starsSprite = new createjs.Sprite(spritesheet, "none");
-        this.view.addChild(this.starsSprite);
+        // TIME IND
+        this.timeTxt = new createjs.Text("", "14px Arial", "#000000");
+        this.view.addChild(this.timeTxt);
+        this.timeTxt.x = stage.canvas.width/2 - 170/2;
+        this.timeTxt.y = 40;
 
         // SOUND MUTE
         var mute_data = {
-            images: ["img/mute-spritesheet.png"],
-            frames: {width:50, height:50},
+            images: ["assets/common/buttons/mute.png"],
+            frames: {width:27, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
-            console.log("[Statistics] mute sound");
             SoundManager.togglePlayBackgroundMusic();
             if(SoundManager.isPlayingMusic){
                 self.muteBtnSprite.gotoAndStop("on");
@@ -64,16 +64,10 @@ var Statistics = (function(){
 
 
         // LEVELS PANEL BTN
-        var levelsBtn_data = {
-            images: ["img/mute-spritesheet.png"],
-            frames: {width:50, height:50},
-            animations: {on:[0], mute:[1]}
-        };
-        var levelsBtnspritesheet = new createjs.SpriteSheet(levelsBtn_data);
-        this.levelsBtnSprite = new createjs.Sprite(levelsBtnspritesheet, "on");
-        this.levelsBtnSprite.x = 100;
-        this.view.addChild(this.levelsBtnSprite);
-        this.levelsBtnSprite.addEventListener("click", function(e){
+        var levelsBtn = new Button(Button.LEVELS);
+        levelsBtn.view.x = 100;
+        this.view.addChild(levelsBtn.view);
+        levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
             self.view.dispatchEvent(event);
         });
@@ -96,37 +90,37 @@ var Statistics = (function(){
         updateStats();
     };
 
-    /*Statistics.prototype.starUp = function(){
-        if(this.stars <= 2){
-            this.stars++;
-            updateStats();
-        }
-    };
-
-    Statistics.prototype.starDown = function(){
-        this.stars--;
-        updateStats();
-    };*/
-
     Statistics.prototype.increaseBounce = function(){
         this.bounces++;
-        console.log("[bounces] "+this.bounces);
         updateStats();
     };
 
-    Statistics.prototype.resetBounces = function(){
-        this.bounces = 1;
+    Statistics.prototype.earnTime = function(){
+        this.timeCount += 10;
+    };
+
+    Statistics.prototype.resetStats = function(){
+        clearInterval(this.timer);
+        this.timer = null;
+        this.timeCount = 59;
+        this.timer = setInterval(updateTime, 1000);
+        this.bounces = 0;
+        updateTime();
     };
 
     Statistics.prototype.getStars = function(){
-        return (self.bounces / self.leafsCount) * 3;
+        if(self.bounces<0)
+        {
+            self.bounces = 0;
+        }
+        return (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
     };
 
     function updateStats(){
 
         self.levelTxt.text = "level: " + (self.level + 1);
 
-        var frame = "none";
+        /*var frame = "none";
         switch(this.self.starsSprite){
             case 0:
                 frame = "none";
@@ -143,7 +137,25 @@ var Statistics = (function(){
             default:
                 frame = "none";
         }
-        self.starsSprite.gotoAndStop(frame);
+        self.starsSprite.gotoAndStop(frame);*/
+    }
+
+    function updateTime(){
+        var timeTxt = "time left: 00:";
+        if(self.timeCount<10){
+            timeTxt += "0";
+        }
+        timeTxt +=self.timeCount;
+        self.timeTxt.text = timeTxt;
+
+        self.timeCount--;
+
+        if(self.timeCount < 0){
+            clearInterval(self.timer);
+            self.timer = null;
+            var event = new createjs.Event(Statistics.TIME_OUT);
+            self.view.dispatchEvent(event);
+        }
     }
 
     return Statistics;

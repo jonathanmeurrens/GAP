@@ -10,6 +10,7 @@
 /* globals Box2D:true  */
 /* globals createjs:true  */
 /* globals GameData:true  */
+/* globals PreloadManager:true  */
 /* globals SoundManager:true  */
 /* globals GameContainer:true  */
 /* globals Statistics:true  */
@@ -47,6 +48,7 @@ var stage, world, debug, preload;
         self = this;
 
         stage = new createjs.Stage(document.getElementById("game"));
+        stage.enableMouseOver();
         debug = document.getElementById('debug');
         this.width = stage.canvas.width;
         this.height = stage.canvas.height;
@@ -61,7 +63,7 @@ var stage, world, debug, preload;
         setupPhysics();
     }
 
-    // ------------------- START UP FUNCTIONS
+    // ------------------- PHYSICS FUNCTIONS
 
     function setupPhysics(){
 
@@ -81,8 +83,9 @@ var stage, world, debug, preload;
 
             self.gameContainer.handleBeginContact(contact);
 
-            var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-            var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+            var colliderA = contact.GetFixtureA().GetUserData();
+            var colliderB = contact.GetFixtureB().GetUserData();
+            //console.log("[MAIN] collision: ",contact.GetFixtureA().GetUserData(), contact.GetFixtureB().GetUserData());
 
             if(colliderA === "ground" || colliderB === "ground"){
                 if(!self.collisionDetected){
@@ -99,31 +102,40 @@ var stage, world, debug, preload;
             else if(colliderA === "leaf" && colliderB === "bird" || colliderB === "bird" && colliderA === "leaf"){
                 if(!self.collisionDetected){
                     // make leaf move a bit
-                    console.log("[APP] leaf collided "+colliderA, colliderB);
                     SoundManager.playBounce();
                     self.stats.increaseBounce();
                 }
             }
-            else if(colliderA === "nest" || colliderB === "nest"){
+            else if(colliderA === "top-nest" || colliderB === "top-nest"){
                 if(!self.collisionDetected){
-                    self.gameContainer.bird.rest();
+                    self.gameContainer.bird.rest({x:self.gameContainer.nest.view.x, y:self.gameContainer.nest.view.y});
                     showNextLevelScreen();
                     self.collisionDetected = true;
                 }
             }
             else if(colliderA === "tornado" || colliderB === "tornado"){
-                console.log("[APP] egg passed tornado");
                 self.gameContainer.bird.tornadoFly();
             }
             else if(colliderA === "enemyBird" || colliderB === "enemyBird"){
-                console.log("[APP] egg collided with enemybird");
                 showGameOverScreen();
                 self.collisionDetected = true;
             }
             else if(colliderA === "balloon" || colliderB === "balloon"){
-                console.log("[APP] egg collided with balloon");
                 showGameOverScreen();
                 self.collisionDetected = true;
+            }
+            else if(colliderA === "miniTree" || colliderB === "miniTree"){
+                showGameOverScreen();
+                self.collisionDetected = true;
+            }
+            else if(colliderA.indexOf("timeCoin") !== -1 || colliderB.indexOf("timeCoin") !== -1){
+                if(colliderA.indexOf("timeCoin") !== -1){
+                    self.gameContainer.removeTimeCoinWithUserData(colliderA);
+                }
+                else{
+                    self.gameContainer.removeTimeCoinWithUserData(colliderB);
+                }
+                self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
             }
         };
         listener.EndContact = function(contact) {
@@ -139,16 +151,34 @@ var stage, world, debug, preload;
     }
 
 
+    //**
+    //
+    //
     // --------------- STARTER FUNCTIONS
 
     function gameDataLoadedHandler(){
+        self.preloadManager = new PreloadManager();
+        self.preloadManager.view.addEventListener(PreloadManager.LOADING_DONE, preloadHandler);
+        self.preloadManager.preloadGame();
+    }
 
-        drawLevel();
-        addListeners();
-        drawGameInfo();
+    function preloadHandler(e){
+        if(self.preloadManager.isPreloadingGame){
+            drawLevel();
+            drawGameInfo();
+            showStartScreen();
+            addListeners();
 
-        //showLevelsScreen();
-        showStartScreen();
+        }else{
+            var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
+            if(instructionsData.length > 0 && !self.gameData.didUserGetInstructionForLevel(self.stats.level)){
+                drawLevel();
+                showInstructionsScreen(instructionsData);
+            }
+            else{
+                startGame();
+            }
+        }
     }
 
     function addListeners(){
@@ -157,8 +187,7 @@ var stage, world, debug, preload;
         createjs.Ticker.setFPS(60);
         createjs.Ticker.useRAF = true;
 
-        $(document).on("keyup",function(e){
-            console.log("[APP] keycode: "+e.which);
+        $(document).on("keydown",function(e){
             if(e.which === 32){
                 launchEgg();
             }
@@ -173,6 +202,11 @@ var stage, world, debug, preload;
             }
         });
     }
+
+    //**
+    //
+    //
+    // ------------------ MAIN DRAWING FUNCTIONS
 
     function drawGameInfo(){
         if(this.stats == null){
@@ -197,12 +231,16 @@ var stage, world, debug, preload;
         var level=0;
         if(self.stats!=null){
             level = self.gameData.getLevel(self.stats.level);
-            self.stats.resetBounces();
             self.stats.leafsCount = $(level).find('leaf').length;
         }
 
         $(level).find('background').each(function(i, obj){
-            self.gameContainer.createBackground($(obj).attr("img"));
+            if(i<=0){
+                $("#game").css('background-image','url('+$(obj).attr("img")+')');
+            }
+            else{
+                self.gameContainer.createBackground($(obj).attr("img"));
+            }
         });
         $(level).find('ground').each(function(i, obj){
             self.gameContainer.createGround($(obj).attr("img"), self.width/2, self.height - parseInt($(obj).attr("height")), self.width, parseInt($(obj).attr("height")));
@@ -213,37 +251,47 @@ var stage, world, debug, preload;
         $(level).find('leaf').each(function(i, obj){
             self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("rotation"), $(obj).attr("restitution"));
         });
-        $(level).find('nest').each(function(i, obj){
-            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
-        });
         $(level).find('rock').each(function(i, obj){
             self.gameContainer.createRock($(obj).attr("x"), $(obj).attr("y"));
         });
         $(level).find('tornado').each(function(i, obj){
             self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
         });
-        $(level).find('cloud').each(function(i, obj){
-            self.gameContainer.createCloud($(obj).attr("x"), $(obj).attr("y"));
-        });
         $(level).find('enemyBird').each(function(i, obj){
-            self.gameContainer.createEnemyBird($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
+            self.gameContainer.createEnemyBird($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
         });
         $(level).find('balloon').each(function(i, obj){
-            self.gameContainer.createBalloon($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
+            self.gameContainer.createBalloon($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("direction"));
         });
         $(level).find('egg').each(function(i, obj){
             self.gameContainer.createBird($(obj).attr("x"), $(obj).attr("y"));
             self.gameContainer.bird.setMaxRotations(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("maxRotations"));
             self.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
         });
+        $(level).find('nest').each(function(i, obj){
+            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('miniTree').each(function(i, obj){
+            self.gameContainer.createMiniTree( $(obj).attr("img"), $(obj).attr("x"));
+        });
+        $(level).find('cloud').each(function(i, obj){
+            self.gameContainer.createCloud($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"));
+        });
+        $(level).find('timeCoin').each(function(i, obj){
+            self.gameContainer.createTimeCoin($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("worth"), i);
+        });
     }
 
 
+    //**
+    //
+    //
     // --------------- CREATE STATIC GAME INFO
 
     function createStatistics(){
         this.stats = new Statistics(20, 20);
         this.stats.view.addEventListener(Statistics.LEVELS_CLICKED, showLevelsScreen);
+        this.stats.view.addEventListener(Statistics.TIME_OUT, showGameOverScreen);
         stage.addChild(this.stats.view);
     }
 
@@ -253,11 +301,14 @@ var stage, world, debug, preload;
     }
 
 
+    //**
+    //
+    //
     // --------------- GAME NAVIGATION HANDLERS
 
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
-        self.screenManager.view.on(StartScreen.START, function(e){
+        self.screenManager.view.addEventListener(StartScreen.START, function(e){
             showLevelsScreen();
         });
     }
@@ -265,90 +316,95 @@ var stage, world, debug, preload;
     function showLevelsScreen(){
         self.isPaused = true;
         self.screenManager.showLevelsScreen(self.gameData);
-        self.screenManager.view.on(LevelNest.LEVEL_SELECTED, function(e){
+        self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             self.stats.setLevel(e.levelIndex);
-            drawLevel();
-            var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
-            if(instructionsData.length > 0 && !self.gameData.didUserGetInstructionForLevel(self.stats.level)){
-                console.log("[APP] show instructions");
-                showInstructionsScreen(instructionsData);
-            }
-            else{
-                console.log("[APP] start game");
-                startGame();
-            }
+            preloadLevel(e.levelIndex);
         });
+    }
+
+    function preloadLevel(levelIndex){
+        self.preloadManager.preloadLevel(self.gameData.getManifestForLevel(levelIndex));
     }
 
     function showInstructionsScreen(instructionsData){
         console.log(instructionsData);
         self.isPaused = true;
         self.screenManager.showInstructionsScreen(instructionsData);
-        //self.screenManager.showLevelsScreen(self.gameData);
-        self.screenManager.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
-            console.log("[APP] instructions done!");
+        self.screenManager.view.addEventListener(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.gameData.storeGamerInstructionGiven(self.stats.level);
             startGame();
         });
     }
 
     function startGame(){
+        drawLevel();
         self.isPaused = false;
+        self.collisionDetected = false;
+        self.stats.resetStats();
         SoundManager.togglePlayBackgroundMusic();
     }
 
     function showGameOverScreen(){
-        SoundManager.playGameOver();
-        self.screenManager.showScreen(ScreenManager.GAME_OVER);
-        self.screenManager.view.on(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+        if(!self.isPaused){
+            SoundManager.playGameOver();
+            self.screenManager.showScreen(ScreenManager.GAME_OVER);
+            self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+            self.isPaused = true;
+        }
     }
 
     function showNextLevelScreen(){
-        SoundManager.playSuccess();
-        self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-        console.log("[stars] "+this.stats.getStars());
-        self.screenManager.showNextLevelScreen();
-        self.screenManager.view.on(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+        if(!self.isPaused){
+            SoundManager.playSuccess();
+            self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
+            console.log("[level] "+this.stats.level);
+            self.isPaused = true;
+            self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
+            self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+            self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+        }
     }
 
+    function restartLevelHandler(e){
+        startGame();
+        self.isPaused = false;
+        self.collisionDetected = false;
+    }
+
+    function nextLevelHandler(e){
+        self.stats.levelUp();
+        preloadLevel(self.stats.level);
+    }
+
+
+    //**
+    //
+    //
+    // --------------- EGG
+
     function launchEgg(){
-        console.log("[APP] game paused: " + self.isPaused);
         if(self.levelStarted || self.isPaused)
         {
             return;
         }
         this.gameContainer.bird.push();
-
-        this.gameContainer.bird.view.on(Bird.DIED, function(){
+        this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
             console.log("[APP] bird died");
             showGameOverScreen();
         });
         self.levelStarted = true;
     }
 
-    function restartLevelHandler(e){
-        drawLevel();
-        self.collisionDetected = false;
-    }
-
-    function nextLevelHandler(e){
-        self.stats.levelUp();
-        drawLevel();
-        self.collisionDetected = false;
+    function catchedCoinHandler(e){
+        self.stats.earnTime();
+        self.gameContainer.view.removeEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
+        SoundManager.playCoinCatched();
     }
 
 
     // --------------- TICK
 
     function tick(){
-        if(this.levelStarted){
-            if(this.gameContainer.bird.view.y  < 80){
-                stage.y = - this.gameContainer.bird.view.y + 80;
-            }
-            else{
-                stage.y=0;
-            }
-        }
         stage.update();
         world.DrawDebugData();
         world.Step(1/60, 10, 10);

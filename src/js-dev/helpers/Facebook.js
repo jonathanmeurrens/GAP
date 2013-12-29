@@ -83,7 +83,7 @@ function publishScoreToFB(level, stars){
             name: 'Tjilp',
             caption: 'Check out my score!',
             description: (
-                'I got'+ stars +' stars on level '+level
+                'I got '+ stars +' stars on level '+level
                 ),
             link: 'http://tjilp.be',
             picture: 'http://www.baatsontwerp.nl/Styles/img/portfolio/illustraties/Tjilp/tjilp_web.jpg'

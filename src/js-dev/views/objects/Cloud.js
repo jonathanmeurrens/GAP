@@ -17,15 +17,18 @@
 var Cloud = (function(){
 
     var buoyancyController;
+    var self;
 
-    function Cloud(x, y, width, height){
+    function Cloud(url, x, y, width, height){
+
+        self = this;
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap(preload.getResult("cloud"));
+        this.view = new createjs.Bitmap(preload.getResult(url));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
@@ -44,26 +47,26 @@ var Cloud = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData("cloud");
 
-        var circle1 = new box2d.b2CircleShape(this.width/3 / SCALE);
+        var circle1 = new box2d.b2CircleShape(this.width/3.5 / SCALE);
         circle1.m_p.Set(0,0);
         fixDef.shape = circle1;
-        fixDef.userData = "cloud-part-one";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        var circle2 = new box2d.b2CircleShape(((this.width/3)-10) / SCALE);
+        var circle2 = new box2d.b2CircleShape(((this.width/3.5)-15) / SCALE);
         circle2.m_p.Set(2,0);
         fixDef.shape = circle2;
-        fixDef.userData = "cloud-part-two";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        var circle3 = new box2d.b2CircleShape(((this.width/3)-6) / SCALE);
+        var circle3 = new box2d.b2CircleShape(((this.width/3.5)-10) / SCALE);
         circle3.m_p.Set(-2,0);
         fixDef.shape = circle3;
-        fixDef.userData = "cloud-part-three";
+        fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
         //applyImpulse(this.view.body, 0, 200);
-        this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
+        //this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
         //this.view.body.SetLinearDamping(10);
 
 
@@ -77,17 +80,28 @@ var Cloud = (function(){
          world.AddController(buoyancyController);
 
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        //$(this.view).on('tick', $.proxy( tick, this ));
         //this.updateView();
+        this.updateView();
+        animate();
     }
 
     function tick(e){
         this.updateView();
     }
 
+    function animate(){
+        createjs.Tween.removeTweens(self.view);
+        createjs.Tween.get(self.view).to({y:self.view.y + 20}, 2700).call(function(){
+            createjs.Tween.get(self.view).to({y:self.view.y - 20}, 2700).call(function(){
+                animate();
+            });
+        });
+    }
+
     Cloud.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 70;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 60;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 20;
+        this.view.y = this.view.body.GetPosition().y * SCALE + 32;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 

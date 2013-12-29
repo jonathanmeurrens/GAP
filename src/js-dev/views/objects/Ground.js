@@ -45,6 +45,7 @@ var Ground = (function(){
         bodyDef.userData = "ground";
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.shape.SetAsBox(this.width / SCALE, realHeight / SCALE);
+        fixDef.userData = "ground";
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
     }

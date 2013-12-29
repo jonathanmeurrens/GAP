@@ -21,6 +21,8 @@
 /* globals Tree:true  */
 /* globals EnemyBird:true  */
 /* globals Balloon:true  */
+/* globals TimeCoin:true  */
+/* globals MiniTree:true  */
 
 var GameContainer = (function(){
 
@@ -30,6 +32,8 @@ var GameContainer = (function(){
 
         self = this;
 
+        GameContainer.COIN_REMOVED = "COIN_REMOVED";
+
         this.gameData = gameData;
 
         this.view = new createjs.Container();
@@ -38,11 +42,16 @@ var GameContainer = (function(){
         this.obstacles = [];
         this.clouds = [];
         this.trees = [];
+        this.backgrounds = [];
+        this.timeCoins = [];
+
+        $(this.view).on('tick', $.proxy(tick, this));
     }
 
     GameContainer.prototype.createBackground = function(url){
-        this.background = new Background(url);
-        this.view.addChild(this.background.view);
+        var background = new Background(url);
+        this.view.addChild(background.view);
+        this.backgrounds.push(background);
     };
 
     GameContainer.prototype.createGround = function(url, xPos, yPos, width, height){
@@ -51,7 +60,7 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.createRock = function(xPos, yPos){
-        var obstacle = new Rock(xPos, translateYPos(yPos), 40, 240);
+        var obstacle = new Rock(xPos, translateYPos(yPos), 475, 358);
         this.view.addChild(obstacle.view);
         this.obstacles.push(obstacle);
     };
@@ -71,7 +80,7 @@ var GameContainer = (function(){
         if(xPos==null){
             xPos = stage.canvas.width - 20;
         }
-        this.nest = new Nest(xPos, translateYPos(yPos), 50, 16);
+        this.nest = new Nest(xPos, translateYPos(yPos), 30, 12);
         this.view.addChild(this.nest.view);
     };
 
@@ -81,20 +90,20 @@ var GameContainer = (function(){
         this.obstacles.push(tornado);
     };
 
-    GameContainer.prototype.createCloud = function(xPos, yPos){
-        var cloud = new Cloud(xPos, translateYPos(yPos), 150, 150);
+    GameContainer.prototype.createCloud = function(url, xPos, yPos){
+        var cloud = new Cloud(url, xPos, translateYPos(yPos), 150, 150);
         this.view.addChild(cloud.view);
         this.clouds.push(cloud);
     };
 
-    GameContainer.prototype.createEnemyBird = function(xPos, yPos, direction){
-        var enemyBird = new EnemyBird(xPos, translateYPos(yPos), 150, 150, direction);
+    GameContainer.prototype.createEnemyBird = function(url, xPos, yPos, direction){
+        var enemyBird = new EnemyBird(url, xPos, translateYPos(yPos), direction);
         this.view.addChild(enemyBird.view);
         this.obstacles.push(enemyBird);
     };
 
-    GameContainer.prototype.createBalloon = function(xPos, yPos, direction){
-        var balloon = new Balloon(xPos, translateYPos(yPos), 150, 150, direction);
+    GameContainer.prototype.createBalloon = function(url, xPos, yPos, direction){
+        var balloon = new Balloon(url, xPos, translateYPos(yPos), 93, 157, direction);
         this.view.addChild(balloon.view);
         this.obstacles.push(balloon);
     };
@@ -105,18 +114,38 @@ var GameContainer = (function(){
         this.trees.push(tree);
     };
 
+    GameContainer.prototype.createTimeCoin = function(xPos, yPos, worth, index){
+        var timeCoin = new TimeCoin(xPos, translateYPos(yPos), worth, index);
+        this.view.addChild(timeCoin.view);
+        this.timeCoins.push(timeCoin);
+    };
+
+    GameContainer.prototype.createMiniTree = function(url, xPos){
+        var miniTree = new MiniTree(url, xPos, translateYPos(0), 20, 245);
+        this.view.addChild(miniTree.view);
+        this.obstacles.push(miniTree);
+    };
+
+
+
+    GameContainer.prototype.removeTimeCoinWithUserData = function(userData){
+        for(var n=0; n < this.timeCoins.length; n++){
+            var timeCoin = this.timeCoins[n];
+            if(timeCoin.view.body.GetUserData() === userData){
+                world.DestroyBody(timeCoin.view.body);
+                this.view.removeChild(timeCoin.view);
+                this.timeCoins.splice(n,1);
+                var event = new createjs.Event(GameContainer.COIN_REMOVED);
+                self.view.dispatchEvent(event);
+            }
+        }
+    };
+
     GameContainer.prototype.removeBird = function(){
         if(this.bird != null){
             world.DestroyBody(this.bird.view.body);
             this.view.removeChild(this.bird.view);
             this.bird = null;
-        }
-    };
-
-    GameContainer.prototype.removeBackground = function(){
-        if(this.background != null){
-            this.view.removeChild(this.background.view);
-            this.background = null;
         }
     };
 
@@ -137,33 +166,57 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.resetContainer = function(){
-        for(var i=0; i < this.leafs.length; i++){
-            var leaf = this.leafs[i];
+
+        var length = this.leafs.length;
+        for(var q=0; q < length; q++){
+            var leaf = this.leafs.pop();
             world.DestroyBody(leaf.view.body);
             this.view.removeChild(leaf.view);
-            this.leafs.splice(i,1);
         }
-        for(var j=0; j < this.obstacles.length; j++){
-            var obstacle = this.obstacles[j];
+
+        length = this.obstacles.length;
+        for(var j=0; j < length; j++){
+            var obstacle = this.obstacles.pop();
             world.DestroyBody(obstacle.view.body);
             this.view.removeChild(obstacle.view);
-            this.obstacles.splice(j,1);
         }
-        for(var k=0; k < this.clouds.length; k++){
-            var cloud = this.clouds[k];
+        length = this.clouds.length;
+        for(var k=0; k < length; k++){
+            var cloud = this.clouds.pop();
             world.DestroyBody(cloud.view.body);
             this.view.removeChild(cloud.view);
-            this.clouds.splice(k,1);
         }
-        for(var l=0; l < this.trees.length; l++){
-            var tree = this.trees[l];
+        length = this.trees.length;
+        for(var l=0; l < length; l++){
+            var tree = this.trees.pop();
             this.view.removeChild(tree.view);
-            this.trees.splice(l,1);
+        }
+        length = this.backgrounds.length;
+        for(var m=0; m < length; m++){
+            var background = this.backgrounds.pop();
+            this.view.removeChild(background.view);
+        }
+        length = this.timeCoins.length;
+        for(var n=0; n < length; n++){
+            var timeCoin = this.timeCoins.pop();
+            world.DestroyBody(timeCoin.view.body);
+            this.view.removeChild(timeCoin.view);
         }
         this.removeBird();
         this.removeGround();
         this.removeNest();
-        this.removeBackground();
+    };
+
+    GameContainer.prototype.parallaxLeft = function(){
+        var bg = this.backgrounds[1].view;
+        createjs.Tween.removeTweens(bg);
+        createjs.Tween.get(bg).to({x:bg.x+10}, 1000);
+    };
+
+    GameContainer.prototype.parallaxRight = function(){
+        var bg = this.backgrounds[1].view;
+        createjs.Tween.removeTweens(bg);
+        createjs.Tween.get(bg).to({x:bg.x-10}, 1000);
     };
 
     GameContainer.prototype.handleBeginContact = function(contact){
@@ -172,7 +225,7 @@ var GameContainer = (function(){
 
         //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 
-        if(colliderA === "leaf" || colliderB === "leaf"){
+        /*if(colliderA === "leaf" || colliderB === "leaf"){
             for(var i=0; i < this.leafs.length; i++){
                 var leaf = this.leafs[i];
                 leaf.handleBeginContact(contact);
@@ -183,7 +236,7 @@ var GameContainer = (function(){
                 var cloud = this.clouds[j];
                 cloud.handleBeginContact(contact);
             }
-        }
+        }*/
     };
 
     GameContainer.prototype.handleEndContact = function(contact){
@@ -204,6 +257,18 @@ var GameContainer = (function(){
             }
         }
     };
+
+
+    function tick(e){
+        if(self.bird != null){
+            if(self.bird.view.y  < 80){
+                self.view.y = -self.bird.view.y + 80;
+            }
+            else{
+                self.view.y=0;
+            }
+        }
+    }
 
 
     // --------------- HELPERS

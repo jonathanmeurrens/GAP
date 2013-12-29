@@ -49,3 +49,9 @@ SoundManager.playSuccess = function(){
         createjs.Sound.play("success_sound");
     }
 };
+
+SoundManager.playCoinCatched = function(){
+    if(SoundManager.playSounds){
+        createjs.Sound.play("coin_sound");
+    }
+};

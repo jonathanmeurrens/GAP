@@ -28,7 +28,8 @@ var Rock = (function(){
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
         fixDef.friction = 0.5;
-        fixDef.restitution = 1;
+        fixDef.restitution = 0.1;
+
         var bodyDef = new box2d.b2BodyDef();
         bodyDef.type = box2d.b2Body.b2_staticBody;
         bodyDef.position.x = this.x / SCALE;
@@ -36,12 +37,18 @@ var Rock = (function(){
         bodyDef.userData = "rock";
 
         fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+        var vertices = [];
+        vertices.push(new box2d.b2Vec2(-0.7, -7));
+        vertices.push(new box2d.b2Vec2(7, 3.3));
+        vertices.push(new box2d.b2Vec2(-7, 3.3));
+        fixDef.shape.SetAsVector(vertices, 3);
+        fixDef.userData = "rock";
+        /*fixDef.shape = new box2d.b2PolygonShape();
+        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);*/
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
         this.updateView();
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Rock.prototype.updateView = function(){

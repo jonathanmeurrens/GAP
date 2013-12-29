@@ -40,13 +40,21 @@ var Nest = (function(){
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
+        var top_nest = new box2d.b2PolygonShape();
+        top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
+        //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
+        //console.log("[Nest] position:"+top_nest.GetPosition());
+        fixDef.shape = top_nest;
+        fixDef.userData = "top-nest";
+        this.view.body.CreateFixture(fixDef);
+
         this.updateView();
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Nest.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 25;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 10;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 32;
+        this.view.y = this.view.body.GetPosition().y * SCALE - 13;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 

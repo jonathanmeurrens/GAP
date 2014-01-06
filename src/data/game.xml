@@ -7,6 +7,7 @@
             <instruction img="assets/level1/instruction-1.3.png"/>
             <instruction img="assets/level1/instruction-1.4.png"/>
         </instructions>
+        <nest y="90" x="930" start="true"></nest>
         <timeCoin x="200" y="380"></timeCoin>
         <timeCoin x="500" y="400"></timeCoin>
         <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
@@ -21,11 +22,12 @@
         <background img="assets/level1/background.png"></background>
     </level>
     <level>
-        <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
+        <egg maxRotations="100" evolution="2" x="40" y="500"></egg>
         <leaf x="200" y="300" rotation="45" restitution="1.4"></leaf>
         <leaf x="450" y="420" rotation="-45" restitution="1"></leaf>
-        <rock x="360" y="100"></rock>
-        <rock x="600" y="40"></rock>
+        <rock x="360" y="100" img="assets/level1/rock1.png" width="475" height="358" triangle="{}"></rock>
+        <rock x="660" y="100" img="assets/level1/rock2.png" width="375" height="250"></rock>
+        <rock x="660" y="100" img="assets/level1/rock2.png" width="175" height="200"></rock>
         <nest y="290"></nest>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>

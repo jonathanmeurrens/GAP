@@ -48,8 +48,8 @@ var GameOverScreen = (function(){
 
         // FACEBOOK
         var facebookBtn = new Button(Button.FACEBOOK);
-        facebookBtn.view.x = 225;
-        facebookBtn.view.y = 20;
+        facebookBtn.view.x = 260;
+        facebookBtn.view.y = 50;
         facebookBtn.view.y = facebookBtn.view.y;
         this.container.addChild(facebookBtn.view);
         facebookBtn.view.on("click", postOnFbHandler);
@@ -57,8 +57,8 @@ var GameOverScreen = (function(){
 
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 60;
-        playAgainBtn.view.y = this.height - 42;
+        playAgainBtn.view.x = 143;
+        playAgainBtn.view.y = this.height + 24;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
             var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);

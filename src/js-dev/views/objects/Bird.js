@@ -11,6 +11,7 @@
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
+/* globals Twirl:true  */
 
 var Bird = (function(){
 
@@ -39,7 +40,7 @@ var Bird = (function(){
         var data = {
             images: ["assets/common/egg-spritesheet.png"],
             frames: {width:45, height:55},
-            animations: {one:[0], two:[1], three:[2], fly:[3,4,5,6]}
+            animations: {one:[0], two:[1], three:[2], four:[3], fly:[3,4,5,6]}
         };
         var spritesheet = new createjs.SpriteSheet(data);
         this.sprite = new createjs.Sprite(spritesheet, "one");
@@ -137,12 +138,14 @@ var Bird = (function(){
         self.view.body.ApplyTorque(self.impulse);
         applyImpulse(self.view.body, 0, self.impulse);
         self.view.body.SetAngularVelocity(1);
+        self.impulseAnimation(Twirl.LEFT_DIRECTION);
     };
 
     Bird.prototype.moveLeft = function(){
         self.view.body.ApplyTorque(-self.impulse);
         applyImpulse(self.view.body, 0, -self.impulse);
         self.view.body.SetAngularVelocity(-1);
+        self.impulseAnimation(Twirl.RIGHT_DIRECTION);
     };
 
     Bird.prototype.fly = function(){
@@ -163,7 +166,6 @@ var Bird = (function(){
         this.view.removeAllEventListeners();
         console.log(this.view.rotation%90, this.view.rotation, 90*(this.view.rotation%180));
         createjs.Tween.get(this.view).to({rotation:360, x:nestPosition.x+35, y:nestPosition.y-20},300);
-        //this.view.rotation = 0;
     };
 
     Bird.prototype.stopFly = function(){
@@ -183,9 +185,25 @@ var Bird = (function(){
             case 3:
                 this.sprite.gotoAndStop("three");
                 break;
+            case 4:
+                this.sprite.gotoAndStop("four");
+                break;
             default :
                 this.sprite.gotoAndStop("one");
         }
+    };
+
+    Bird.prototype.impulseAnimation = function(direction){
+        //console.log("[Bird] rotation:"+this.view.rotation % 90);
+        /*if(this.view.rotation < 0){
+            if(direction === Twirl.LEFT_DIRECTION){
+                direction = Twirl.RIGHT_DIRECTION;
+            }else{
+                direction = Twirl.LEFT_DIRECTION;
+            }
+        }*/
+        var twirl = new Twirl(this.view.x + 60, this.view.y, direction);
+        stage.addChild(twirl.view);
     };
 
     Bird.prototype.setMaxRotations = function(maxRotations){

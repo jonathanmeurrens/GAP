@@ -47,6 +47,9 @@ var Button = (function(){
             this.height = 40;
         }
 
+        this.view.regX = this.width/2;
+        this.view.regY = this.height/2;
+
         var button_data = {
             images: [url],
             frames: {width:this.width, height:this.height},
@@ -55,18 +58,26 @@ var Button = (function(){
         var btnSpritesheet = new createjs.SpriteSheet(button_data);
         this.btn = new createjs.Sprite(btnSpritesheet, "default");
         this.view.addChild(this.btn);
-        this.btn.on("click", function(e){
+        this.btn.regX = this.width/2;
+        this.btn.regY = this.height/2;
+        this.btn.addEventListener("click", function(e){
             self.btn.gotoAndStop("active");
             this.clickTimeout = setTimeout(function(){
                 self.btn.gotoAndStop("default");
                 clearTimeout(self.clickTimeout);
             },100);
         });
+        this.btn.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.1, scaleY:1.1},  100);
+        });
+        this.btn.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
 
         this.view.cursor = 'pointer';
-        /*this.btn.on("mouseup", function(e){
-            self.btn.gotoAndStop("default");
-        });*/
+        this.btn.scaleX = 0;
+        this.btn.scaleY = 0;
+        createjs.Tween.get(this.btn).wait(Math.random()*1000).to({scaleX:1, scaleY:1},  1200, createjs.Ease.elasticOut);
     }
 
     return Button;

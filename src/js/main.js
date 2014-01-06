@@ -46,6 +46,7 @@ var GameContainer = (function(){
         this.trees = [];
         this.backgrounds = [];
         this.timeCoins = [];
+        this.nests = [];
 
         $(this.view).on('tick', $.proxy(tick, this));
     }
@@ -61,8 +62,8 @@ var GameContainer = (function(){
         this.view.addChild(this.ground.view);
     };
 
-    GameContainer.prototype.createRock = function(xPos, yPos){
-        var obstacle = new Rock(xPos, translateYPos(yPos), 475, 358);
+    GameContainer.prototype.createRock = function(url, xPos, yPos, width, height){
+        var obstacle = new Rock(url, xPos, translateYPos(yPos), width, height);
         this.view.addChild(obstacle.view);
         this.obstacles.push(obstacle);
     };
@@ -78,12 +79,16 @@ var GameContainer = (function(){
         this.view.addChild(this.bird.view);
     };
 
-    GameContainer.prototype.createNest = function(xPos, yPos){
+    GameContainer.prototype.createNest = function(xPos, yPos, isStart){
         if(xPos==null){
             xPos = stage.canvas.width - 20;
         }
-        this.nest = new Nest(xPos, translateYPos(yPos), 30, 12);
-        this.view.addChild(this.nest.view);
+        var nest = new Nest(xPos, translateYPos(yPos), 30, 12, isStart);
+        if(isStart!=="true"){
+            this.nest = nest;
+        }
+        this.view.addChild(nest.view);
+        this.nests.push(nest);
     };
 
     GameContainer.prototype.createTornado = function(xPos, yPos){
@@ -204,9 +209,16 @@ var GameContainer = (function(){
             world.DestroyBody(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
         }
+        length = this.nests.length;
+        for(var x=0; x < length; x++){
+            var nest = this.nests.pop();
+            if(!nest.isStart){
+                world.DestroyBody(nest.view.body);
+            }
+            this.view.removeChild(nest.view);
+        }
         this.removeBird();
         this.removeGround();
-        this.removeNest();
     };
 
     GameContainer.prototype.parallaxLeft = function(){
@@ -394,7 +406,7 @@ var Balloon = (function(){
 
         //$(this.view).on('tick', $.proxy( tick, this ));
         this.updateView();
-        animate();
+        animate(this.view);
     }
 
     function tick(e){
@@ -407,11 +419,11 @@ var Balloon = (function(){
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
-    function animate(){
-        createjs.Tween.removeTweens(self.view);
-        createjs.Tween.get(self.view).to({y:self.view.y + 30}, 1700).call(function(){
-            createjs.Tween.get(self.view).to({y:self.view.y - 30}, 1700).call(function(){
-                animate();
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y + 30}, 1700).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 30}, 1700).call(function(){
+                animate(this);
             });
         });
     }
@@ -439,6 +451,7 @@ var Balloon = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
+/* globals Twirl:true  */
 
 var Bird = (function(){
 
@@ -467,7 +480,7 @@ var Bird = (function(){
         var data = {
             images: ["assets/common/egg-spritesheet.png"],
             frames: {width:45, height:55},
-            animations: {one:[0], two:[1], three:[2], fly:[3,4,5,6]}
+            animations: {one:[0], two:[1], three:[2], four:[3], fly:[3,4,5,6]}
         };
         var spritesheet = new createjs.SpriteSheet(data);
         this.sprite = new createjs.Sprite(spritesheet, "one");
@@ -565,12 +578,14 @@ var Bird = (function(){
         self.view.body.ApplyTorque(self.impulse);
         applyImpulse(self.view.body, 0, self.impulse);
         self.view.body.SetAngularVelocity(1);
+        self.impulseAnimation(Twirl.LEFT_DIRECTION);
     };
 
     Bird.prototype.moveLeft = function(){
         self.view.body.ApplyTorque(-self.impulse);
         applyImpulse(self.view.body, 0, -self.impulse);
         self.view.body.SetAngularVelocity(-1);
+        self.impulseAnimation(Twirl.RIGHT_DIRECTION);
     };
 
     Bird.prototype.fly = function(){
@@ -591,7 +606,6 @@ var Bird = (function(){
         this.view.removeAllEventListeners();
         console.log(this.view.rotation%90, this.view.rotation, 90*(this.view.rotation%180));
         createjs.Tween.get(this.view).to({rotation:360, x:nestPosition.x+35, y:nestPosition.y-20},300);
-        //this.view.rotation = 0;
     };
 
     Bird.prototype.stopFly = function(){
@@ -611,9 +625,25 @@ var Bird = (function(){
             case 3:
                 this.sprite.gotoAndStop("three");
                 break;
+            case 4:
+                this.sprite.gotoAndStop("four");
+                break;
             default :
                 this.sprite.gotoAndStop("one");
         }
+    };
+
+    Bird.prototype.impulseAnimation = function(direction){
+        //console.log("[Bird] rotation:"+this.view.rotation % 90);
+        /*if(this.view.rotation < 0){
+            if(direction === Twirl.LEFT_DIRECTION){
+                direction = Twirl.RIGHT_DIRECTION;
+            }else{
+                direction = Twirl.LEFT_DIRECTION;
+            }
+        }*/
+        var twirl = new Twirl(this.view.x + 60, this.view.y, direction);
+        stage.addChild(twirl.view);
     };
 
     Bird.prototype.setMaxRotations = function(maxRotations){
@@ -679,6 +709,9 @@ var Button = (function(){
             this.height = 40;
         }
 
+        this.view.regX = this.width/2;
+        this.view.regY = this.height/2;
+
         var button_data = {
             images: [url],
             frames: {width:this.width, height:this.height},
@@ -687,18 +720,26 @@ var Button = (function(){
         var btnSpritesheet = new createjs.SpriteSheet(button_data);
         this.btn = new createjs.Sprite(btnSpritesheet, "default");
         this.view.addChild(this.btn);
-        this.btn.on("click", function(e){
+        this.btn.regX = this.width/2;
+        this.btn.regY = this.height/2;
+        this.btn.addEventListener("click", function(e){
             self.btn.gotoAndStop("active");
             this.clickTimeout = setTimeout(function(){
                 self.btn.gotoAndStop("default");
                 clearTimeout(self.clickTimeout);
             },100);
         });
+        this.btn.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.1, scaleY:1.1},  100);
+        });
+        this.btn.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
 
         this.view.cursor = 'pointer';
-        /*this.btn.on("mouseup", function(e){
-            self.btn.gotoAndStop("default");
-        });*/
+        this.btn.scaleX = 0;
+        this.btn.scaleY = 0;
+        createjs.Tween.get(this.btn).wait(Math.random()*1000).to({scaleX:1, scaleY:1},  1200, createjs.Ease.elasticOut);
     }
 
     return Button;
@@ -798,18 +839,18 @@ var Cloud = (function(){
         //$(this.view).on('tick', $.proxy( tick, this ));
         //this.updateView();
         this.updateView();
-        animate();
+        animate(this.view);
     }
 
     function tick(e){
         this.updateView();
     }
 
-    function animate(){
-        createjs.Tween.removeTweens(self.view);
-        createjs.Tween.get(self.view).to({y:self.view.y + 20}, 2700).call(function(){
-            createjs.Tween.get(self.view).to({y:self.view.y - 20}, 2700).call(function(){
-                animate();
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y + 20}, 2700).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 20}, 2700).call(function(){
+                animate(this);
             });
         });
     }
@@ -1248,7 +1289,7 @@ var MiniTree = (function(){
 
 var Nest = (function(){
 
-    function Nest(x, y, width, height){
+    function Nest(x, y, width, height, isStart){
 
         this.x = x;
         this.y = y;
@@ -1259,29 +1300,41 @@ var Nest = (function(){
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
-        var fixDef = new box2d.b2FixtureDef();
-        fixDef.density = 1;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0;
-        var bodyDef = new box2d.b2BodyDef();
-        bodyDef.type = box2d.b2Body.b2_staticBody;
-        bodyDef.position.x = this.x / SCALE;
-        bodyDef.position.y = this.y / SCALE;
-        bodyDef.userData = "nest";
-        fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
-        this.view.body = world.CreateBody(bodyDef);
-        this.view.body.CreateFixture(fixDef);
+        if(isStart === "true"){
+            this.isStart = true;
+        }
+        else{
+            this.isStart = false;
+        }
+        console.log(this.isStart);
 
-        var top_nest = new box2d.b2PolygonShape();
-        top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
-        //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
-        //console.log("[Nest] position:"+top_nest.GetPosition());
-        fixDef.shape = top_nest;
-        fixDef.userData = "top-nest";
-        this.view.body.CreateFixture(fixDef);
 
-        this.updateView();
+
+        if(!isStart){
+            var fixDef = new box2d.b2FixtureDef();
+            fixDef.density = 1;
+            fixDef.friction = 0.5;
+            fixDef.restitution = 0;
+            var bodyDef = new box2d.b2BodyDef();
+            bodyDef.type = box2d.b2Body.b2_staticBody;
+            bodyDef.position.x = this.x / SCALE;
+            bodyDef.position.y = this.y / SCALE;
+            bodyDef.userData = "nest";
+            fixDef.shape = new box2d.b2PolygonShape();
+            fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+            this.view.body = world.CreateBody(bodyDef);
+            this.view.body.CreateFixture(fixDef);
+
+            var top_nest = new box2d.b2PolygonShape();
+            top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
+            //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
+            //console.log("[Nest] position:"+top_nest.GetPosition());
+            fixDef.shape = top_nest;
+            fixDef.userData = "top-nest";
+            this.view.body.CreateFixture(fixDef);
+            this.updateView();
+        }
+
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
@@ -1311,14 +1364,14 @@ var Nest = (function(){
 
 var Rock = (function(){
 
-    function Rock(x, y, width, height){
+    function Rock(url, x, y, width, height){
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.view = new createjs.Bitmap(preload.getResult("rock"));
+        this.view = new createjs.Bitmap(preload.getResult(url));
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
@@ -1333,11 +1386,14 @@ var Rock = (function(){
         bodyDef.position.y = this.y / SCALE;
         bodyDef.userData = "rock";
 
+        var scaleX = width / 475;
+        var scaleY = height / 358;
+
         fixDef.shape = new box2d.b2PolygonShape();
         var vertices = [];
-        vertices.push(new box2d.b2Vec2(-0.7, -7));
-        vertices.push(new box2d.b2Vec2(7, 3.3));
-        vertices.push(new box2d.b2Vec2(-7, 3.3));
+        vertices.push(new box2d.b2Vec2(- (1-scaleX)*9, -6 * scaleY));
+        vertices.push(new box2d.b2Vec2(6.3 * scaleX - (1-scaleX)*9, 3.3));
+        vertices.push(new box2d.b2Vec2(-5.5 * scaleX - (1-scaleX)*9, 3.3));
         fixDef.shape.SetAsVector(vertices, 3);
         fixDef.userData = "rock";
         /*fixDef.shape = new box2d.b2PolygonShape();
@@ -1349,8 +1405,8 @@ var Rock = (function(){
     }
 
     Rock.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 20;
-        this.view.y = this.view.body.GetPosition().y * SCALE - 20;
+        this.view.x = this.view.body.GetPosition().x * SCALE;
+        this.view.y = this.view.body.GetPosition().y * SCALE + 5;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
@@ -1376,7 +1432,11 @@ var Rock = (function(){
 
 var TimeCoin = (function(){
 
+    var self;
+
     function TimeCoin(x, y, worth, index){
+
+        self = this;
 
         this.x = x;
         this.y = y;
@@ -1406,7 +1466,18 @@ var TimeCoin = (function(){
         fixDef.userData = "timeCoin"+index;
         this.view.body.CreateFixture(fixDef);
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        this.updateView();
+        animate(this.view);
+        //$(this.view).on('tick', $.proxy( tick, this ));
+    }
+
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y - 10}, 1000 + Math.random()*500).call(function(e){
+            createjs.Tween.get(this).to({y:view.y + 10}, 1000 + Math.random()*500).call(function(){
+                animate(this);
+            });
+        });
     }
 
     function tick(e){
@@ -1521,6 +1592,57 @@ var Tree = (function(){
 /**
  * Created with JetBrains PhpStorm.
  * User: Jonathan
+ * Date: 02/01/14
+ * Time: 12:20
+ * To change this template use File | Settings | File Templates.
+ */
+
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals preload:true  */
+
+var Twirl = (function(){
+
+    var self;
+
+    function Twirl(xPos, yPos, direction){
+
+        self = this;
+
+        this.view = new createjs.Bitmap(preload.getResult("twirl"));
+
+        this.width = 11;
+        this.height = 21;
+
+        this.view.regX = this.width/2;
+        this.view.regY = this.height/2;
+
+        this.view.x = xPos - 90;
+        this.view.y = yPos;
+        var toX = xPos - 110;
+
+        if(direction === Twirl.RIGHT_DIRECTION){
+            this.view.scaleX = -1;
+            this.view.x = xPos - 30;
+            toX = xPos;
+        }
+
+
+        createjs.Tween.get(this.view).to({scaleX:0, scaleY:0, rotate: 10, x: toX},  400)
+            .call(function(){
+                this.parent.removeChild(this);
+            });
+    }
+
+    return Twirl;
+})();
+
+Twirl.LEFT_DIRECTION = "LEFT_DIRECTION";
+Twirl.RIGHT_DIRECTION = "RIGHT_DIRECTION";
+
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Jonathan
  * Date: 27/11/13
  * Time: 18:58
  * To change this template use File | Settings | File Templates.
@@ -1626,8 +1748,8 @@ var Statistics = (function(){
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
-            SoundManager.togglePlayBackgroundMusic();
-            if(SoundManager.isPlayingMusic){
+            SoundManager.toggleSound();
+            if(SoundManager.playSounds){
                 self.muteBtnSprite.gotoAndStop("on");
             }else{
                 self.muteBtnSprite.gotoAndStop("mute");
@@ -1685,7 +1807,13 @@ var Statistics = (function(){
         {
             self.bounces = 0;
         }
-        return (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
+        var stars = (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
+        if(stars > 3){
+            stars = 3;
+        }else if(stars < 0){
+            stars = 0;
+        }
+        return stars;
     };
 
     function updateStats(){
@@ -1784,8 +1912,8 @@ var GameOverScreen = (function(){
 
         // FACEBOOK
         var facebookBtn = new Button(Button.FACEBOOK);
-        facebookBtn.view.x = 225;
-        facebookBtn.view.y = 20;
+        facebookBtn.view.x = 260;
+        facebookBtn.view.y = 50;
         facebookBtn.view.y = facebookBtn.view.y;
         this.container.addChild(facebookBtn.view);
         facebookBtn.view.on("click", postOnFbHandler);
@@ -1793,8 +1921,8 @@ var GameOverScreen = (function(){
 
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 60;
-        playAgainBtn.view.y = this.height - 42;
+        playAgainBtn.view.x = 143;
+        playAgainBtn.view.y = this.height + 24;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
             var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
@@ -2002,8 +2130,8 @@ var NextLevelScreen = (function(){
 
         // FACEBOOK
         var facebookBtn = new Button(Button.FACEBOOK);
-        facebookBtn.view.x = 225;
-        facebookBtn.view.y = 20;
+        facebookBtn.view.x = 260;
+        facebookBtn.view.y = 50;
         facebookBtn.view.y = facebookBtn.view.y;
         this.container.addChild(facebookBtn.view);
         facebookBtn.view.on("click", postOnFbHandler);
@@ -2011,8 +2139,8 @@ var NextLevelScreen = (function(){
 
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 60;
-        playAgainBtn.view.y = this.height - 42;
+        playAgainBtn.view.x = 143;
+        playAgainBtn.view.y = this.height + 24;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.PLAY_AGAIN, true);
@@ -2021,8 +2149,8 @@ var NextLevelScreen = (function(){
 
         // NEXT LEVEL
         var nextLevelBtn = new Button(Button.NEXT_LEVEL);
-        nextLevelBtn.view.x = 220;
-        nextLevelBtn.view.y = playAgainBtn.view.y - 10;
+        nextLevelBtn.view.x = 265;
+        nextLevelBtn.view.y = playAgainBtn.view.y + 10;
         this.container.addChild(nextLevelBtn.view);
         nextLevelBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
@@ -2089,8 +2217,8 @@ var StartScreen = (function(){
         var startBtn = new Button(Button.START);
         this.view.addChild(startBtn.view);
         startBtn.view.addEventListener("click", startHandler);
-        startBtn.view.x = stage.canvas.width/2 - 35;
-        startBtn.view.y = stage.canvas.height/2 - 20;
+        startBtn.view.x = stage.canvas.width/2;
+        startBtn.view.y = stage.canvas.height/2;
 
         $("body").on("keydown", function(e){
             if(e.which === 83){
@@ -2139,12 +2267,19 @@ var PreloadManager = (function(){
         preload.addEventListener("fileload", self.handleFileLoad);
 
         this.preloaderView = new createjs.Container();
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
+        this.preloaderView.addChild(colorPanel);
         this.progressEgg = new createjs.Bitmap('assets/common/leaf.png');
         this.progressEgg.regX = 41/2;
         this.progressEgg.regY = 56/2;
         this.progressEgg.x = stage.canvas.width/2;
         this.progressEgg.y = stage.canvas.height/2;
-        self.preloaderView.addChild(this.progressEgg);
+        this.preloaderView.addChild(this.progressEgg);
+
+        this.removePreloaderTimeout = null;
     }
 
     PreloadManager.prototype.preloadGame = function(){
@@ -2157,6 +2292,7 @@ var PreloadManager = (function(){
             {src:"assets/common/egg-spritesheet.png"},
             {src:"assets/common/leaf.png", id:"leaf"},
             {src:"assets/common/nest.png", id:"nest"},
+            {src:"assets/common/twirl.png", id:"twirl"},
             {src:"assets/common/rock.png", id:"rock"},
             {src:"assets/common/stars-spritesheet.png"},
 
@@ -2168,11 +2304,12 @@ var PreloadManager = (function(){
             {src:"assets/common/buttons/mute.png"},
 
             {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
-            {src:"assets/sound/coin.mp3|coin.ogg", id:"coin_sound"},
-            {src:"assets/sound/music.mp3|music.ogg", id:"music"},
-            {src:"assets/sound/gameover.mp3|gameover.ogg", id:"gameover_sound"},
-            {src:"assets/sound/success.mp3|success.ogg", id:"success_sound"}
+            {src:"assets/sound/coin.ogg", id:"coin_sound"},
+            {src:"assets/sound/music.ogg", id:"music"},
+            {src:"assets/sound/gameover.ogg", id:"gameover_sound"},
+            {src:"assets/sound/success.ogg", id:"success_sound"}
         ];
+        createjs.Sound.alternateExtensions = ["mp3"];
         preload.loadManifest(manifest, true);
     };
 
@@ -2202,11 +2339,17 @@ var PreloadManager = (function(){
     };
 
     function showPreloader(){
+        console.log(self.preloaderView.x, self.preloaderView.y);
         stage.addChild(self.preloaderView);
     }
 
     function removePreloader(){
         stage.removeChild(self.preloaderView);
+        /*self.removePreloaderTimeout = setTimeout(function(){
+
+            clearTimeout(self.removePreloaderTimeout);
+            self.removePreloaderTimeout = null;
+        }, 1000);*/
     }
 
     return PreloadManager;
@@ -2256,9 +2399,7 @@ var ScreenManager = (function(){
 
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
-            console.log("[ScreenManager] show game over!");
             this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
-                console.log("[ScreenManager] RESTART LEVEL");
                     self.removeScreen();
             });
         }
@@ -2268,12 +2409,10 @@ var ScreenManager = (function(){
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
             this.screen.view.on(StartScreen.START, function(e){
-                console.log("[ScreenManager] START");
                 self.removeScreen();
             });
         }
         this.view.addChild(this.screen.view);
-        animateScreenIn();
     };
 
     ScreenManager.prototype.showLevelsScreen = function(gameData){
@@ -2282,7 +2421,6 @@ var ScreenManager = (function(){
         this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
             self.removeScreen();
         });
-        animateScreenIn();
     };
 
     ScreenManager.prototype.showInstructionsScreen = function(instructionsData){
@@ -2291,7 +2429,6 @@ var ScreenManager = (function(){
         this.screen.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.removeScreen();
         });
-        animateScreenIn();
     };
 
     ScreenManager.prototype.showNextLevelScreen = function(level, stars){
@@ -2304,7 +2441,6 @@ var ScreenManager = (function(){
         this.screen.view.on(NextLevelScreen.PLAY_AGAIN, function(e){
             self.removeScreen();
         });
-        animateScreenIn();
     };
 
     ScreenManager.prototype.removeScreen = function(){
@@ -2313,11 +2449,6 @@ var ScreenManager = (function(){
             self.screen = null;
         }
     };
-
-    function animateScreenIn(){
-        //self.screen.view.alpha = 0;
-        //createjs.Tween.get(self.screen.view).to({scaleX:1, scaleY:1, alpha:1},900, createjs.Ease.cubicInOut);
-    }
 
     return ScreenManager;
 })();
@@ -2335,31 +2466,35 @@ var ScreenManager = (function(){
 
 function SoundManager(){}
 
-SoundManager.isPlayingMusic = false;
 SoundManager.backgroundMusicInstance = null;
-SoundManager.playSounds = false;
+SoundManager.playSounds = true;
 
-SoundManager.playBounce = function(){
+SoundManager.toggleSound = function(){
+    SoundManager.playSounds = !SoundManager.playSounds;
     if(SoundManager.playSounds){
-        createjs.Sound.play("bounce_sound");
-    }
-};
-
-SoundManager.togglePlayBackgroundMusic = function(){
-    if(SoundManager.playSounds){
-        if(!SoundManager.isPlayingMusic){
             // play
-            if(SoundManager.backgroundMusicInstance == null){
+            if(SoundManager.backgroundMusicInstance === null){
                 SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
             }
             else{
                 SoundManager.backgroundMusicInstance.setMute(false);
             }
-        }else{
-            // stop
-            SoundManager.backgroundMusicInstance.setMute(true);
-        }
-        SoundManager.isPlayingMusic = !SoundManager.isPlayingMusic;
+    }
+    else if(SoundManager.backgroundMusicInstance !== null){
+        // stop
+        SoundManager.backgroundMusicInstance.setMute(true);
+    }
+};
+
+SoundManager.startSounds = function(){
+    if(SoundManager.backgroundMusicInstance == null){
+        this.toggleSound();
+    }
+};
+
+SoundManager.playBounce = function(){
+    if(SoundManager.playSounds){
+        createjs.Sound.play("bounce_sound");
     }
 };
 
@@ -2662,12 +2797,14 @@ var stage, world, debug, preload;
         this.levelStarted = false;
         this.collisionDetected = false;
         this.isPaused = true;
+        this.keypressCount = 0;
 
         this.gameData = new GameData('data/game.xml');
         $(this.gameData).on("parsed", gameDataLoadedHandler);
         this.gameData.parse();
 
         setupPhysics();
+        addListeners();
     }
 
     // ------------------- PHYSICS FUNCTIONS
@@ -2748,12 +2885,12 @@ var stage, world, debug, preload;
         listener.EndContact = function(contact) {
             self.gameContainer.handleEndContact(contact);
         };
-        listener.PostSolve = function(contact, impulse) {
+        /*listener.PostSolve = function(contact, impulse) {
 
         };
         listener.PreSolve = function(contact, oldManifold) {
 
-        };
+        };*/
         world.SetContactListener(listener);
     }
 
@@ -2774,7 +2911,6 @@ var stage, world, debug, preload;
             drawLevel();
             drawGameInfo();
             showStartScreen();
-            addListeners();
 
         }else{
             var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
@@ -2795,6 +2931,14 @@ var stage, world, debug, preload;
         createjs.Ticker.useRAF = true;
 
         $(document).on("keydown",function(e){
+
+            if(e.which >= 37 && e.which <= 39){
+               self.keypressCount++;
+                if(self.keypressCount > 3){
+                    return;
+                }
+            }
+
             if(e.which === 32){
                 launchEgg();
             }
@@ -2807,6 +2951,9 @@ var stage, world, debug, preload;
             else if(e.which === 38){
                 self.gameContainer.bird.fly();
             }
+        });
+        $(document).on("keyup", function(){
+            self.keypressCount = 0;
         });
     }
 
@@ -2859,7 +3006,7 @@ var stage, world, debug, preload;
             self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("rotation"), $(obj).attr("restitution"));
         });
         $(level).find('rock').each(function(i, obj){
-            self.gameContainer.createRock($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.createRock($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("width"), $(obj).attr("height"));
         });
         $(level).find('tornado').each(function(i, obj){
             self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
@@ -2876,7 +3023,7 @@ var stage, world, debug, preload;
             self.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
         });
         $(level).find('nest').each(function(i, obj){
-            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("start"));
         });
         $(level).find('miniTree').each(function(i, obj){
             self.gameContainer.createMiniTree( $(obj).attr("img"), $(obj).attr("x"));
@@ -2948,7 +3095,7 @@ var stage, world, debug, preload;
         self.isPaused = false;
         self.collisionDetected = false;
         self.stats.resetStats();
-        SoundManager.togglePlayBackgroundMusic();
+        SoundManager.startSounds();
     }
 
     function showGameOverScreen(){
@@ -2964,7 +3111,6 @@ var stage, world, debug, preload;
         if(!self.isPaused){
             SoundManager.playSuccess();
             self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-            console.log("[level] "+this.stats.level);
             self.isPaused = true;
             self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
             self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
@@ -2996,7 +3142,6 @@ var stage, world, debug, preload;
         }
         this.gameContainer.bird.push();
         this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
-            console.log("[APP] bird died");
             showGameOverScreen();
         });
         self.levelStarted = true;

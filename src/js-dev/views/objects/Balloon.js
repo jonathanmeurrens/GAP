@@ -73,7 +73,7 @@ var Balloon = (function(){
 
         //$(this.view).on('tick', $.proxy( tick, this ));
         this.updateView();
-        animate();
+        animate(this.view);
     }
 
     function tick(e){
@@ -86,11 +86,11 @@ var Balloon = (function(){
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
-    function animate(){
-        createjs.Tween.removeTweens(self.view);
-        createjs.Tween.get(self.view).to({y:self.view.y + 30}, 1700).call(function(){
-            createjs.Tween.get(self.view).to({y:self.view.y - 30}, 1700).call(function(){
-                animate();
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y + 30}, 1700).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 30}, 1700).call(function(){
+                animate(this);
             });
         });
     }

@@ -15,7 +15,7 @@
 
 var Nest = (function(){
 
-    function Nest(x, y, width, height){
+    function Nest(x, y, width, height, isStart){
 
         this.x = x;
         this.y = y;
@@ -26,29 +26,41 @@ var Nest = (function(){
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
-        var fixDef = new box2d.b2FixtureDef();
-        fixDef.density = 1;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0;
-        var bodyDef = new box2d.b2BodyDef();
-        bodyDef.type = box2d.b2Body.b2_staticBody;
-        bodyDef.position.x = this.x / SCALE;
-        bodyDef.position.y = this.y / SCALE;
-        bodyDef.userData = "nest";
-        fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
-        this.view.body = world.CreateBody(bodyDef);
-        this.view.body.CreateFixture(fixDef);
+        if(isStart === "true"){
+            this.isStart = true;
+        }
+        else{
+            this.isStart = false;
+        }
+        console.log(this.isStart);
 
-        var top_nest = new box2d.b2PolygonShape();
-        top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
-        //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
-        //console.log("[Nest] position:"+top_nest.GetPosition());
-        fixDef.shape = top_nest;
-        fixDef.userData = "top-nest";
-        this.view.body.CreateFixture(fixDef);
 
-        this.updateView();
+
+        if(!isStart){
+            var fixDef = new box2d.b2FixtureDef();
+            fixDef.density = 1;
+            fixDef.friction = 0.5;
+            fixDef.restitution = 0;
+            var bodyDef = new box2d.b2BodyDef();
+            bodyDef.type = box2d.b2Body.b2_staticBody;
+            bodyDef.position.x = this.x / SCALE;
+            bodyDef.position.y = this.y / SCALE;
+            bodyDef.userData = "nest";
+            fixDef.shape = new box2d.b2PolygonShape();
+            fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
+            this.view.body = world.CreateBody(bodyDef);
+            this.view.body.CreateFixture(fixDef);
+
+            var top_nest = new box2d.b2PolygonShape();
+            top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
+            //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
+            //console.log("[Nest] position:"+top_nest.GetPosition());
+            fixDef.shape = top_nest;
+            fixDef.userData = "top-nest";
+            this.view.body.CreateFixture(fixDef);
+            this.updateView();
+        }
+
         //$(this.view).on('tick', $.proxy( tick, this ));
     }
 

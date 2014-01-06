@@ -10,31 +10,35 @@
 
 function SoundManager(){}
 
-SoundManager.isPlayingMusic = false;
 SoundManager.backgroundMusicInstance = null;
-SoundManager.playSounds = false;
+SoundManager.playSounds = true;
 
-SoundManager.playBounce = function(){
+SoundManager.toggleSound = function(){
+    SoundManager.playSounds = !SoundManager.playSounds;
     if(SoundManager.playSounds){
-        createjs.Sound.play("bounce_sound");
-    }
-};
-
-SoundManager.togglePlayBackgroundMusic = function(){
-    if(SoundManager.playSounds){
-        if(!SoundManager.isPlayingMusic){
             // play
-            if(SoundManager.backgroundMusicInstance == null){
+            if(SoundManager.backgroundMusicInstance === null){
                 SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
             }
             else{
                 SoundManager.backgroundMusicInstance.setMute(false);
             }
-        }else{
-            // stop
-            SoundManager.backgroundMusicInstance.setMute(true);
-        }
-        SoundManager.isPlayingMusic = !SoundManager.isPlayingMusic;
+    }
+    else if(SoundManager.backgroundMusicInstance !== null){
+        // stop
+        SoundManager.backgroundMusicInstance.setMute(true);
+    }
+};
+
+SoundManager.startSounds = function(){
+    if(SoundManager.backgroundMusicInstance == null){
+        this.toggleSound();
+    }
+};
+
+SoundManager.playBounce = function(){
+    if(SoundManager.playSounds){
+        createjs.Sound.play("bounce_sound");
     }
 };
 

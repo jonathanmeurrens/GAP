@@ -44,6 +44,7 @@ var GameContainer = (function(){
         this.trees = [];
         this.backgrounds = [];
         this.timeCoins = [];
+        this.nests = [];
 
         $(this.view).on('tick', $.proxy(tick, this));
     }
@@ -59,8 +60,8 @@ var GameContainer = (function(){
         this.view.addChild(this.ground.view);
     };
 
-    GameContainer.prototype.createRock = function(xPos, yPos){
-        var obstacle = new Rock(xPos, translateYPos(yPos), 475, 358);
+    GameContainer.prototype.createRock = function(url, xPos, yPos, width, height){
+        var obstacle = new Rock(url, xPos, translateYPos(yPos), width, height);
         this.view.addChild(obstacle.view);
         this.obstacles.push(obstacle);
     };
@@ -76,12 +77,16 @@ var GameContainer = (function(){
         this.view.addChild(this.bird.view);
     };
 
-    GameContainer.prototype.createNest = function(xPos, yPos){
+    GameContainer.prototype.createNest = function(xPos, yPos, isStart){
         if(xPos==null){
             xPos = stage.canvas.width - 20;
         }
-        this.nest = new Nest(xPos, translateYPos(yPos), 30, 12);
-        this.view.addChild(this.nest.view);
+        var nest = new Nest(xPos, translateYPos(yPos), 30, 12, isStart);
+        if(isStart!=="true"){
+            this.nest = nest;
+        }
+        this.view.addChild(nest.view);
+        this.nests.push(nest);
     };
 
     GameContainer.prototype.createTornado = function(xPos, yPos){
@@ -202,9 +207,16 @@ var GameContainer = (function(){
             world.DestroyBody(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
         }
+        length = this.nests.length;
+        for(var x=0; x < length; x++){
+            var nest = this.nests.pop();
+            if(!nest.isStart){
+                world.DestroyBody(nest.view.body);
+            }
+            this.view.removeChild(nest.view);
+        }
         this.removeBird();
         this.removeGround();
-        this.removeNest();
     };
 
     GameContainer.prototype.parallaxLeft = function(){

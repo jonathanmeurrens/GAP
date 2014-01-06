@@ -54,8 +54,8 @@ var Statistics = (function(){
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
-            SoundManager.togglePlayBackgroundMusic();
-            if(SoundManager.isPlayingMusic){
+            SoundManager.toggleSound();
+            if(SoundManager.playSounds){
                 self.muteBtnSprite.gotoAndStop("on");
             }else{
                 self.muteBtnSprite.gotoAndStop("mute");
@@ -113,7 +113,13 @@ var Statistics = (function(){
         {
             self.bounces = 0;
         }
-        return (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
+        var stars = (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
+        if(stars > 3){
+            stars = 3;
+        }else if(stars < 0){
+            stars = 0;
+        }
+        return stars;
     };
 
     function updateStats(){

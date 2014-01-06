@@ -83,18 +83,18 @@ var Cloud = (function(){
         //$(this.view).on('tick', $.proxy( tick, this ));
         //this.updateView();
         this.updateView();
-        animate();
+        animate(this.view);
     }
 
     function tick(e){
         this.updateView();
     }
 
-    function animate(){
-        createjs.Tween.removeTweens(self.view);
-        createjs.Tween.get(self.view).to({y:self.view.y + 20}, 2700).call(function(){
-            createjs.Tween.get(self.view).to({y:self.view.y - 20}, 2700).call(function(){
-                animate();
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y + 20}, 2700).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 20}, 2700).call(function(){
+                animate(this);
             });
         });
     }

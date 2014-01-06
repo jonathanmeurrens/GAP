@@ -16,7 +16,11 @@
 
 var TimeCoin = (function(){
 
+    var self;
+
     function TimeCoin(x, y, worth, index){
+
+        self = this;
 
         this.x = x;
         this.y = y;
@@ -46,7 +50,18 @@ var TimeCoin = (function(){
         fixDef.userData = "timeCoin"+index;
         this.view.body.CreateFixture(fixDef);
 
-        $(this.view).on('tick', $.proxy( tick, this ));
+        this.updateView();
+        animate(this.view);
+        //$(this.view).on('tick', $.proxy( tick, this ));
+    }
+
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({y:view.y - 10}, 1000 + Math.random()*500).call(function(e){
+            createjs.Tween.get(this).to({y:view.y + 10}, 1000 + Math.random()*500).call(function(){
+                animate(this);
+            });
+        });
     }
 
     function tick(e){

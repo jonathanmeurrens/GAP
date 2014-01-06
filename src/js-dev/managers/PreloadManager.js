@@ -30,12 +30,19 @@ var PreloadManager = (function(){
         preload.addEventListener("fileload", self.handleFileLoad);
 
         this.preloaderView = new createjs.Container();
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
+        this.preloaderView.addChild(colorPanel);
         this.progressEgg = new createjs.Bitmap('assets/common/leaf.png');
         this.progressEgg.regX = 41/2;
         this.progressEgg.regY = 56/2;
         this.progressEgg.x = stage.canvas.width/2;
         this.progressEgg.y = stage.canvas.height/2;
-        self.preloaderView.addChild(this.progressEgg);
+        this.preloaderView.addChild(this.progressEgg);
+
+        this.removePreloaderTimeout = null;
     }
 
     PreloadManager.prototype.preloadGame = function(){
@@ -48,6 +55,7 @@ var PreloadManager = (function(){
             {src:"assets/common/egg-spritesheet.png"},
             {src:"assets/common/leaf.png", id:"leaf"},
             {src:"assets/common/nest.png", id:"nest"},
+            {src:"assets/common/twirl.png", id:"twirl"},
             {src:"assets/common/rock.png", id:"rock"},
             {src:"assets/common/stars-spritesheet.png"},
 
@@ -59,11 +67,12 @@ var PreloadManager = (function(){
             {src:"assets/common/buttons/mute.png"},
 
             {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
-            {src:"assets/sound/coin.mp3|coin.ogg", id:"coin_sound"},
-            {src:"assets/sound/music.mp3|music.ogg", id:"music"},
-            {src:"assets/sound/gameover.mp3|gameover.ogg", id:"gameover_sound"},
-            {src:"assets/sound/success.mp3|success.ogg", id:"success_sound"}
+            {src:"assets/sound/coin.ogg", id:"coin_sound"},
+            {src:"assets/sound/music.ogg", id:"music"},
+            {src:"assets/sound/gameover.ogg", id:"gameover_sound"},
+            {src:"assets/sound/success.ogg", id:"success_sound"}
         ];
+        createjs.Sound.alternateExtensions = ["mp3"];
         preload.loadManifest(manifest, true);
     };
 
@@ -93,11 +102,17 @@ var PreloadManager = (function(){
     };
 
     function showPreloader(){
+        console.log(self.preloaderView.x, self.preloaderView.y);
         stage.addChild(self.preloaderView);
     }
 
     function removePreloader(){
         stage.removeChild(self.preloaderView);
+        /*self.removePreloaderTimeout = setTimeout(function(){
+
+            clearTimeout(self.removePreloaderTimeout);
+            self.removePreloaderTimeout = null;
+        }, 1000);*/
     }
 
     return PreloadManager;

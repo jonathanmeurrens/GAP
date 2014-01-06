@@ -51,8 +51,8 @@ var NextLevelScreen = (function(){
 
         // FACEBOOK
         var facebookBtn = new Button(Button.FACEBOOK);
-        facebookBtn.view.x = 225;
-        facebookBtn.view.y = 20;
+        facebookBtn.view.x = 260;
+        facebookBtn.view.y = 50;
         facebookBtn.view.y = facebookBtn.view.y;
         this.container.addChild(facebookBtn.view);
         facebookBtn.view.on("click", postOnFbHandler);
@@ -60,8 +60,8 @@ var NextLevelScreen = (function(){
 
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 60;
-        playAgainBtn.view.y = this.height - 42;
+        playAgainBtn.view.x = 143;
+        playAgainBtn.view.y = this.height + 24;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.PLAY_AGAIN, true);
@@ -70,8 +70,8 @@ var NextLevelScreen = (function(){
 
         // NEXT LEVEL
         var nextLevelBtn = new Button(Button.NEXT_LEVEL);
-        nextLevelBtn.view.x = 220;
-        nextLevelBtn.view.y = playAgainBtn.view.y - 10;
+        nextLevelBtn.view.x = 265;
+        nextLevelBtn.view.y = playAgainBtn.view.y + 10;
         this.container.addChild(nextLevelBtn.view);
         nextLevelBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);

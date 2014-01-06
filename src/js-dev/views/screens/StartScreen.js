@@ -36,8 +36,8 @@ var StartScreen = (function(){
         var startBtn = new Button(Button.START);
         this.view.addChild(startBtn.view);
         startBtn.view.addEventListener("click", startHandler);
-        startBtn.view.x = stage.canvas.width/2 - 35;
-        startBtn.view.y = stage.canvas.height/2 - 20;
+        startBtn.view.x = stage.canvas.width/2;
+        startBtn.view.y = stage.canvas.height/2;
 
         $("body").on("keydown", function(e){
             if(e.which === 83){

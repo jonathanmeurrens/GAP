@@ -55,12 +55,14 @@ var stage, world, debug, preload;
         this.levelStarted = false;
         this.collisionDetected = false;
         this.isPaused = true;
+        this.keypressCount = 0;
 
         this.gameData = new GameData('data/game.xml');
         $(this.gameData).on("parsed", gameDataLoadedHandler);
         this.gameData.parse();
 
         setupPhysics();
+        addListeners();
     }
 
     // ------------------- PHYSICS FUNCTIONS
@@ -141,12 +143,12 @@ var stage, world, debug, preload;
         listener.EndContact = function(contact) {
             self.gameContainer.handleEndContact(contact);
         };
-        listener.PostSolve = function(contact, impulse) {
+        /*listener.PostSolve = function(contact, impulse) {
 
         };
         listener.PreSolve = function(contact, oldManifold) {
 
-        };
+        };*/
         world.SetContactListener(listener);
     }
 
@@ -167,7 +169,6 @@ var stage, world, debug, preload;
             drawLevel();
             drawGameInfo();
             showStartScreen();
-            addListeners();
 
         }else{
             var instructionsData = self.gameData.getLevelInstructionsForLevel(self.stats.level);
@@ -188,6 +189,14 @@ var stage, world, debug, preload;
         createjs.Ticker.useRAF = true;
 
         $(document).on("keydown",function(e){
+
+            if(e.which >= 37 && e.which <= 39){
+               self.keypressCount++;
+                if(self.keypressCount > 3){
+                    return;
+                }
+            }
+
             if(e.which === 32){
                 launchEgg();
             }
@@ -200,6 +209,9 @@ var stage, world, debug, preload;
             else if(e.which === 38){
                 self.gameContainer.bird.fly();
             }
+        });
+        $(document).on("keyup", function(){
+            self.keypressCount = 0;
         });
     }
 
@@ -252,7 +264,7 @@ var stage, world, debug, preload;
             self.gameContainer.createLeaf($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("rotation"), $(obj).attr("restitution"));
         });
         $(level).find('rock').each(function(i, obj){
-            self.gameContainer.createRock($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.createRock($(obj).attr("img"), $(obj).attr("x"), $(obj).attr("y"), $(obj).attr("width"), $(obj).attr("height"));
         });
         $(level).find('tornado').each(function(i, obj){
             self.gameContainer.createTornado($(obj).attr("x"), $(obj).attr("y"));
@@ -269,7 +281,7 @@ var stage, world, debug, preload;
             self.gameContainer.bird.setEvolution(self.gameData.getEggDataForLevel(self.stats.level).getAttribute("evolution"));
         });
         $(level).find('nest').each(function(i, obj){
-            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"));
+            self.gameContainer.createNest($(obj).attr("x"), $(obj).attr("y"), $(obj).attr("start"));
         });
         $(level).find('miniTree').each(function(i, obj){
             self.gameContainer.createMiniTree( $(obj).attr("img"), $(obj).attr("x"));
@@ -341,7 +353,7 @@ var stage, world, debug, preload;
         self.isPaused = false;
         self.collisionDetected = false;
         self.stats.resetStats();
-        SoundManager.togglePlayBackgroundMusic();
+        SoundManager.startSounds();
     }
 
     function showGameOverScreen(){
@@ -357,7 +369,6 @@ var stage, world, debug, preload;
         if(!self.isPaused){
             SoundManager.playSuccess();
             self.gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-            console.log("[level] "+this.stats.level);
             self.isPaused = true;
             self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
             self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
@@ -389,7 +400,6 @@ var stage, world, debug, preload;
         }
         this.gameContainer.bird.push();
         this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
-            console.log("[APP] bird died");
             showGameOverScreen();
         });
         self.levelStarted = true;

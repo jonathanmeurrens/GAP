@@ -8,6 +8,7 @@
 
 /* globals stage:true  */
 /* globals createjs:true  */
+/* globals preload:true  */
 
 var Button = (function(){
 
@@ -46,38 +47,48 @@ var Button = (function(){
             this.width = 70;
             this.height = 40;
         }
+        else if(button_type === Button.START_GAME){
+            this.width = 308;
+            this.height = 123;
+        }
+        else if(button_type === Button.OPTIONS){
+            this.width = 123;
+            this.height = 60;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
-        var button_data = {
+        /*var button_data = {
             images: [url],
             frames: {width:this.width, height:this.height},
             animations: {default:[0], active:[1], hover:[2]}
         };
         var btnSpritesheet = new createjs.SpriteSheet(button_data);
-        this.btn = new createjs.Sprite(btnSpritesheet, "default");
+        this.btn = new createjs.Sprite(btnSpritesheet, "default");*/
+        this.btn = new createjs.Bitmap(preload.getResult(url));
         this.view.addChild(this.btn);
         this.btn.regX = this.width/2;
         this.btn.regY = this.height/2;
-        this.btn.addEventListener("click", function(e){
+       /* this.btn.addEventListener("click", function(e){
             self.btn.gotoAndStop("active");
             this.clickTimeout = setTimeout(function(){
                 self.btn.gotoAndStop("default");
                 clearTimeout(self.clickTimeout);
             },100);
-        });
+        });*/
         this.btn.addEventListener("mouseover", function(e){
-            createjs.Tween.get(e.target).to({scaleX:1.1, scaleY:1.1},  100);
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
         });
         this.btn.addEventListener("mouseout", function(e){
             createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
         });
 
         this.view.cursor = 'pointer';
-        this.btn.scaleX = 0;
-        this.btn.scaleY = 0;
-        createjs.Tween.get(this.btn).wait(Math.random()*1000).to({scaleX:1, scaleY:1},  1200, createjs.Ease.elasticOut);
+        this.btn.scaleX = 0.7;
+        this.btn.scaleY = 0.7;
+        this.btn.alpha = 0;
+        createjs.Tween.get(this.btn).wait(Math.random()*700).to({scaleX:1, scaleY:1, alpha:1},  1400, createjs.Ease.elasticOut);
     }
 
     return Button;
@@ -91,3 +102,5 @@ Button.FACEBOOK = "FACEBOOK";
 Button.MUTE = "MUTE";
 Button.LEVELS = "LEVELS";
 Button.START = "START";
+Button.START_GAME = "START_GAME";
+Button.OPTIONS = "OPTIONS";

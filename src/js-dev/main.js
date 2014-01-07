@@ -209,6 +209,9 @@ var stage, world, debug, preload;
             else if(e.which === 38){
                 self.gameContainer.bird.fly();
             }
+            else if(e.which === 80){
+                self.isPaused = !self.isPaused;
+            }
         });
         $(document).on("keyup", function(){
             self.keypressCount = 0;
@@ -244,6 +247,7 @@ var stage, world, debug, preload;
         if(self.stats!=null){
             level = self.gameData.getLevel(self.stats.level);
             self.stats.leafsCount = $(level).find('leaf').length;
+            self.stats.maxTime = $(level).attr("time");
         }
 
         $(level).find('background').each(function(i, obj){
@@ -323,6 +327,9 @@ var stage, world, debug, preload;
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
             showLevelsScreen();
         });
+        self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
+            showOptionsScreen();
+        });
     }
 
     function showLevelsScreen(){
@@ -331,6 +338,14 @@ var stage, world, debug, preload;
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             self.stats.setLevel(e.levelIndex);
             preloadLevel(e.levelIndex);
+        });
+    }
+
+    function showOptionsScreen(){
+        self.isPaused = true;
+        self.screenManager.showOptionsScreen(self.gameData);
+        self.screenManager.view.addEventListener(StartScreen.SAVE, function(e){
+
         });
     }
 
@@ -354,6 +369,7 @@ var stage, world, debug, preload;
         self.collisionDetected = false;
         self.stats.resetStats();
         SoundManager.startSounds();
+        self.gameContainer.showSpacebarInstruction();
     }
 
     function showGameOverScreen(){
@@ -398,6 +414,7 @@ var stage, world, debug, preload;
         {
             return;
         }
+        self.gameContainer.removeSpacebarInstruction();
         this.gameContainer.bird.push();
         this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
             showGameOverScreen();

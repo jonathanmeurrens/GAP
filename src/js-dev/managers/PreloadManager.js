@@ -30,14 +30,20 @@ var PreloadManager = (function(){
         preload.addEventListener("fileload", self.handleFileLoad);
 
         this.preloaderView = new createjs.Container();
-        var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
-        colorPanel.alpha = 0.5;
-        this.preloaderView.addChild(colorPanel);
-        this.progressEgg = new createjs.Bitmap('assets/common/leaf.png');
-        this.progressEgg.regX = 41/2;
-        this.progressEgg.regY = 56/2;
+
+        var background = new createjs.Bitmap('assets/common/preloader/bg.png');
+        this.preloaderView.addChild(background);
+
+        this.earth = new createjs.Bitmap('assets/common/preloader/bg2.png');
+        this.earth.regX = 592/2;
+        this.earth.regY = 592/2;
+        this.earth.x = stage.canvas.width/2;
+        this.earth.y = stage.canvas.height/2;
+        this.preloaderView.addChild(this.earth);
+
+        this.progressEgg = new createjs.Bitmap('assets/common/preloader/eitje.png');
+        this.progressEgg.regX = 83/2;
+        this.progressEgg.regY = 91/2;
         this.progressEgg.x = stage.canvas.width/2;
         this.progressEgg.y = stage.canvas.height/2;
         this.preloaderView.addChild(this.progressEgg);
@@ -49,6 +55,11 @@ var PreloadManager = (function(){
         showPreloader();
         self.isPreloadingGame = true;
         var manifest = [
+            {src:"assets/common/startpage/bg.png"},
+            {src:"assets/common/startpage/boom.png"},
+            {src:"assets/common/startpage/bosjes_onderaan.png"},
+            {src:"assets/common/startpage/tjilp.png"},
+
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},
             {src:"assets/common/time-coin.png", id:"time-coin"},
@@ -58,6 +69,10 @@ var PreloadManager = (function(){
             {src:"assets/common/twirl.png", id:"twirl"},
             {src:"assets/common/rock.png", id:"rock"},
             {src:"assets/common/stars-spritesheet.png"},
+            {src:"assets/common/press_spacebar.png"},
+            {src:"assets/common/progressbar/progress_bar_spritesheet.png"},
+            {src:"assets/common/progressbar/levels_spritesheet.png"},
+            {src:"assets/common/progressbar/bg.png"},
 
             {src:"assets/common/buttons/facebook.png"},
             {src:"assets/common/buttons/next_level.png"},
@@ -65,6 +80,8 @@ var PreloadManager = (function(){
             {src:"assets/common/buttons/pause.png"},
             {src:"assets/common/buttons/levels.png"},
             {src:"assets/common/buttons/mute.png"},
+            {src:"assets/common/buttons/options.png"},
+            {src:"assets/common/buttons/start_game.png"},
 
             {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
             {src:"assets/sound/coin.ogg", id:"coin_sound"},
@@ -76,6 +93,15 @@ var PreloadManager = (function(){
         preload.loadManifest(manifest, true);
     };
 
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({rotation:-180}, 6000 + Math.random()*1000).call(function(){
+            createjs.Tween.get(this).to({y:this.rotation-180}, 6000).call(function(){
+                animate(this);
+            });
+        });
+    }
+
     PreloadManager.prototype.preloadLevel = function(manifest){
         showPreloader();
         self.isPreloadingGame = false;
@@ -84,7 +110,8 @@ var PreloadManager = (function(){
 
     PreloadManager.prototype.handleProgress = function(event) {
         //console.log(event.loaded);
-        self.progressEgg.rotation = event.loaded * 180;
+        self.progressEgg.rotation = event.loaded * 360;
+        console.log(event.loaded * 360);
     };
 
     PreloadManager.prototype.handleFileLoad = function(event) {
@@ -103,16 +130,17 @@ var PreloadManager = (function(){
 
     function showPreloader(){
         console.log(self.preloaderView.x, self.preloaderView.y);
+        animate(self.earth);
         stage.addChild(self.preloaderView);
     }
 
     function removePreloader(){
-        stage.removeChild(self.preloaderView);
-        /*self.removePreloaderTimeout = setTimeout(function(){
-
+        self.removePreloaderTimeout = setTimeout(function(){
+            createjs.Tween.removeTweens(self.earth);
+            stage.removeChild(self.preloaderView);
             clearTimeout(self.removePreloaderTimeout);
             self.removePreloaderTimeout = null;
-        }, 1000);*/
+        }, 1000);
     }
 
     return PreloadManager;

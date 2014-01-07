@@ -14,6 +14,7 @@
 /* globals NextLevelScreen:true  */
 /* globals LevelsScreen:true  */
 /* globals LevelNest:true  */
+/* globals OptionsScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -55,6 +56,17 @@ var ScreenManager = (function(){
             });
         }
         this.view.addChild(this.screen.view);
+    };
+
+    ScreenManager.prototype.showOptionsScreen = function(gameData){
+        this.screen = new OptionsScreen(gameData);
+        this.view.addChild(this.screen.view);
+        this.screen.view.on(OptionsScreen.CANCEL, function(e){
+            self.removeScreen();
+        });
+        this.screen.view.on(OptionsScreen.SAVE, function(e){
+            self.removeScreen();
+        });
     };
 
     ScreenManager.prototype.showLevelsScreen = function(gameData){

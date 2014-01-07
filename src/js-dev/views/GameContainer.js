@@ -23,6 +23,7 @@
 /* globals Balloon:true  */
 /* globals TimeCoin:true  */
 /* globals MiniTree:true  */
+/* globals preload:true  */
 
 var GameContainer = (function(){
 
@@ -48,6 +49,25 @@ var GameContainer = (function(){
 
         $(this.view).on('tick', $.proxy(tick, this));
     }
+
+    GameContainer.prototype.showSpacebarInstruction = function(){
+        if(this.spacebar_instruction == null){
+            this.spacebar_instruction = new createjs.Bitmap(preload.getResult("assets/common/press_spacebar.png"));
+            this.spacebar_instruction.regX = 370/2;
+            this.spacebar_instruction.regY = 211/2;
+            this.spacebar_instruction.x = 500;
+            this.spacebar_instruction.y = 300;
+            this.view.addChild(this.spacebar_instruction);
+            console.log("[GameContainer] showSpacebarInstruction");
+        }
+    };
+
+    GameContainer.prototype.removeSpacebarInstruction = function(){
+        if(this.spacebar_instruction !== null){
+            this.view.removeChild(this.spacebar_instruction);
+            this.spacebar_instruction = null;
+        }
+    };
 
     GameContainer.prototype.createBackground = function(url){
         var background = new Background(url);

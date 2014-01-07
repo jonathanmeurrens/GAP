@@ -1,7 +1,7 @@
 <?xml version= "1.0"?>
 <levels>
 
-    <level>
+    <level time="20">
         <instructions>
             <instruction img="assets/level1/instruction-1.1.png"/>
             <instruction img="assets/level1/instruction-1.2.png"/>
@@ -17,11 +17,12 @@
         <leaf x="454" y="231" rotation="0" restitution="1"></leaf>
         <leaf x="685" y="308" rotation="0" restitution="1"></leaf>
         <nest y="298" x="914"></nest>
+        <nest y="298" x="914" start="true"></nest>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
         <background img="assets/level1/background.png"></background>
     </level>
-    <level>
+    <level time="30">
         <instructions>
             <instruction img="assets/level2/instruction-2.1.png"/>
         </instructions>
@@ -38,7 +39,7 @@
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
     </level>
-    <level>
+    <level time="40">
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <tree img="assets/level3/boom_links.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level3/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>
@@ -50,7 +51,7 @@
         <ground img="assets/level3/ground.png" height="162"></ground>
         <background img="assets/level3/achterstuk.png"></background>
     </level>
-    <level>
+    <level time="40">
         <instructions>
             <instruction img="assets/level4/instruction-4.1.png"/>
         </instructions>
@@ -66,7 +67,7 @@
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level4/background.png"></background>
     </level>
-    <level>
+    <level time="40">
         <egg maxRotations="100" evolution="1" x="130" y="500"></egg>
         <tree img="assets/level5/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level5/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
@@ -81,7 +82,7 @@
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level5/background.png"></background>
     </level>
-    <level>
+    <level time="50">
         <egg maxRotations="100" evolution="1" x="130" y="500"></egg>
         <tree img="assets/level6/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level6/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
@@ -104,7 +105,7 @@
     <!-- VANAF HIER BLOK 2 -->
     <!--______________________-->
 
-    <level> <!--Level 7-->
+    <level time="30"> <!--Level 7-->
         <instructions>
             <instruction img="assets/level7/instruction-7.1.png" />
             <instruction img="assets/level7/instruction-7.2.png"/>
@@ -125,7 +126,7 @@
         <background img="assets/level7/background.png"></background>
         <background img="assets/level7/voorstuk.png"></background>
     </level>
-    <level> <!--Level 8-->
+    <level time="40"> <!--Level 8-->
         <instructions>
             <instruction img="assets/level7/instruction-8.1.png"/>
         </instructions>

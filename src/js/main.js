@@ -25,6 +25,7 @@
 /* globals Balloon:true  */
 /* globals TimeCoin:true  */
 /* globals MiniTree:true  */
+/* globals preload:true  */
 
 var GameContainer = (function(){
 
@@ -50,6 +51,25 @@ var GameContainer = (function(){
 
         $(this.view).on('tick', $.proxy(tick, this));
     }
+
+    GameContainer.prototype.showSpacebarInstruction = function(){
+        if(this.spacebar_instruction == null){
+            this.spacebar_instruction = new createjs.Bitmap(preload.getResult("assets/common/press_spacebar.png"));
+            this.spacebar_instruction.regX = 370/2;
+            this.spacebar_instruction.regY = 211/2;
+            this.spacebar_instruction.x = 500;
+            this.spacebar_instruction.y = 300;
+            this.view.addChild(this.spacebar_instruction);
+            console.log("[GameContainer] showSpacebarInstruction");
+        }
+    };
+
+    GameContainer.prototype.removeSpacebarInstruction = function(){
+        if(this.spacebar_instruction !== null){
+            this.view.removeChild(this.spacebar_instruction);
+            this.spacebar_instruction = null;
+        }
+    };
 
     GameContainer.prototype.createBackground = function(url){
         var background = new Background(url);
@@ -670,6 +690,7 @@ var Bird = (function(){
 
 /* globals stage:true  */
 /* globals createjs:true  */
+/* globals preload:true  */
 
 var Button = (function(){
 
@@ -708,38 +729,48 @@ var Button = (function(){
             this.width = 70;
             this.height = 40;
         }
+        else if(button_type === Button.START_GAME){
+            this.width = 308;
+            this.height = 123;
+        }
+        else if(button_type === Button.OPTIONS){
+            this.width = 123;
+            this.height = 60;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
 
-        var button_data = {
+        /*var button_data = {
             images: [url],
             frames: {width:this.width, height:this.height},
             animations: {default:[0], active:[1], hover:[2]}
         };
         var btnSpritesheet = new createjs.SpriteSheet(button_data);
-        this.btn = new createjs.Sprite(btnSpritesheet, "default");
+        this.btn = new createjs.Sprite(btnSpritesheet, "default");*/
+        this.btn = new createjs.Bitmap(preload.getResult(url));
         this.view.addChild(this.btn);
         this.btn.regX = this.width/2;
         this.btn.regY = this.height/2;
-        this.btn.addEventListener("click", function(e){
+       /* this.btn.addEventListener("click", function(e){
             self.btn.gotoAndStop("active");
             this.clickTimeout = setTimeout(function(){
                 self.btn.gotoAndStop("default");
                 clearTimeout(self.clickTimeout);
             },100);
-        });
+        });*/
         this.btn.addEventListener("mouseover", function(e){
-            createjs.Tween.get(e.target).to({scaleX:1.1, scaleY:1.1},  100);
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
         });
         this.btn.addEventListener("mouseout", function(e){
             createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
         });
 
         this.view.cursor = 'pointer';
-        this.btn.scaleX = 0;
-        this.btn.scaleY = 0;
-        createjs.Tween.get(this.btn).wait(Math.random()*1000).to({scaleX:1, scaleY:1},  1200, createjs.Ease.elasticOut);
+        this.btn.scaleX = 0.7;
+        this.btn.scaleY = 0.7;
+        this.btn.alpha = 0;
+        createjs.Tween.get(this.btn).wait(Math.random()*700).to({scaleX:1, scaleY:1, alpha:1},  1400, createjs.Ease.elasticOut);
     }
 
     return Button;
@@ -753,6 +784,8 @@ Button.FACEBOOK = "FACEBOOK";
 Button.MUTE = "MUTE";
 Button.LEVELS = "LEVELS";
 Button.START = "START";
+Button.START_GAME = "START_GAME";
+Button.OPTIONS = "OPTIONS";
 
 /**
  * Created with JetBrains PhpStorm.
@@ -1725,18 +1758,46 @@ var Statistics = (function(){
         this.bounces = 0;
         this.leafsCount = 1;
         this.timeCount = 0;
+        this.maxTime = 59;
+
+        var background = new createjs.Bitmap('assets/common/progressbar/bg.png');
+        background.regX = 255/2;
+        background.x = stage.canvas.width/2;
+        background.y = 7;
+        this.view.addChild(background);
 
         // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
-        this.view.addChild(this.levelTxt);
+        //this.view.addChild(this.levelTxt);
         this.levelTxt.x = stage.canvas.width/2 - 122/2;
         this.levelTxt.y = 10;
+        this.levelTxt.alpha = 0;
+        var levelSprite_data = {
+            images: ["assets/common/progressbar/levels_spritesheet.png"],
+            frames: {width:66, height:28.8}
+        };
+        var levelsSpritesheet = new createjs.SpriteSheet(levelSprite_data);
+        this.levelsSprite = new createjs.Sprite(levelsSpritesheet);
+        this.view.addChild(this.levelsSprite);
+        this.levelsSprite.regX = 66/2;
+        this.levelsSprite.x = stage.canvas.width/2;
+        this.levelsSprite.y = 22;
 
         // TIME IND
         this.timeTxt = new createjs.Text("", "14px Arial", "#000000");
-        this.view.addChild(this.timeTxt);
+        //this.view.addChild(this.timeTxt);
         this.timeTxt.x = stage.canvas.width/2 - 170/2;
         this.timeTxt.y = 40;
+        var progressSprite_data = {
+            images: ["assets/common/progressbar/progress_bar_spritesheet.png"],
+            frames: {width:200, height:15}
+        };
+        var progressSpritesheet = new createjs.SpriteSheet(progressSprite_data);
+        this.progressSprite = new createjs.Sprite(progressSpritesheet);
+        this.view.addChild(this.progressSprite);
+        this.progressSprite.regX = 200/2;
+        this.progressSprite.x = stage.canvas.width/2;
+        this.progressSprite.y = 68;
 
         // SOUND MUTE
         var mute_data = {
@@ -1791,13 +1852,16 @@ var Statistics = (function(){
     };
 
     Statistics.prototype.earnTime = function(){
-        this.timeCount += 10;
+        var extra = this.maxTime/10;
+        if(this.timeCount + extra < this.maxTime){
+            this.timeCount += extra;
+        }
     };
 
     Statistics.prototype.resetStats = function(){
         clearInterval(this.timer);
         this.timer = null;
-        this.timeCount = 59;
+        this.timeCount = this.maxTime;
         this.timer = setInterval(updateTime, 1000);
         this.bounces = 0;
         updateTime();
@@ -1820,6 +1884,7 @@ var Statistics = (function(){
     function updateStats(){
 
         self.levelTxt.text = "level: " + (self.level + 1);
+        self.levelsSprite.gotoAndStop(self.level);
 
         /*var frame = "none";
         switch(this.self.starsSprite){
@@ -1842,6 +1907,9 @@ var Statistics = (function(){
     }
 
     function updateTime(){
+
+       self.progressSprite.gotoAndStop(Math.round((self.timeCount / self.maxTime)*67));
+
         var timeTxt = "time left: 00:";
         if(self.timeCount<10){
             timeTxt += "0";
@@ -2213,6 +2281,43 @@ var NextLevelScreen = (function(){
 /* globals preload:true  */
 /* globals Button:true  */
 
+var OptionsScreen = (function(){
+
+    var self;
+
+    function OptionsScreen(){
+
+        // EVENT TYPES
+        OptionsScreen.SAVE = "SAVE";
+        OptionsScreen.CANCEL = "CANCEL";
+
+        self = this;
+
+        this.view = new createjs.Container();
+
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(200,200,200));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
+        this.view.addChild(colorPanel);
+    }
+
+    return OptionsScreen;
+})();
+
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Jonathan
+ * Date: 27/11/13
+ * Time: 20:21
+ * To change this template use File | Settings | File Templates.
+ */
+
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals ScreenManager:true  */
+/* globals preload:true  */
+/* globals Button:true  */
+
 var StartScreen = (function(){
 
     var self;
@@ -2223,22 +2328,38 @@ var StartScreen = (function(){
 
         // EVENT TYPES
         StartScreen.START = "START";
+        StartScreen.OPTIONS = "OPTIONS";
 
         this.view = new createjs.Container();
 
-        var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(200,200,200));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width, stage.canvas.height);
-        this.view.addChild(colorPanel);
+        var background = new createjs.Bitmap(preload.getResult("assets/common/startpage/bg.png"));
+        this.view.addChild(background);
 
-       /* var background = new createjs.Bitmap(preload.getResult("failed-background"));
-        this.view.addChild(background);*/
+        var boom = new createjs.Bitmap(preload.getResult("assets/common/startpage/boom.png"));
+        boom.y = stage.canvas.height - 539;
+        this.view.addChild(boom);
 
-        var startBtn = new Button(Button.START);
-        this.view.addChild(startBtn.view);
-        startBtn.view.addEventListener("click", startHandler);
-        startBtn.view.x = stage.canvas.width/2;
-        startBtn.view.y = stage.canvas.height/2;
+        var bosjes = new createjs.Bitmap(preload.getResult("assets/common/startpage/bosjes_onderaan.png"));
+        bosjes.y = stage.canvas.height - 88;
+        this.view.addChild(bosjes);
+
+        var tjilp = new createjs.Bitmap(preload.getResult("assets/common/startpage/tjilp.png"));
+        tjilp.y = 50;
+        tjilp.x = 400;
+        this.view.addChild(tjilp);
+
+        var startGameBtn = new Button(Button.START_GAME);
+        this.view.addChild(startGameBtn.view);
+        startGameBtn.view.addEventListener("click", startHandler);
+        startGameBtn.view.x = 800;
+        startGameBtn.view.y = 370;
+
+        var optionsBtn = new Button(Button.OPTIONS);
+        this.view.addChild(optionsBtn.view);
+        optionsBtn.view.addEventListener("click", optionsHandler);
+        optionsBtn.view.x = 710;
+        optionsBtn.view.y = 453;
+
 
         $("body").on("keydown", function(e){
             if(e.which === 83){
@@ -2249,6 +2370,11 @@ var StartScreen = (function(){
 
     function startHandler(e){
         var event = new createjs.Event(StartScreen.START, true);
+        self.view.dispatchEvent(event);
+    }
+
+    function optionsHandler(e){
+        var event = new createjs.Event(StartScreen.OPTIONS, true);
         self.view.dispatchEvent(event);
     }
 
@@ -2287,14 +2413,20 @@ var PreloadManager = (function(){
         preload.addEventListener("fileload", self.handleFileLoad);
 
         this.preloaderView = new createjs.Container();
-        var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
-        colorPanel.alpha = 0.5;
-        this.preloaderView.addChild(colorPanel);
-        this.progressEgg = new createjs.Bitmap('assets/common/leaf.png');
-        this.progressEgg.regX = 41/2;
-        this.progressEgg.regY = 56/2;
+
+        var background = new createjs.Bitmap('assets/common/preloader/bg.png');
+        this.preloaderView.addChild(background);
+
+        this.earth = new createjs.Bitmap('assets/common/preloader/bg2.png');
+        this.earth.regX = 592/2;
+        this.earth.regY = 592/2;
+        this.earth.x = stage.canvas.width/2;
+        this.earth.y = stage.canvas.height/2;
+        this.preloaderView.addChild(this.earth);
+
+        this.progressEgg = new createjs.Bitmap('assets/common/preloader/eitje.png');
+        this.progressEgg.regX = 83/2;
+        this.progressEgg.regY = 91/2;
         this.progressEgg.x = stage.canvas.width/2;
         this.progressEgg.y = stage.canvas.height/2;
         this.preloaderView.addChild(this.progressEgg);
@@ -2306,6 +2438,11 @@ var PreloadManager = (function(){
         showPreloader();
         self.isPreloadingGame = true;
         var manifest = [
+            {src:"assets/common/startpage/bg.png"},
+            {src:"assets/common/startpage/boom.png"},
+            {src:"assets/common/startpage/bosjes_onderaan.png"},
+            {src:"assets/common/startpage/tjilp.png"},
+
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},
             {src:"assets/common/time-coin.png", id:"time-coin"},
@@ -2315,6 +2452,10 @@ var PreloadManager = (function(){
             {src:"assets/common/twirl.png", id:"twirl"},
             {src:"assets/common/rock.png", id:"rock"},
             {src:"assets/common/stars-spritesheet.png"},
+            {src:"assets/common/press_spacebar.png"},
+            {src:"assets/common/progressbar/progress_bar_spritesheet.png"},
+            {src:"assets/common/progressbar/levels_spritesheet.png"},
+            {src:"assets/common/progressbar/bg.png"},
 
             {src:"assets/common/buttons/facebook.png"},
             {src:"assets/common/buttons/next_level.png"},
@@ -2322,6 +2463,8 @@ var PreloadManager = (function(){
             {src:"assets/common/buttons/pause.png"},
             {src:"assets/common/buttons/levels.png"},
             {src:"assets/common/buttons/mute.png"},
+            {src:"assets/common/buttons/options.png"},
+            {src:"assets/common/buttons/start_game.png"},
 
             {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
             {src:"assets/sound/coin.ogg", id:"coin_sound"},
@@ -2333,6 +2476,15 @@ var PreloadManager = (function(){
         preload.loadManifest(manifest, true);
     };
 
+    function animate(view){
+        createjs.Tween.removeTweens(view);
+        createjs.Tween.get(view).to({rotation:-180}, 6000 + Math.random()*1000).call(function(){
+            createjs.Tween.get(this).to({y:this.rotation-180}, 6000).call(function(){
+                animate(this);
+            });
+        });
+    }
+
     PreloadManager.prototype.preloadLevel = function(manifest){
         showPreloader();
         self.isPreloadingGame = false;
@@ -2341,7 +2493,8 @@ var PreloadManager = (function(){
 
     PreloadManager.prototype.handleProgress = function(event) {
         //console.log(event.loaded);
-        self.progressEgg.rotation = event.loaded * 180;
+        self.progressEgg.rotation = event.loaded * 360;
+        console.log(event.loaded * 360);
     };
 
     PreloadManager.prototype.handleFileLoad = function(event) {
@@ -2360,16 +2513,17 @@ var PreloadManager = (function(){
 
     function showPreloader(){
         console.log(self.preloaderView.x, self.preloaderView.y);
+        animate(self.earth);
         stage.addChild(self.preloaderView);
     }
 
     function removePreloader(){
-        stage.removeChild(self.preloaderView);
-        /*self.removePreloaderTimeout = setTimeout(function(){
-
+        self.removePreloaderTimeout = setTimeout(function(){
+            createjs.Tween.removeTweens(self.earth);
+            stage.removeChild(self.preloaderView);
             clearTimeout(self.removePreloaderTimeout);
             self.removePreloaderTimeout = null;
-        }, 1000);*/
+        }, 1000);
     }
 
     return PreloadManager;
@@ -2392,6 +2546,7 @@ var PreloadManager = (function(){
 /* globals NextLevelScreen:true  */
 /* globals LevelsScreen:true  */
 /* globals LevelNest:true  */
+/* globals OptionsScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -2433,6 +2588,17 @@ var ScreenManager = (function(){
             });
         }
         this.view.addChild(this.screen.view);
+    };
+
+    ScreenManager.prototype.showOptionsScreen = function(gameData){
+        this.screen = new OptionsScreen(gameData);
+        this.view.addChild(this.screen.view);
+        this.screen.view.on(OptionsScreen.CANCEL, function(e){
+            self.removeScreen();
+        });
+        this.screen.view.on(OptionsScreen.SAVE, function(e){
+            self.removeScreen();
+        });
     };
 
     ScreenManager.prototype.showLevelsScreen = function(gameData){
@@ -2971,6 +3137,9 @@ var stage, world, debug, preload;
             else if(e.which === 38){
                 self.gameContainer.bird.fly();
             }
+            else if(e.which === 80){
+                self.isPaused = !self.isPaused;
+            }
         });
         $(document).on("keyup", function(){
             self.keypressCount = 0;
@@ -3006,6 +3175,7 @@ var stage, world, debug, preload;
         if(self.stats!=null){
             level = self.gameData.getLevel(self.stats.level);
             self.stats.leafsCount = $(level).find('leaf').length;
+            self.stats.maxTime = $(level).attr("time");
         }
 
         $(level).find('background').each(function(i, obj){
@@ -3085,6 +3255,9 @@ var stage, world, debug, preload;
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
             showLevelsScreen();
         });
+        self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
+            showOptionsScreen();
+        });
     }
 
     function showLevelsScreen(){
@@ -3093,6 +3266,14 @@ var stage, world, debug, preload;
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             self.stats.setLevel(e.levelIndex);
             preloadLevel(e.levelIndex);
+        });
+    }
+
+    function showOptionsScreen(){
+        self.isPaused = true;
+        self.screenManager.showOptionsScreen(self.gameData);
+        self.screenManager.view.addEventListener(StartScreen.SAVE, function(e){
+
         });
     }
 
@@ -3116,6 +3297,7 @@ var stage, world, debug, preload;
         self.collisionDetected = false;
         self.stats.resetStats();
         SoundManager.startSounds();
+        self.gameContainer.showSpacebarInstruction();
     }
 
     function showGameOverScreen(){
@@ -3160,6 +3342,7 @@ var stage, world, debug, preload;
         {
             return;
         }
+        self.gameContainer.removeSpacebarInstruction();
         this.gameContainer.bird.push();
         this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
             showGameOverScreen();

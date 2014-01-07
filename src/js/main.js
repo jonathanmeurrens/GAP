@@ -575,14 +575,14 @@ var Bird = (function(){
     };
 
     Bird.prototype.moveRight = function(){
-        self.view.body.ApplyTorque(self.impulse);
+        self.view.body.ApplyTorque(self.impulse*5);
         applyImpulse(self.view.body, 0, self.impulse);
         self.view.body.SetAngularVelocity(1);
         self.impulseAnimation(Twirl.LEFT_DIRECTION);
     };
 
     Bird.prototype.moveLeft = function(){
-        self.view.body.ApplyTorque(-self.impulse);
+        self.view.body.ApplyTorque(-self.impulse*5);
         applyImpulse(self.view.body, 0, -self.impulse);
         self.view.body.SetAngularVelocity(-1);
         self.impulseAnimation(Twirl.RIGHT_DIRECTION);
@@ -848,8 +848,8 @@ var Cloud = (function(){
 
     function animate(view){
         createjs.Tween.removeTweens(view);
-        createjs.Tween.get(view).to({y:view.y + 20}, 2700).call(function(){
-            createjs.Tween.get(this).to({y:this.y - 20}, 2700).call(function(){
+        createjs.Tween.get(view).to({y:view.y + 20}, 2300 + Math.random()*1000).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 20}, 2300 + Math.random()*1000).call(function(){
                 animate(this);
             });
         });
@@ -1623,8 +1623,8 @@ var Twirl = (function(){
 
         if(direction === Twirl.RIGHT_DIRECTION){
             this.view.scaleX = -1;
-            this.view.x = xPos - 30;
-            toX = xPos;
+            this.view.x = xPos - 10;
+            toX = xPos + 10;
         }
 
 
@@ -1759,7 +1759,8 @@ var Statistics = (function(){
 
         // LEVELS PANEL BTN
         var levelsBtn = new Button(Button.LEVELS);
-        levelsBtn.view.x = 100;
+        levelsBtn.view.x = 150;
+        levelsBtn.view.y = 74;
         this.view.addChild(levelsBtn.view);
         levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
@@ -2050,6 +2051,15 @@ var LevelsScreen = (function(){
             else if(e.which === 54){ //5
                 levelSelected(4);
             }
+            else if(e.which === 54){ //5
+                levelSelected(4);
+            }
+            else if(e.which === 55){ //5
+                levelSelected(4);
+            }
+            else if(e.which === 56){ //5
+                levelSelected(4);
+            }
         });
 
         showLevels();
@@ -2064,13 +2074,23 @@ var LevelsScreen = (function(){
     function showLevels(){
         var levelsContainer = new createjs.Container();
         self.view.addChild(levelsContainer);
+
+        var yPos = 0;
+        var xPos = 0;
         for(var i=0; i < this.gameData.getLevelCount(); i++){
             var nest = new LevelNest(i,this.gameData.gamerData.levels[i],true);
-            nest.view.x = (i)*120;
+            nest.view.x = xPos;
+            nest.view.y = yPos;
+            //console.log(i,(i%3));
+            xPos += 120;
+            if(i%3 >= 2){
+                yPos+=100;
+                xPos = 0;
+            }
             levelsContainer.addChild(nest.view);
         }
-        levelsContainer.x = 300;
-        levelsContainer.y = 200;
+        levelsContainer.x = 330;
+        levelsContainer.y = 170;
     }
 
     return LevelsScreen;

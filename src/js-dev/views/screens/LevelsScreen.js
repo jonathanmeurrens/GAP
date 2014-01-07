@@ -44,6 +44,15 @@ var LevelsScreen = (function(){
             else if(e.which === 54){ //5
                 levelSelected(4);
             }
+            else if(e.which === 54){ //5
+                levelSelected(4);
+            }
+            else if(e.which === 55){ //5
+                levelSelected(4);
+            }
+            else if(e.which === 56){ //5
+                levelSelected(4);
+            }
         });
 
         showLevels();
@@ -58,13 +67,23 @@ var LevelsScreen = (function(){
     function showLevels(){
         var levelsContainer = new createjs.Container();
         self.view.addChild(levelsContainer);
+
+        var yPos = 0;
+        var xPos = 0;
         for(var i=0; i < this.gameData.getLevelCount(); i++){
             var nest = new LevelNest(i,this.gameData.gamerData.levels[i],true);
-            nest.view.x = (i)*120;
+            nest.view.x = xPos;
+            nest.view.y = yPos;
+            //console.log(i,(i%3));
+            xPos += 120;
+            if(i%3 >= 2){
+                yPos+=100;
+                xPos = 0;
+            }
             levelsContainer.addChild(nest.view);
         }
-        levelsContainer.x = 300;
-        levelsContainer.y = 200;
+        levelsContainer.x = 330;
+        levelsContainer.y = 170;
     }
 
     return LevelsScreen;

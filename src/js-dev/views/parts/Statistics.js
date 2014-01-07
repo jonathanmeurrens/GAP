@@ -65,7 +65,8 @@ var Statistics = (function(){
 
         // LEVELS PANEL BTN
         var levelsBtn = new Button(Button.LEVELS);
-        levelsBtn.view.x = 100;
+        levelsBtn.view.x = 150;
+        levelsBtn.view.y = 74;
         this.view.addChild(levelsBtn.view);
         levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);

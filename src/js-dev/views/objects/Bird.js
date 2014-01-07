@@ -135,14 +135,14 @@ var Bird = (function(){
     };
 
     Bird.prototype.moveRight = function(){
-        self.view.body.ApplyTorque(self.impulse);
+        self.view.body.ApplyTorque(self.impulse*5);
         applyImpulse(self.view.body, 0, self.impulse);
         self.view.body.SetAngularVelocity(1);
         self.impulseAnimation(Twirl.LEFT_DIRECTION);
     };
 
     Bird.prototype.moveLeft = function(){
-        self.view.body.ApplyTorque(-self.impulse);
+        self.view.body.ApplyTorque(-self.impulse*5);
         applyImpulse(self.view.body, 0, -self.impulse);
         self.view.body.SetAngularVelocity(-1);
         self.impulseAnimation(Twirl.RIGHT_DIRECTION);

@@ -32,8 +32,8 @@ var Twirl = (function(){
 
         if(direction === Twirl.RIGHT_DIRECTION){
             this.view.scaleX = -1;
-            this.view.x = xPos - 30;
-            toX = xPos;
+            this.view.x = xPos - 10;
+            toX = xPos + 10;
         }
 
 

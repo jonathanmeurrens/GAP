@@ -92,8 +92,8 @@ var Cloud = (function(){
 
     function animate(view){
         createjs.Tween.removeTweens(view);
-        createjs.Tween.get(view).to({y:view.y + 20}, 2700).call(function(){
-            createjs.Tween.get(this).to({y:this.y - 20}, 2700).call(function(){
+        createjs.Tween.get(view).to({y:view.y + 20}, 2300 + Math.random()*1000).call(function(){
+            createjs.Tween.get(this).to({y:this.y - 20}, 2300 + Math.random()*1000).call(function(){
                 animate(this);
             });
         });

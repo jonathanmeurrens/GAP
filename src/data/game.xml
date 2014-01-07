@@ -61,7 +61,7 @@
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
         <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
         <!--<enemyBird x="30" y="400" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>-->
-        <rock x="500" y="159"></rock>
+        <rock x="500" y="159" img="assets/common/rock.png" width="475" height="358"></rock>
         <nest y="80" x="914"></nest>
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level4/background.png"></background>
@@ -74,9 +74,9 @@
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
         <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
         <enemyBird x="30" y="260" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
-        <rock x="350" y="0"></rock>
-        <rock x="650" y="0"></rock>
-        <rock x="500" y="60"></rock>
+        <rock x="350" y="0" img="assets/common/rock.png" width="475" height="358"></rock>
+        <rock x="650" y="0" img="assets/common/rock.png" width="475" height="358"></rock>
+        <rock x="500" y="60" img="assets/common/rock.png" width="475" height="358"></rock>
         <nest y="80" x="914"></nest>
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level5/background.png"></background>
@@ -92,8 +92,8 @@
         <enemyBird x="30" y="260" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <enemyBird x="1380" y="140" direction="left" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <enemyBird x="1580" y="380" direction="left" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
-        <rock x="350" y="80"></rock>
-        <rock x="650" y="80"></rock>
+        <rock x="350" y="80" img="assets/common/rock.png" width="475" height="358"></rock>
+        <rock x="650" y="80" img="assets/common/rock.png" width="475" height="358"></rock>
         <nest y="80" x="914"></nest>
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level5/background.png"></background>
@@ -106,7 +106,7 @@
 
     <level> <!--Level 7-->
         <instructions>
-            <instruction img="assets/level7/instruction-7.1.png"/>
+            <instruction img="assets/level7/instruction-7.1.png" />
             <instruction img="assets/level7/instruction-7.2.png"/>
             <instruction img="assets/level7/instruction-7.3.png"/>
         </instructions>

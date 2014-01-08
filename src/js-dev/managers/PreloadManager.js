@@ -55,6 +55,7 @@ var PreloadManager = (function(){
         showPreloader();
         self.isPreloadingGame = true;
         var manifest = [
+            {src:"assets/common/bg.png"},
             {src:"assets/common/startpage/bg.png"},
             {src:"assets/common/startpage/boom.png"},
             {src:"assets/common/startpage/bosjes_onderaan.png"},
@@ -66,6 +67,8 @@ var PreloadManager = (function(){
             {src:"assets/common/egg-spritesheet.png"},
             {src:"assets/common/leaf.png", id:"leaf"},
             {src:"assets/common/nest.png", id:"nest"},
+            {src:"assets/common/nest-available.png"},
+            {src:"assets/common/nest-locked.png"},
             {src:"assets/common/twirl.png", id:"twirl"},
             {src:"assets/common/rock.png", id:"rock"},
             {src:"assets/common/stars-spritesheet.png"},
@@ -82,6 +85,9 @@ var PreloadManager = (function(){
             {src:"assets/common/buttons/mute.png"},
             {src:"assets/common/buttons/options.png"},
             {src:"assets/common/buttons/start_game.png"},
+            {src:"assets/common/buttons/reset_levels.png"},
+            {src:"assets/common/buttons/music_spritesheet.png"},
+            {src:"assets/common/buttons/soundfx_spritesheet.png"},
 
             {src:"assets/sound/bounce.mp3", id:"bounce_sound"},
             {src:"assets/sound/coin.ogg", id:"coin_sound"},
@@ -111,7 +117,6 @@ var PreloadManager = (function(){
     PreloadManager.prototype.handleProgress = function(event) {
         //console.log(event.loaded);
         self.progressEgg.rotation = event.loaded * 360;
-        console.log(event.loaded * 360);
     };
 
     PreloadManager.prototype.handleFileLoad = function(event) {
@@ -129,7 +134,6 @@ var PreloadManager = (function(){
     };
 
     function showPreloader(){
-        console.log(self.preloaderView.x, self.preloaderView.y);
         animate(self.earth);
         stage.addChild(self.preloaderView);
     }

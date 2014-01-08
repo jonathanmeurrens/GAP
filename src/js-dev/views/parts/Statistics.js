@@ -83,11 +83,7 @@ var Statistics = (function(){
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
             SoundManager.toggleSound();
-            if(SoundManager.playSounds){
-                self.muteBtnSprite.gotoAndStop("on");
-            }else{
-                self.muteBtnSprite.gotoAndStop("mute");
-            }
+            updateMuteBtnState();
         });
 
 
@@ -102,6 +98,15 @@ var Statistics = (function(){
         });
 
         updateStats();
+        updateMuteBtnState();
+    }
+
+    function updateMuteBtnState(){
+        if(SoundManager.playSounds){
+            self.muteBtnSprite.gotoAndStop("on");
+        }else{
+            self.muteBtnSprite.gotoAndStop("mute");
+        }
     }
 
     Statistics.prototype.setLevel = function(levelIndex){
@@ -141,7 +146,7 @@ var Statistics = (function(){
     };
 
     Statistics.prototype.getStars = function(){
-        if(self.bounces<0)
+       /* if(self.bounces<0)
         {
             self.bounces = 0;
         }
@@ -150,7 +155,10 @@ var Statistics = (function(){
             stars = 3;
         }else if(stars < 0){
             stars = 0;
-        }
+        }*/
+
+        var stars = Math.round(this.timeCount / (this.maxTime - this.maxTime/15) * 3);
+        console.log("[Statistics] stars:" + stars, this.timeCount, this.maxTime);
         return stars;
     };
 

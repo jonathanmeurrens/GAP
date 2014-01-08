@@ -7,15 +7,17 @@
  */
 
 /* globals createjs:true  */
+/* globals gameData:true  */
 
 function SoundManager(){}
 
 SoundManager.backgroundMusicInstance = null;
-SoundManager.playSounds = true;
+SoundManager.playSounds = false;
 
 SoundManager.toggleSound = function(){
+
     SoundManager.playSounds = !SoundManager.playSounds;
-    if(SoundManager.playSounds){
+    if(SoundManager.playSounds && gameData.gamerData.isMusicOn){
             // play
             if(SoundManager.backgroundMusicInstance === null){
                 SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
@@ -37,25 +39,25 @@ SoundManager.startSounds = function(){
 };
 
 SoundManager.playBounce = function(){
-    if(SoundManager.playSounds){
+    if(SoundManager.playSounds && gameData.gamerData.isFxOn){
         createjs.Sound.play("bounce_sound");
     }
 };
 
 SoundManager.playGameOver = function(){
-    if(SoundManager.playSounds){
+    if(SoundManager.playSounds && gameData.gamerData.isFxOn){
         createjs.Sound.play("gameover_sound");
     }
 };
 
 SoundManager.playSuccess = function(){
-    if(SoundManager.playSounds){
+    if(SoundManager.playSounds && gameData.gamerData.isFxOn){
         createjs.Sound.play("success_sound");
     }
 };
 
 SoundManager.playCoinCatched = function(){
-    if(SoundManager.playSounds){
+    if(SoundManager.playSounds && gameData.gamerData.isFxOn){
         createjs.Sound.play("coin_sound");
     }
 };

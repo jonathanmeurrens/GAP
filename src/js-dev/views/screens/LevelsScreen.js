@@ -6,27 +6,25 @@
  * To change this template use File | Settings | File Templates.
  */
 
+/* globals gameData:true  */
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
 /* globals LevelNest:true  */
+/* globals preload:true  */
 
 var LevelsScreen = (function(){
 
     var self;
 
-    function LevelsScreen(gameData){
+    function LevelsScreen(){
 
         self = this;
 
-        this.gameData = gameData;
         this.view = new createjs.Container();
 
-        var colorPanel = new createjs.Shape();
-        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
-        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
-        colorPanel.alpha = 0.5;
-        this.view.addChild(colorPanel);
+        var background = new createjs.Bitmap(preload.getResult('assets/common/bg.png'));
+        this.view.addChild(background);
 
         $("body").on("keydown",function(e){
             if(e.which === 49){ //1
@@ -48,10 +46,19 @@ var LevelsScreen = (function(){
                 levelSelected(4);
             }
             else if(e.which === 55){ //5
-                levelSelected(4);
+                levelSelected(5);
             }
             else if(e.which === 56){ //5
-                levelSelected(4);
+                levelSelected(6);
+            }
+            else if(e.which === 57){ //5
+                levelSelected(7);
+            }
+            else if(e.which === 58){ //5
+                levelSelected(8);
+            }
+            else if(e.which === 59){ //5
+                levelSelected(9);
             }
         });
 
@@ -70,20 +77,24 @@ var LevelsScreen = (function(){
 
         var yPos = 0;
         var xPos = 0;
-        for(var i=0; i < this.gameData.getLevelCount(); i++){
-            var nest = new LevelNest(i,this.gameData.gamerData.levels[i],true);
+        for(var i=0; i < gameData.getLevelCount(); i++){
+            var locked = true;
+            if(i <= gameData.gamerData.levels.length)
+            {
+                locked = false;
+            }
+            var nest = new LevelNest(i,gameData.gamerData.levels[i],!locked);
             nest.view.x = xPos;
             nest.view.y = yPos;
-            //console.log(i,(i%3));
-            xPos += 120;
+            xPos += 140;
             if(i%3 >= 2){
-                yPos+=100;
+                yPos+=110;
                 xPos = 0;
             }
             levelsContainer.addChild(nest.view);
         }
-        levelsContainer.x = 330;
-        levelsContainer.y = 170;
+        levelsContainer.x = 314;
+        levelsContainer.y = 130;
     }
 
     return LevelsScreen;

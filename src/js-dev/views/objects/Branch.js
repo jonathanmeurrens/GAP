@@ -1,11 +1,10 @@
 /**
  * Created with JetBrains PhpStorm.
  * User: Jonathan
- * Date: 27/11/13
- * Time: 22:03
+ * Date: 21/11/13
+ * Time: 14:39
  * To change this template use File | Settings | File Templates.
  */
-
 /* globals preload:true  */
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -13,9 +12,9 @@
 /* globals createjs:true  */
 /* globals box2d:true  */
 
-var Tornado = (function(){
+var Branch = (function(){
 
-    function Tornado(url, x, y, width, height){
+    function Branch(url, x, y, width, height){
 
         this.x = x;
         this.y = y;
@@ -23,39 +22,35 @@ var Tornado = (function(){
         this.height = height;
 
         this.view = new createjs.Bitmap(preload.getResult(url));
-
-
-        console.log("[Tornado] pos", this.x, this.y);
+        this.view.regX = this.width/2;
+        this.view.regY = this.height;
 
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
         fixDef.friction = 0.5;
-        fixDef.restitution = 1;
-        fixDef.isSensor = true;
+        fixDef.restitution = 0.1;
+
         var bodyDef = new box2d.b2BodyDef();
         bodyDef.type = box2d.b2Body.b2_staticBody;
-        bodyDef.position.x = (parseInt(this.x)+350) / SCALE;
-        bodyDef.position.y = (parseInt(this.y)+340) / SCALE;
-        bodyDef.userData = "tornado";
+        bodyDef.position.x = this.x / SCALE;
+        bodyDef.position.y = this.y / SCALE;
+        bodyDef.userData = "branch";
 
         fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);
-        fixDef.userData = "tornado";
+        fixDef.shape.SetAsBox(this.width / SCALE, (this.height - 20) / SCALE);
+        fixDef.userData = "branch";
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
-        this.view.x = x;
-        this.view.y = y;
-
-        //this.updateView();
+        this.updateView();
     }
 
-    Tornado.prototype.updateView = function(){
-       /* this.view.x = this.view.body.GetPosition().x * SCALE;
+    Branch.prototype.updateView = function(){
+        this.view.x = this.view.body.GetPosition().x * SCALE - 56;
         this.view.y = this.view.body.GetPosition().y * SCALE;
-        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);*/
+        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
-    return Tornado;
+    return Branch;
 
 })();

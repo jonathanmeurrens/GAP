@@ -8,6 +8,7 @@
 
 /* globals stage:true  */
 /* globals createjs:true  */
+/* globals preload:true  */
 
 var LevelNest = (function(){
 
@@ -22,11 +23,14 @@ var LevelNest = (function(){
 
         this.levelIndex = levelIndex;
         this.starsCount = starsCount;
-        this.isPlayable = isPlayable;
 
         this.view = new createjs.Container();
 
-        var nest = new createjs.Bitmap("assets/common/nest.png");
+        var url = "assets/common/nest-available.png";
+        if(!isPlayable){
+            url = "assets/common/nest-locked.png";
+        }
+        var nest = new createjs.Bitmap(preload.getResult(url));
         this.view.addChild(nest);
         nest.y = 25;
 
@@ -36,8 +40,10 @@ var LevelNest = (function(){
             stars.x = 12;
         }
 
-        this.view.cursor = 'pointer';
-        this.view.addEventListener("click", $.proxy( clickHandler, this ));
+        if(isPlayable){
+            this.view.cursor = 'pointer';
+            this.view.addEventListener("click", $.proxy( clickHandler, this ));
+        }
     }
 
     function clickHandler(e){

@@ -13,7 +13,9 @@ var UserData = (function(){
         this.id = 2304958271;
 
         this.levels = [];
-        this.givenInstructions =[];
+        this.givenInstructions = [];
+        this.isMusicOn = true;
+        this.isFxOn = true;
     }
 
     return UserData;

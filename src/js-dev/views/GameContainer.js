@@ -23,6 +23,7 @@
 /* globals Balloon:true  */
 /* globals TimeCoin:true  */
 /* globals MiniTree:true  */
+/* globals Branch:true  */
 /* globals preload:true  */
 
 var GameContainer = (function(){
@@ -59,6 +60,9 @@ var GameContainer = (function(){
             this.spacebar_instruction.y = 300;
             this.view.addChild(this.spacebar_instruction);
             console.log("[GameContainer] showSpacebarInstruction");
+        }else{
+            this.removeSpacebarInstruction();
+            this.showSpacebarInstruction();
         }
     };
 
@@ -109,8 +113,8 @@ var GameContainer = (function(){
         this.nests.push(nest);
     };
 
-    GameContainer.prototype.createTornado = function(xPos, yPos){
-        var tornado = new Tornado(xPos, translateYPos(yPos), 150, 150);
+    GameContainer.prototype.createTornado = function(url, xPos, yPos){
+        var tornado = new Tornado(url, xPos, translateYPos(yPos), 120, 230);
         this.view.addChild(tornado.view);
         this.obstacles.push(tornado);
     };
@@ -151,7 +155,11 @@ var GameContainer = (function(){
         this.obstacles.push(miniTree);
     };
 
-
+    GameContainer.prototype.createBranch = function(url, xPos, yPos){
+        var branch = new Branch(url, xPos, translateYPos(yPos), 10, 135);
+        this.view.addChild(branch.view);
+        this.obstacles.push(branch);
+    };
 
     GameContainer.prototype.removeTimeCoinWithUserData = function(userData){
         for(var n=0; n < this.timeCoins.length; n++){

@@ -58,19 +58,19 @@ var ScreenManager = (function(){
         this.view.addChild(this.screen.view);
     };
 
-    ScreenManager.prototype.showOptionsScreen = function(gameData){
-        this.screen = new OptionsScreen(gameData);
+    ScreenManager.prototype.showOptionsScreen = function(gamerData){
+        this.screen = new OptionsScreen(gamerData);
         this.view.addChild(this.screen.view);
         this.screen.view.on(OptionsScreen.CANCEL, function(e){
             self.removeScreen();
         });
-        this.screen.view.on(OptionsScreen.SAVE, function(e){
+        /*this.screen.view.on(OptionsScreen.SAVE, function(e){
             self.removeScreen();
-        });
+        });*/
     };
 
-    ScreenManager.prototype.showLevelsScreen = function(gameData){
-        this.screen = new LevelsScreen(gameData);
+    ScreenManager.prototype.showLevelsScreen = function(){
+        this.screen = new LevelsScreen();
         this.view.addChild(this.screen.view);
         this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
             self.removeScreen();

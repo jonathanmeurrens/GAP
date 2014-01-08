@@ -32,9 +32,6 @@ var Nest = (function(){
         else{
             this.isStart = false;
         }
-        console.log(this.isStart);
-
-
 
         if(!isStart){
             var fixDef = new box2d.b2FixtureDef();
@@ -59,6 +56,10 @@ var Nest = (function(){
             fixDef.userData = "top-nest";
             this.view.body.CreateFixture(fixDef);
             this.updateView();
+        }
+        else{
+            this.view.x = this.x;
+            this.view.y = this.y;
         }
 
         //$(this.view).on('tick', $.proxy( tick, this ));

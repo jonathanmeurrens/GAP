@@ -91,6 +91,15 @@ var GameData = (function(){
         save();
     };
 
+    GameData.prototype.storeSettings = function(){
+        save();
+    };
+
+    GameData.prototype.resetStorage = function(){
+        localStorage.setItem("tjilp_game","");
+        localStorage.clear();
+    };
+
     function save(){
         localStorage.setItem("tjilp_game",JSON.stringify(self.gamerData));
     }

@@ -16,8 +16,9 @@
         <leaf x="240" y="150" rotation="0" restitution="1"></leaf>
         <leaf x="454" y="231" rotation="0" restitution="1"></leaf>
         <leaf x="685" y="308" rotation="0" restitution="1"></leaf>
+        <nest y="385" x="53" start="true"></nest>
         <nest y="298" x="914"></nest>
-        <nest y="298" x="914" start="true"></nest>
+        <branch img="assets/level2/miniboompje.png" x="300" y="400"></branch>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
         <background img="assets/level1/background.png"></background>
@@ -145,6 +146,7 @@
         <cloud x="675" y="386" img="assets/level8/wolkjes/wolk7.png"></cloud>
         <cloud x="962" y="516" img="assets/level8/wolkjes/wolk8.png"></cloud>
         <nest y="180" x="914"></nest>
+        <tornado y="680" x="314" img="assets/common/tornado.png"></tornado>
         <background img="assets/level7/background.png"></background>
         <background img="assets/level7/achterstuk.png"></background>
         <background img="assets/level7/voorstuk.png"></background>

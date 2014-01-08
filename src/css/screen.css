@@ -1,8 +1,4 @@
-/* Welcome to Compass.
- * In this file you should write your main styles. (or centralize your imports)
- * Import this file using the following HTML or equivalent:
- * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
-/* line 17, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/*reset*/
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -21,58 +17,13 @@ time, mark, audio, video {
   border: 0;
   font: inherit;
   font-size: 100%;
-  vertical-align: baseline;
-}
+  vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-html {
-  line-height: 1;
-}
-
-/* line 24, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-ol, ul {
-  list-style: none;
-}
-
-/* line 26, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-/* line 28, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-caption, th, td {
-  text-align: left;
-  font-weight: normal;
-  vertical-align: middle;
-}
-
-/* line 30, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-q, blockquote {
-  quotes: none;
-}
-/* line 103, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-q:before, q:after, blockquote:before, blockquote:after {
-  content: "";
-  content: none;
-}
-
-/* line 32, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-a img {
-  border: none;
-}
-
-/* line 116, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
-  display: block;
-}
-
-/* line 9, ../sass/screen.scss */
 body {
   font-size: 62.5%;
-}
+  background: url("../assets/interface/bg_gradient.png") repeat-x center center;
+  height: 1000px; }
 
-/* line 14, ../sass/screen.scss */
 #container {
   width: 1000px;
   height: 600px;
@@ -81,19 +32,46 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  margin: auto;
-}
+  margin: auto; }
 
-/* line 29, ../sass/screen.scss */
+#header {
+  background: url("../assets/interface/tjilp.png") no-repeat center center;
+  width: 524px;
+  height: 201px;
+  margin: auto; }
+
+#game {
+  border: 6px #D5EECB solid;
+  -webkit-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  -ms-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  -moz-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  -o-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  margin-top: 220px;
+  position: relative;
+  z-index: 1000; }
+
+#header {
+  background: url("../assets/interface/tjilp.png") no-repeat center center;
+  width: 524px;
+  height: 201px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 55px; }
+
+#footer {
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  z-index: 0;
+  background: url("../assets/interface/bg_bottom.png") no-repeat center bottom; }
+
 #debug {
   position: absolute;
   top: 0;
-  display: none;
-}
+  display: none; }
 
-/* line 35, ../sass/screen.scss */
 #fb-login {
   position: absolute;
   top: 17px;
-  right: 0px;
-}
+  right: 0px; }

@@ -5,6 +5,9 @@
     <link href="css/screen.css" type="text/css" rel="stylesheet" media="all"/>
 </head>
 <body>
+
+    <div id="header"></div>
+
     <div id="container">
         <canvas id="game" width="1000" height="600">
             your browser does not support HTML5 Canvas. So no entertainment, sorry!
@@ -12,6 +15,14 @@
         <canvas id="debug" width="1000" height="600"></canvas>
         <div id="fb-root"></div>
     </div>
+
+    <div id="footer"></div>
+
+    <!--Default scroll spacebar-->
+    <script type="text/javascript">
+        window.onkeydown = function(e) {
+      return !(e.keyCode == 32);
+    };</script>
 
     <script type="text/javascript" src="js/vendor/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="js/vendor/easeljs-0.7.0.min.js"></script>

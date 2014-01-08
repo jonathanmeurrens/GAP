@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 01/12/13
- * Time: 21:59
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals preload:true  */
 /* globals SCALE:true  */
 

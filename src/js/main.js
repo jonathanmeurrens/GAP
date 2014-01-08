@@ -1,13 +1,5 @@
 (function(){
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 10:05
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals world:true  */
 /* globals createjs:true  */
@@ -61,7 +53,8 @@ var GameContainer = (function(){
             this.spacebar_instruction.x = 500;
             this.spacebar_instruction.y = 300;
             this.view.addChild(this.spacebar_instruction);
-            console.log("[GameContainer] showSpacebarInstruction");
+            this.spacebar_instruction.alpha = 0;
+            createjs.Tween.get(this.spacebar_instruction).to({alpha:1}, 400);
         }else{
             this.removeSpacebarInstruction();
             this.showSpacebarInstruction();
@@ -70,8 +63,11 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeSpacebarInstruction = function(){
         if(this.spacebar_instruction !== null){
-            this.view.removeChild(this.spacebar_instruction);
-            this.spacebar_instruction = null;
+            createjs.Tween.get(this.spacebar_instruction).to({alpha:0}, 400)
+                .call(function(){
+                    self.view.removeChild(self.spacebar_instruction);
+                    self.spacebar_instruction = null;
+                });
         }
     };
 
@@ -324,14 +320,6 @@ var GameContainer = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 09/12/13
- * Time: 21:21
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals createjs:true  */
 
@@ -358,14 +346,6 @@ var Background = (function(){
     return Background;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 18/12/13
- * Time: 21:05
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -466,20 +446,13 @@ var Balloon = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:18
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals SCALE:true  */
 /* globals world:true  */
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
 /* globals Twirl:true  */
+/* globals gameData:true  */
 
 var Bird = (function(){
 
@@ -546,6 +519,11 @@ var Bird = (function(){
     }
 
     function tick(e){
+
+        if(gameData.pauseGame){
+            return;
+        }
+
         this.view.x = this.view.body.GetPosition().x * SCALE;
         this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
@@ -657,13 +635,6 @@ var Bird = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 21/11/13
- * Time: 14:39
- * To change this template use File | Settings | File Templates.
- */
 /* globals preload:true  */
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -713,14 +684,6 @@ var Branch = (function(){
     return Branch;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 26/12/13
- * Time: 14:14
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -815,14 +778,6 @@ Button.START_GAME = "START_GAME";
 Button.OPTIONS = "OPTIONS";
 Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 01/12/13
- * Time: 21:59
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -965,14 +920,6 @@ var Cloud = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 18/12/13
- * Time: 20:38
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals preload:true  */
 /* globals SCALE:true  */
 
@@ -980,6 +927,7 @@ var Cloud = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
+/* globals gameData:true  */
 
 var EnemyBird = (function(){
 
@@ -989,10 +937,6 @@ var EnemyBird = (function(){
         this.y = y;
         this.width = 46;
         this.height = 32;
-
-      /*  this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
-        this.view.regX = this.width/2;
-        this.view.regY = this.height/2;*/
 
         this.view = new createjs.Container();
         var data = {
@@ -1039,6 +983,9 @@ var EnemyBird = (function(){
     }
 
     function tick(e){
+        if(gameData.pauseGame){
+            return;
+        }
         this.updateView();
     }
 
@@ -1048,23 +995,9 @@ var EnemyBird = (function(){
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
-    }
-
     return EnemyBird;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:18
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -1113,14 +1046,6 @@ var Ground = (function(){
     return Ground;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:49
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -1277,13 +1202,6 @@ var Leaf = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 21/11/13
- * Time: 14:39
- * To change this template use File | Settings | File Templates.
- */
 /* globals preload:true  */
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -1334,13 +1252,6 @@ var MiniTree = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:49
- * To change this template use File | Settings | File Templates.
- */
 /* globals preload:true  */
 /* globals SCALE:true  */
 
@@ -1411,13 +1322,6 @@ var Nest = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 21/11/13
- * Time: 14:39
- * To change this template use File | Settings | File Templates.
- */
 /* globals preload:true  */
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -1476,14 +1380,6 @@ var Rock = (function(){
     return Rock;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/12/13
- * Time: 10:34
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -1557,14 +1453,6 @@ var TimeCoin = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 22:03
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals preload:true  */
 /* globals SCALE:true  */
 /* globals world:true  */
@@ -1619,14 +1507,6 @@ var Tornado = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 09/12/13
- * Time: 21:27
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals world:true  */
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -1654,14 +1534,6 @@ var Tree = (function(){
     return Tree;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 02/01/14
- * Time: 12:20
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -1705,14 +1577,6 @@ var Twirl = (function(){
 
 Twirl.LEFT_DIRECTION = "LEFT_DIRECTION";
 Twirl.RIGHT_DIRECTION = "RIGHT_DIRECTION";
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 18:58
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -1764,15 +1628,8 @@ var LevelNest = (function(){
     return LevelNest;
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:49
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
+/* globals gameData:true  */
 /* globals createjs:true  */
 /* globals SoundManager:true  */
 /* globals Button:true  */
@@ -1799,11 +1656,14 @@ var Statistics = (function(){
         this.timeCount = 0;
         this.maxTime = 59;
 
+        this.statsContainer = new createjs.Container();
+        this.view.addChild(this.statsContainer);
+
         var background = new createjs.Bitmap('assets/common/progressbar/bg.png');
         background.regX = 255/2;
         background.x = stage.canvas.width/2;
         background.y = 7;
-        this.view.addChild(background);
+        this.statsContainer.addChild(background);
 
         // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
@@ -1817,7 +1677,7 @@ var Statistics = (function(){
         };
         var levelsSpritesheet = new createjs.SpriteSheet(levelSprite_data);
         this.levelsSprite = new createjs.Sprite(levelsSpritesheet);
-        this.view.addChild(this.levelsSprite);
+        this.statsContainer.addChild(this.levelsSprite);
         this.levelsSprite.regX = 66/2;
         this.levelsSprite.x = stage.canvas.width/2;
         this.levelsSprite.y = 22;
@@ -1833,7 +1693,7 @@ var Statistics = (function(){
         };
         var progressSpritesheet = new createjs.SpriteSheet(progressSprite_data);
         this.progressSprite = new createjs.Sprite(progressSpritesheet);
-        this.view.addChild(this.progressSprite);
+        this.statsContainer.addChild(this.progressSprite);
         this.progressSprite.regX = 200/2;
         this.progressSprite.x = stage.canvas.width/2;
         this.progressSprite.y = 68;
@@ -1865,6 +1725,8 @@ var Statistics = (function(){
 
         updateStats();
         updateMuteBtnState();
+
+        this.statsContainer.y = -200;
     }
 
     function updateMuteBtnState(){
@@ -1903,6 +1765,7 @@ var Statistics = (function(){
     };
 
     Statistics.prototype.resetStats = function(){
+        this.statsContainer.y = -200;
         clearInterval(this.timer);
         this.timer = null;
         this.timeCount = this.maxTime;
@@ -1911,18 +1774,16 @@ var Statistics = (function(){
         updateTime();
     };
 
-    Statistics.prototype.getStars = function(){
-       /* if(self.bounces<0)
-        {
-            self.bounces = 0;
-        }
-        var stars = (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
-        if(stars > 3){
-            stars = 3;
-        }else if(stars < 0){
-            stars = 0;
-        }*/
+    Statistics.prototype.showStats = function(){
+        this.statsContainer.y = -200;
+        createjs.Tween.get(this.statsContainer).to({y:0}, 700, createjs.Ease.cubicOut);
+    };
 
+    Statistics.prototype.hideStats = function(){
+        createjs.Tween.get(this.statsContainer).to({y:-200}, 700, createjs.Ease.cubicIn);
+    };
+
+    Statistics.prototype.getStars = function(){
         var stars = Math.round(this.timeCount / (this.maxTime - this.maxTime/15) * 3);
         console.log("[Statistics] stars:" + stars, this.timeCount, this.maxTime);
         return stars;
@@ -1955,6 +1816,10 @@ var Statistics = (function(){
 
     function updateTime(){
 
+        if(gameData.pauseGame){
+            return;
+        }
+
        self.progressSprite.gotoAndStop(Math.round((self.timeCount / self.maxTime)*67));
 
         var timeTxt = "time left: 00:";
@@ -1977,14 +1842,6 @@ var Statistics = (function(){
     return Statistics;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 26/11/13
- * Time: 19:31
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -2053,14 +1910,6 @@ var GameOverScreen = (function(){
     return GameOverScreen;
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 26/11/13
- * Time: 19:32
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
@@ -2119,14 +1968,6 @@ var InstructionsScreen = (function(){
 
     return InstructionsScreen;
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 18:00
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals gameData:true  */
 /* globals stage:true  */
@@ -2223,14 +2064,6 @@ var LevelsScreen = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 26/11/13
- * Time: 21:39
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
@@ -2324,14 +2157,6 @@ var NextLevelScreen = (function(){
 
     return NextLevelScreen;
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 20:21
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -2473,14 +2298,6 @@ var OptionsScreen = (function(){
     return OptionsScreen;
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 20:21
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
@@ -2549,14 +2366,6 @@ var StartScreen = (function(){
 
     return StartScreen;
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 09/12/13
- * Time: 22:44
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -2692,25 +2501,18 @@ var PreloadManager = (function(){
     }
 
     function removePreloader(){
-        self.removePreloaderTimeout = setTimeout(function(){
-            createjs.Tween.removeTweens(self.earth);
-            stage.removeChild(self.preloaderView);
+        createjs.Tween.removeTweens(self.earth);
+        stage.removeChild(self.preloaderView);
+       /* self.removePreloaderTimeout = setTimeout(function(){
+
             clearTimeout(self.removePreloaderTimeout);
             self.removePreloaderTimeout = null;
-        }, 1000);
+        }, 1000);*/
     }
 
     return PreloadManager;
 
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 26/11/13
- * Time: 19:48
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals stage:true  */
 /* globals createjs:true  */
@@ -2816,14 +2618,6 @@ var ScreenManager = (function(){
 })();
 
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 08/12/13
- * Time: 11:34
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals createjs:true  */
 /* globals gameData:true  */
 
@@ -2880,14 +2674,6 @@ SoundManager.playCoinCatched = function(){
     }
 };
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 21/11/13
- * Time: 15:23
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals UserData:true  */
 
 var GameData = (function(){
@@ -2897,6 +2683,8 @@ var GameData = (function(){
     function GameData(xmlPath){
         self = this;
         this.xmlPath = xmlPath;
+
+        this.pauseGame = false;
 
         this.gamerData = this.getStoredGamerData();
         if(this.gamerData == null){
@@ -2990,14 +2778,6 @@ var GameData = (function(){
 
 })();
 
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 01/12/13
- * Time: 11:07
- * To change this template use File | Settings | File Templates.
- */
-
 var UserData = (function(){
 
     function UserData(){
@@ -3012,14 +2792,6 @@ var UserData = (function(){
 
     return UserData;
 })();
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 01/12/13
- * Time: 10:55
- * To change this template use File | Settings | File Templates.
- */
 
 /* globals FB:true  */
 
@@ -3101,7 +2873,7 @@ function publishScoreToFB(level, stars){
                 'I got '+ stars +' stars on level '+level
                 ),
             link: 'http://tjilp.be',
-            picture: 'http://www.baatsontwerp.nl/Styles/img/portfolio/illustraties/Tjilp/tjilp_web.jpg'
+            picture: 'http://jnthn.be/GAP/img/tjilp-score.png'
         },
         function(response) {
             if (response && response.post_id) {
@@ -3114,15 +2886,6 @@ function publishScoreToFB(level, stars){
         }
     );
 }
-
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 10:35
- * To change this template use File | Settings | File Templates.
- */
-
 
 /* globals Box2D:true  */
 /* globals createjs:true  */
@@ -3331,7 +3094,8 @@ var stage, world, debug, preload, gameData;
                 self.gameContainer.bird.fly();
             }
             else if(e.which === 80){
-                self.isPaused = !self.isPaused;
+                //self.isPaused = !self.isPaused;
+                gameData.pauseGame = !gameData.pauseGame;
             }
         });
         $(document).on("keyup", function(){
@@ -3495,6 +3259,7 @@ var stage, world, debug, preload, gameData;
         self.isPaused = false;
         self.collisionDetected = false;
         self.stats.resetStats();
+        self.stats.showStats();
         SoundManager.startSounds();
         self.gameContainer.showSpacebarInstruction();
     }
@@ -3506,6 +3271,7 @@ var stage, world, debug, preload, gameData;
             self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
             self.isPaused = true;
             self.gameContainer.bird.die();
+            self.stats.hideStats();
         }
     }
 
@@ -3517,6 +3283,7 @@ var stage, world, debug, preload, gameData;
             self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
             self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
             self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+            self.stats.hideStats();
         }
     }
 
@@ -3544,6 +3311,9 @@ var stage, world, debug, preload, gameData;
         }
         self.gameContainer.removeSpacebarInstruction();
         this.gameContainer.bird.push();
+        this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
+           showGameOverScreen();
+        });
         self.levelStarted = true;
     }
 
@@ -3558,9 +3328,12 @@ var stage, world, debug, preload, gameData;
 
     function tick(){
         stage.update();
-        world.DrawDebugData();
-        world.Step(1/60, 10, 10);
-        world.ClearForces();
+
+        if(!gameData.pauseGame){
+            world.DrawDebugData();
+            world.Step(1/60, 10, 10);
+            world.ClearForces();
+        }
     }
 
     init();

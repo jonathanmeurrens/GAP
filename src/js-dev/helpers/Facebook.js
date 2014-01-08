@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 01/12/13
- * Time: 10:55
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals FB:true  */
 
 window.fbAsyncInit = function() {
@@ -86,7 +78,7 @@ function publishScoreToFB(level, stars){
                 'I got '+ stars +' stars on level '+level
                 ),
             link: 'http://tjilp.be',
-            picture: 'http://www.baatsontwerp.nl/Styles/img/portfolio/illustraties/Tjilp/tjilp_web.jpg'
+            picture: 'http://jnthn.be/GAP/img/tjilp-score.png'
         },
         function(response) {
             if (response && response.post_id) {

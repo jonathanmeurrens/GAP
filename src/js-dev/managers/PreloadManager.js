@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 09/12/13
- * Time: 22:44
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals preload:true  */
@@ -140,12 +132,13 @@ var PreloadManager = (function(){
     }
 
     function removePreloader(){
-        self.removePreloaderTimeout = setTimeout(function(){
-            createjs.Tween.removeTweens(self.earth);
-            stage.removeChild(self.preloaderView);
+        createjs.Tween.removeTweens(self.earth);
+        stage.removeChild(self.preloaderView);
+       /* self.removePreloaderTimeout = setTimeout(function(){
+
             clearTimeout(self.removePreloaderTimeout);
             self.removePreloaderTimeout = null;
-        }, 1000);
+        }, 1000);*/
     }
 
     return PreloadManager;

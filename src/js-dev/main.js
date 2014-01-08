@@ -1,12 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 10:35
- * To change this template use File | Settings | File Templates.
- */
-
-
 /* globals Box2D:true  */
 /* globals createjs:true  */
 /* globals GameData:true  */
@@ -214,7 +205,8 @@ var stage, world, debug, preload, gameData;
                 self.gameContainer.bird.fly();
             }
             else if(e.which === 80){
-                self.isPaused = !self.isPaused;
+                //self.isPaused = !self.isPaused;
+                gameData.pauseGame = !gameData.pauseGame;
             }
         });
         $(document).on("keyup", function(){
@@ -378,6 +370,7 @@ var stage, world, debug, preload, gameData;
         self.isPaused = false;
         self.collisionDetected = false;
         self.stats.resetStats();
+        self.stats.showStats();
         SoundManager.startSounds();
         self.gameContainer.showSpacebarInstruction();
     }
@@ -389,6 +382,7 @@ var stage, world, debug, preload, gameData;
             self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
             self.isPaused = true;
             self.gameContainer.bird.die();
+            self.stats.hideStats();
         }
     }
 
@@ -400,6 +394,7 @@ var stage, world, debug, preload, gameData;
             self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
             self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
             self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+            self.stats.hideStats();
         }
     }
 
@@ -427,6 +422,9 @@ var stage, world, debug, preload, gameData;
         }
         self.gameContainer.removeSpacebarInstruction();
         this.gameContainer.bird.push();
+        this.gameContainer.bird.view.addEventListener(Bird.DIED, function(){
+           showGameOverScreen();
+        });
         self.levelStarted = true;
     }
 
@@ -441,9 +439,12 @@ var stage, world, debug, preload, gameData;
 
     function tick(){
         stage.update();
-        world.DrawDebugData();
-        world.Step(1/60, 10, 10);
-        world.ClearForces();
+
+        if(!gameData.pauseGame){
+            world.DrawDebugData();
+            world.Step(1/60, 10, 10);
+            world.ClearForces();
+        }
     }
 
     init();

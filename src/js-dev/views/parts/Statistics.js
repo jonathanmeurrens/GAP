@@ -93,6 +93,16 @@ var Statistics = (function(){
             self.view.dispatchEvent(event);
         });
 
+
+        // PAUZE BTN
+        var pauzeBtn = new Button(Button.PAUSE);
+        pauzeBtn.view.x = 150;
+        pauzeBtn.view.y = 74;
+        this.view.addChild(pauzeBtn.view);
+        pauzeBtn.view.addEventListener("click", function(e){
+            gameData.pauseGame = true;
+        });
+
         updateStats();
         updateMuteBtnState();
 

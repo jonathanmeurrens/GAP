@@ -741,6 +741,10 @@ var Button = (function(){
             this.width = 68;
             this.height = 41;
         }
+        else if(button_type === Button.PAUSE){
+            this.width = 68;
+            this.height = 41;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
@@ -778,6 +782,7 @@ Button.START_GAME = "START_GAME";
 Button.OPTIONS = "OPTIONS";
 Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
+Button.PAUSE = "PAUSE";
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -1721,6 +1726,16 @@ var Statistics = (function(){
         levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
             self.view.dispatchEvent(event);
+        });
+
+
+        // PAUZE BTN
+        var pauzeBtn = new Button(Button.PAUSE);
+        pauzeBtn.view.x = 150;
+        pauzeBtn.view.y = 74;
+        this.view.addChild(pauzeBtn.view);
+        pauzeBtn.view.addEventListener("click", function(e){
+            gameData.pauseGame = true;
         });
 
         updateStats();

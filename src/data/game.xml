@@ -1,6 +1,7 @@
 <?xml version= "1.0"?>
 
         <!-- <branch img="assets/level2/miniboompje.png" x="300" y="400"></branch> -->
+        <!-- <tornado y="680" x="314" img="assets/common/tornado.png"></tornado> -->
 
 <levels>
 
@@ -148,7 +149,6 @@
         <cloud x="675" y="386" img="assets/level8/wolkjes/wolk7.png"></cloud>
         <cloud x="962" y="516" img="assets/level8/wolkjes/wolk8.png"></cloud>
         <nest y="180" x="914"></nest>
-        <tornado y="680" x="314" img="assets/common/tornado.png"></tornado>
         <background img="assets/level7/background.png"></background>
         <background img="assets/level7/achterstuk.png"></background>
         <background img="assets/level7/voorstuk.png"></background>

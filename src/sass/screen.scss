@@ -43,9 +43,11 @@ body{
 
 #header{
   background: url('../assets/interface/tjilp.png') no-repeat center center;
-  width: 524px;
-  height: 201px;
-  margin: auto;
+  width: 295px;
+  height: 113px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 85px;
 }
 
 #game {
@@ -56,17 +58,8 @@ body{
   -o-box-shadow: 0 0 40px 5px rgba(0,0,0,.21);
   box-shadow: 0 0 40px 5px rgba(0,0,0,.21);
   position: relative;
-  margin-top:100px;
+  margin-top: 100px;
   z-index: 1000;
-}
-
-#header {
-  background: url("../assets/interface/tjilp.png") no-repeat center center;
-  width: 524px;
-  height: 201px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 55px;
 }
 
 #footer{
@@ -75,6 +68,18 @@ body{
   position: absolute;
   z-index: 0;
   background: url('../assets/interface/bg_bottom.png') no-repeat center bottom;
+  background-size: cover;
+}
+
+#madeby{
+  background: url('../assets/interface/credits.png') no-repeat center bottom;
+  background-size: cover;
+  width: 456px;
+  height: 167px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 730px;
+
 }
 
 #debug{

@@ -39,6 +39,7 @@
         <miniTree img="assets/level2/miniboompje.png" x="750"></miniTree>
         <!--<rock x="360" y="100"></rock>
         <rock x="600" y="40"></rock>-->
+        <nest y="490" x="108" start="true"></nest>
         <nest y="300" x="914"></nest>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
@@ -51,6 +52,7 @@
         <leaf x="500" y="130" rotation="15" restitution="1"></leaf>
         <leaf x="700" y="260" rotation="0" restitution="1.2"></leaf>
         <miniTree img="assets/level2/miniboompje.png" x="350"></miniTree>
+        <nest y="485" x="108" start="true"></nest>
         <nest y="300" x="914"></nest>
         <ground img="assets/level3/ground.png" height="162"></ground>
         <background img="assets/level3/achterstuk.png"></background>
@@ -59,16 +61,14 @@
         <instructions>
             <instruction img="assets/level4/instruction-4.1.png"/>
         </instructions>
-        <egg maxRotations="100" evolution="1" x="40" y="500"></egg>
+        <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <tree img="assets/level4/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level4/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
         <leaf x="200" y="30" rotation="0" restitution="0.84"></leaf>
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
-        <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
-        <!--<enemyBird x="30" y="400" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>-->
         <rock x="500" y="159" img="assets/common/rock.png" width="475" height="358"></rock>
+        <nest y="485" x="108" start="true"></nest>
         <nest y="80" x="914"></nest>
-        <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level4/background.png"></background>
     </level>
     <level time="40">

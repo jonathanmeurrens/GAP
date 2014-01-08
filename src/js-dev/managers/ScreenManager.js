@@ -59,10 +59,12 @@ var ScreenManager = (function(){
     };
 
     ScreenManager.prototype.showOptionsScreen = function(gamerData){
+        self.removeScreen();
         this.screen = new OptionsScreen(gamerData);
         this.view.addChild(this.screen.view);
         this.screen.view.on(OptionsScreen.CANCEL, function(e){
             self.removeScreen();
+            self.showScreen(ScreenManager.START);
         });
         /*this.screen.view.on(OptionsScreen.SAVE, function(e){
             self.removeScreen();

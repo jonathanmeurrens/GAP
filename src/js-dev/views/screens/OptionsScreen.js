@@ -53,8 +53,12 @@ var OptionsScreen = (function(){
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
         this.view.addChild(this.muteBtnSprite);
-        this.muteBtnSprite.x = 535;
-        this.muteBtnSprite.y = 250;
+        this.muteBtnSprite.x = 625;
+        this.muteBtnSprite.y = 287;
+        this.muteBtnSprite.regX = 184/2;
+        this.muteBtnSprite.regY = 53/2;
+        this.muteBtnSprite.scaleX = 0.7;
+        this.muteBtnSprite.scaleY = 0.7;
         this.muteBtnSprite.cursor = 'pointer';
         this.muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isMusicOn = !gameData.gamerData.isMusicOn;
@@ -62,19 +66,30 @@ var OptionsScreen = (function(){
             var event = new createjs.Event(OptionsScreen.SAVE, true);
             self.view.dispatchEvent(event);
         });
+        createjs.Tween.get(this.muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
+        this.muteBtnSprite.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
+        });
+        this.muteBtnSprite.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
 
 
         // FX MUTE
         var fx_mute_data = {
             images: ["assets/common/buttons/soundfx_spritesheet.png"],
-            frames: {width:202, height:54},
+            frames: {width:202.5, height:54},
             animations: {on:[1], mute:[0]}
         };
         var fx_muteBtnspritesheet = new createjs.SpriteSheet(fx_mute_data);
         this.fx_muteBtnSprite = new createjs.Sprite(fx_muteBtnspritesheet);
         this.view.addChild(this.fx_muteBtnSprite);
-        this.fx_muteBtnSprite.x = 525;
-        this.fx_muteBtnSprite.y = 320;
+        this.fx_muteBtnSprite.x = 625;
+        this.fx_muteBtnSprite.y = 355;
+        this.fx_muteBtnSprite.regX = 202/2;
+        this.fx_muteBtnSprite.regY = 54/2;
+        this.fx_muteBtnSprite.scaleX = 0.7;
+        this.fx_muteBtnSprite.scaleY = 0.7;
         this.fx_muteBtnSprite.cursor = 'pointer';
         this.fx_muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isFxOn = !gameData.gamerData.isFxOn;
@@ -82,15 +97,32 @@ var OptionsScreen = (function(){
             var event = new createjs.Event(OptionsScreen.SAVE, true);
             self.view.dispatchEvent(event);
         });
+        createjs.Tween.get(this.fx_muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
+        this.fx_muteBtnSprite.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
+        });
+        this.fx_muteBtnSprite.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
 
 
         // RESET BTN
         var resetBtn = new Button(Button.RESET_LEVELS);
         this.view.addChild(resetBtn.view);
         resetBtn.view.x = 714;
-        resetBtn.view.y = 446;
+        resetBtn.view.y = 456;
         resetBtn.view.addEventListener("click", function(){
             var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);
+            self.view.dispatchEvent(event);
+        });
+
+        // BACK BTN
+        var backBtn = new Button(Button.BACK);
+        this.view.addChild(backBtn.view);
+        backBtn.view.x = 530;
+        backBtn.view.y = 235;
+        backBtn.view.addEventListener("click", function(){
+            var event = new createjs.Event(OptionsScreen.CANCEL, true);
             self.view.dispatchEvent(event);
         });
 

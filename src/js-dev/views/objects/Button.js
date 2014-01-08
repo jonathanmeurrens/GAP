@@ -58,6 +58,10 @@ var Button = (function(){
             this.width = 172;
             this.height = 54;
         }
+        else if(button_type === Button.BACK){
+            this.width = 68;
+            this.height = 41;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
@@ -94,3 +98,4 @@ Button.START = "START";
 Button.START_GAME = "START_GAME";
 Button.OPTIONS = "OPTIONS";
 Button.RESET_LEVELS = "RESET_LEVELS";
+Button.BACK = "BACK";

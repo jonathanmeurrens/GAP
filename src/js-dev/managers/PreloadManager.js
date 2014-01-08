@@ -77,6 +77,7 @@ var PreloadManager = (function(){
             {src:"assets/common/progressbar/levels_spritesheet.png"},
             {src:"assets/common/progressbar/bg.png"},
 
+            {src:"assets/common/buttons/back.png"},
             {src:"assets/common/buttons/facebook.png"},
             {src:"assets/common/buttons/next_level.png"},
             {src:"assets/common/buttons/play_again.png"},

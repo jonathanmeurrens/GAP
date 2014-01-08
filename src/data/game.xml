@@ -1,4 +1,7 @@
 <?xml version= "1.0"?>
+
+        <!-- <branch img="assets/level2/miniboompje.png" x="300" y="400"></branch> -->
+
 <levels>
 
     <level time="20">
@@ -18,7 +21,6 @@
         <leaf x="685" y="308" rotation="0" restitution="1"></leaf>
         <nest y="385" x="53" start="true"></nest>
         <nest y="298" x="914"></nest>
-        <branch img="assets/level2/miniboompje.png" x="300" y="400"></branch>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
         <background img="assets/level1/background.png"></background>

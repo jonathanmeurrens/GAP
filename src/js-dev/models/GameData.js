@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 21/11/13
- * Time: 15:23
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals UserData:true  */
 
 var GameData = (function(){
@@ -15,6 +7,8 @@ var GameData = (function(){
     function GameData(xmlPath){
         self = this;
         this.xmlPath = xmlPath;
+
+        this.pauseGame = false;
 
         this.gamerData = this.getStoredGamerData();
         if(this.gamerData == null){

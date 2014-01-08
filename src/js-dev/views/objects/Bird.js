@@ -1,17 +1,10 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:18
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals SCALE:true  */
 /* globals world:true  */
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
 /* globals Twirl:true  */
+/* globals gameData:true  */
 
 var Bird = (function(){
 
@@ -78,6 +71,11 @@ var Bird = (function(){
     }
 
     function tick(e){
+
+        if(gameData.pauseGame){
+            return;
+        }
+
         this.view.x = this.view.body.GetPosition().x * SCALE;
         this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);

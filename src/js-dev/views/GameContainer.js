@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 10:05
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
 /* globals world:true  */
 /* globals createjs:true  */
@@ -59,7 +51,8 @@ var GameContainer = (function(){
             this.spacebar_instruction.x = 500;
             this.spacebar_instruction.y = 300;
             this.view.addChild(this.spacebar_instruction);
-            console.log("[GameContainer] showSpacebarInstruction");
+            this.spacebar_instruction.alpha = 0;
+            createjs.Tween.get(this.spacebar_instruction).to({alpha:1}, 400);
         }else{
             this.removeSpacebarInstruction();
             this.showSpacebarInstruction();
@@ -68,8 +61,11 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeSpacebarInstruction = function(){
         if(this.spacebar_instruction !== null){
-            this.view.removeChild(this.spacebar_instruction);
-            this.spacebar_instruction = null;
+            createjs.Tween.get(this.spacebar_instruction).to({alpha:0}, 400)
+                .call(function(){
+                    self.view.removeChild(self.spacebar_instruction);
+                    self.spacebar_instruction = null;
+                });
         }
     };
 

@@ -132,7 +132,7 @@
     </level>
     <level time="40"> <!--Level 8-->
         <instructions>
-            <instruction img="assets/level7/instruction-8.1.png"/>
+            <instruction img="assets/level8/instruction-8.1.png"/>
         </instructions>
         <egg maxRotations="100" evolution="1" x="30" y="560"></egg>
         <leaf x="180" y="130" rotation="13" restitution="0.7"></leaf>
@@ -150,7 +150,6 @@
         <cloud x="962" y="516" img="assets/level8/wolkjes/wolk8.png"></cloud>
         <nest y="180" x="914"></nest>
         <background img="assets/level7/background.png"></background>
-        <background img="assets/level7/achterstuk.png"></background>
         <background img="assets/level7/voorstuk.png"></background>
     </level>
 </levels>

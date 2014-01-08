@@ -1,12 +1,5 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 05/11/13
- * Time: 14:49
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals stage:true  */
+/* globals gameData:true  */
 /* globals createjs:true  */
 /* globals SoundManager:true  */
 /* globals Button:true  */
@@ -33,11 +26,14 @@ var Statistics = (function(){
         this.timeCount = 0;
         this.maxTime = 59;
 
+        this.statsContainer = new createjs.Container();
+        this.view.addChild(this.statsContainer);
+
         var background = new createjs.Bitmap('assets/common/progressbar/bg.png');
         background.regX = 255/2;
         background.x = stage.canvas.width/2;
         background.y = 7;
-        this.view.addChild(background);
+        this.statsContainer.addChild(background);
 
         // LEVEL IND
         this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
@@ -51,7 +47,7 @@ var Statistics = (function(){
         };
         var levelsSpritesheet = new createjs.SpriteSheet(levelSprite_data);
         this.levelsSprite = new createjs.Sprite(levelsSpritesheet);
-        this.view.addChild(this.levelsSprite);
+        this.statsContainer.addChild(this.levelsSprite);
         this.levelsSprite.regX = 66/2;
         this.levelsSprite.x = stage.canvas.width/2;
         this.levelsSprite.y = 22;
@@ -67,7 +63,7 @@ var Statistics = (function(){
         };
         var progressSpritesheet = new createjs.SpriteSheet(progressSprite_data);
         this.progressSprite = new createjs.Sprite(progressSpritesheet);
-        this.view.addChild(this.progressSprite);
+        this.statsContainer.addChild(this.progressSprite);
         this.progressSprite.regX = 200/2;
         this.progressSprite.x = stage.canvas.width/2;
         this.progressSprite.y = 68;
@@ -99,6 +95,8 @@ var Statistics = (function(){
 
         updateStats();
         updateMuteBtnState();
+
+        this.statsContainer.y = -200;
     }
 
     function updateMuteBtnState(){
@@ -137,6 +135,7 @@ var Statistics = (function(){
     };
 
     Statistics.prototype.resetStats = function(){
+        this.statsContainer.y = -200;
         clearInterval(this.timer);
         this.timer = null;
         this.timeCount = this.maxTime;
@@ -145,18 +144,16 @@ var Statistics = (function(){
         updateTime();
     };
 
-    Statistics.prototype.getStars = function(){
-       /* if(self.bounces<0)
-        {
-            self.bounces = 0;
-        }
-        var stars = (Math.round((self.leafsCount - self.bounces) / self.leafsCount)*3);
-        if(stars > 3){
-            stars = 3;
-        }else if(stars < 0){
-            stars = 0;
-        }*/
+    Statistics.prototype.showStats = function(){
+        this.statsContainer.y = -200;
+        createjs.Tween.get(this.statsContainer).to({y:0}, 700, createjs.Ease.cubicOut);
+    };
 
+    Statistics.prototype.hideStats = function(){
+        createjs.Tween.get(this.statsContainer).to({y:-200}, 700, createjs.Ease.cubicIn);
+    };
+
+    Statistics.prototype.getStars = function(){
         var stars = Math.round(this.timeCount / (this.maxTime - this.maxTime/15) * 3);
         console.log("[Statistics] stars:" + stars, this.timeCount, this.maxTime);
         return stars;
@@ -188,6 +185,10 @@ var Statistics = (function(){
     }
 
     function updateTime(){
+
+        if(gameData.pauseGame){
+            return;
+        }
 
        self.progressSprite.gotoAndStop(Math.round((self.timeCount / self.maxTime)*67));
 

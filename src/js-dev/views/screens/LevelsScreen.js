@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 27/11/13
- * Time: 18:00
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals gameData:true  */
 /* globals stage:true  */
 /* globals createjs:true  */

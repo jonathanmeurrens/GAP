@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: Jonathan
- * Date: 18/12/13
- * Time: 20:38
- * To change this template use File | Settings | File Templates.
- */
-
 /* globals preload:true  */
 /* globals SCALE:true  */
 
@@ -13,6 +5,7 @@
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals box2d:true  */
+/* globals gameData:true  */
 
 var EnemyBird = (function(){
 
@@ -22,10 +15,6 @@ var EnemyBird = (function(){
         this.y = y;
         this.width = 46;
         this.height = 32;
-
-      /*  this.view = new createjs.Bitmap(preload.getResult("enemyBird"));
-        this.view.regX = this.width/2;
-        this.view.regY = this.height/2;*/
 
         this.view = new createjs.Container();
         var data = {
@@ -72,6 +61,9 @@ var EnemyBird = (function(){
     }
 
     function tick(e){
+        if(gameData.pauseGame){
+            return;
+        }
         this.updateView();
     }
 
@@ -80,12 +72,6 @@ var EnemyBird = (function(){
         this.view.y = this.view.body.GetPosition().y * SCALE;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
-
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
-    }
 
     return EnemyBird;
 

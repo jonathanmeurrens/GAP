@@ -69,13 +69,6 @@ var PauseScreen = (function(){
             var event = new createjs.Event(PauseScreen.LEVELS, true);
             self.view.dispatchEvent(event);
         });
-
-        document.addEventListener("keydown", function(e){
-            if(e.which === 13){
-                var event = new createjs.Event(PauseScreen.RESUME, true);
-                self.view.dispatchEvent(event);
-            }
-        });
     }
 
     return PauseScreen;

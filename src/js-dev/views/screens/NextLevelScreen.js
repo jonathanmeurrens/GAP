@@ -76,13 +76,6 @@ var NextLevelScreen = (function(){
         this.container.addChild(levelNest.view);
         levelNest.view.x = 125;
         levelNest.view.y = 20;
-
-        document.addEventListener("keydown", function(e){
-            if(e.which === 13){
-                var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
-                self.view.dispatchEvent(event);
-            }
-        });
     }
 
     function postOnFbHandler(e){

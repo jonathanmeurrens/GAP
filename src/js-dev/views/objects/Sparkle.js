@@ -86,7 +86,7 @@ var Sparkle = (function(){
         if(sparkle.amount >= sparkle.maxAmount && sparkle.view != null){
             clearInterval(sparkle.interval);
             sparkle.interval = null;
-            //sparkle.view.parent.removeChild(sparkle.view);
+            sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 

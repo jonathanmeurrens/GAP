@@ -1482,7 +1482,7 @@ var Sparkle = (function(){
         if(sparkle.amount >= sparkle.maxAmount && sparkle.view != null){
             clearInterval(sparkle.interval);
             sparkle.interval = null;
-            //sparkle.view.parent.removeChild(sparkle.view);
+            sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 
@@ -2005,18 +2005,9 @@ var GameOverScreen = (function(){
         var background = new createjs.Bitmap(preload.getResult("failed-background"));
         this.container.addChild(background);
 
-        // FACEBOOK
-       /* var facebookBtn = new Button(Button.FACEBOOK);
-        facebookBtn.view.x = 260;
-        facebookBtn.view.y = 50;
-        facebookBtn.view.y = facebookBtn.view.y;
-        this.container.addChild(facebookBtn.view);
-        facebookBtn.view.on("click", postOnFbHandler);*/
-
-
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 140;
+        playAgainBtn.view.x = 305;
         playAgainBtn.view.y = this.height + 21;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
@@ -2026,22 +2017,13 @@ var GameOverScreen = (function(){
 
         // MENU BTN
         var menuBtn = new Button(Button.LEVELS);
-        menuBtn.view.x = 305;
+        menuBtn.view.x = 140;
         menuBtn.view.y = this.height + 21;
         this.container.addChild(menuBtn.view);
         menuBtn.view.on("click", function(){
             var event = new createjs.Event(GameOverScreen.MENU, true);
             self.view.dispatchEvent(event);
         });
-
-
-        document.addEventListener("keydown", function(e){
-            if(e.which === 13){
-                var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
-                self.view.dispatchEvent(event);
-            }
-        });
-
     }
 
     return GameOverScreen;
@@ -2292,13 +2274,6 @@ var NextLevelScreen = (function(){
         this.container.addChild(levelNest.view);
         levelNest.view.x = 125;
         levelNest.view.y = 20;
-
-        document.addEventListener("keydown", function(e){
-            if(e.which === 13){
-                var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
-                self.view.dispatchEvent(event);
-            }
-        });
     }
 
     function postOnFbHandler(e){
@@ -2538,13 +2513,6 @@ var PauseScreen = (function(){
         menuBtn.view.on("click", function(){
             var event = new createjs.Event(PauseScreen.LEVELS, true);
             self.view.dispatchEvent(event);
-        });
-
-        document.addEventListener("keydown", function(e){
-            if(e.which === 13){
-                var event = new createjs.Event(PauseScreen.RESUME, true);
-                self.view.dispatchEvent(event);
-            }
         });
     }
 

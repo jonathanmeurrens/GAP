@@ -2407,16 +2407,36 @@ var OptionsScreen = (function(){
             createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
         });
 
-
-        // RESET BTN
-        var resetBtn = new Button(Button.RESET_LEVELS);
-        this.view.addChild(resetBtn.view);
-        resetBtn.view.x = 730;
-        resetBtn.view.y = 456;
-        resetBtn.view.addEventListener("click", function(){
+        // FX MUTE
+        var reset_data = {
+            images: ["assets/common/buttons/reset_levels.png"],
+            frames: {width:324/2, height:48},
+            animations: {default:[0], done:[1]}
+        };
+        var resetBtnspritesheet = new createjs.SpriteSheet(reset_data);
+        this.resetBtnSprite = new createjs.Sprite(resetBtnspritesheet);
+        this.view.addChild(this.resetBtnSprite);
+        this.resetBtnSprite.regX = 160/2;
+        this.resetBtnSprite.regY = 24/2;
+        this.resetBtnSprite.scaleX = 0.7;
+        this.resetBtnSprite.scaleY = 0.7;
+        this.resetBtnSprite.x = 648;
+        this.resetBtnSprite.y = 415;
+        this.resetBtnSprite.cursor = 'pointer';
+        this.resetBtnSprite.addEventListener("click", function(e){
             var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);
             self.view.dispatchEvent(event);
+            self.resetBtnSprite.gotoAndStop("done");
         });
+        createjs.Tween.get(this.resetBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
+        this.resetBtnSprite.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
+        });
+        this.resetBtnSprite.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
+
+
 
         // BACK BTN
         var backBtn = new Button(Button.BACK);

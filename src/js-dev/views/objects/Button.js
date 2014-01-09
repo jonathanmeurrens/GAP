@@ -62,6 +62,10 @@ var Button = (function(){
             this.width = 81;
             this.height = 67;
         }
+        else if(button_type === Button.PLAY_MORE){
+            this.width = 149;
+            this.height = 92;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
@@ -101,3 +105,4 @@ Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
 Button.PAUSE = "PAUSE";
 Button.RESUME = "RESUME";
+Button.PLAY_MORE = "PLAY_MORE";

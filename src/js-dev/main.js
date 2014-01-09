@@ -13,6 +13,7 @@
 /* globals GameOverScreen:true  */
 /* globals PauseScreen:true  */
 /* globals OptionsScreen:true  */
+/* globals EndScreen:true  */
 /* globals Bird:true  */
 
 
@@ -178,6 +179,8 @@ var stage, world, debug, preload, gameData;
 
         $(document).on("keydown",function(e){
 
+            //console.log(e.which);
+
             if(e.which >= 37 && e.which <= 39){
                self.keypressCount++;
                 if(self.keypressCount > 3){
@@ -194,8 +197,9 @@ var stage, world, debug, preload, gameData;
             else if(e.which === 37){
                 self.gameContainer.bird.moveLeft();
             }
-            else if(e.which === 38){
-                self.gameContainer.bird.fly();
+            else if(e.which === 69){
+                self.screenManager.showScreen(ScreenManager.END);
+                self.screenManager.view.addEventListener(EndScreen.MENU, showLevelsScreen);
             }
         });
         $(document).on("keyup", function(){
@@ -360,7 +364,6 @@ var stage, world, debug, preload, gameData;
     }
 
     function showInstructionsScreen(instructionsData){
-        console.log(instructionsData);
         self.isPaused = true;
         self.screenManager.showInstructionsScreen(instructionsData);
         self.screenManager.view.addEventListener(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
@@ -393,9 +396,9 @@ var stage, world, debug, preload, gameData;
 
     function showNextLevelScreen(){
         if(!self.isPaused){
-
             if(self.stats.level >= gameData.getLevelCount()-1){
                 self.screenManager.showScreen(ScreenManager.END);
+                self.screenManager.view.addEventListener(EndScreen.MENU, showLevelsScreen);
             }else{
                 SoundManager.playSuccess();
                 gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED

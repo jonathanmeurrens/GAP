@@ -752,6 +752,10 @@ var Button = (function(){
             this.width = 81;
             this.height = 67;
         }
+        else if(button_type === Button.PLAY_MORE){
+            this.width = 149;
+            this.height = 92;
+        }
 
         this.view.regX = this.width/2;
         this.view.regY = this.height/2;
@@ -791,6 +795,7 @@ Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
 Button.PAUSE = "PAUSE";
 Button.RESUME = "RESUME";
+Button.PLAY_MORE = "PLAY_MORE";
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -1944,7 +1949,7 @@ var EndScreen = (function(){
         self = this;
 
         // EVENT TYPES
-        EndScreen.PLAY_AGAIN = "PLAY_AGAIN";
+        EndScreen.MENU = "MENU";
 
         this.view = new createjs.Container();
 
@@ -1952,12 +1957,12 @@ var EndScreen = (function(){
         this.view.addChild(background);
 
         // PLAY AGAIN BTN
-        var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 143;
-        playAgainBtn.view.y = this.height + 24;
+        var playAgainBtn = new Button(Button.PLAY_MORE);
+        playAgainBtn.view.x = 925;
+        playAgainBtn.view.y = 120;
         this.view.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
-            var event = new createjs.Event(EndScreen.PLAY_AGAIN, true);
+            var event = new createjs.Event(EndScreen.MENU, true);
             self.view.dispatchEvent(event);
         });
     }
@@ -2663,6 +2668,7 @@ var PreloadManager = (function(){
             {src:"assets/common/progressbar/levels_spritesheet.png"},
             {src:"assets/common/progressbar/bg.png"},
 
+            {src:"assets/common/buttons/play_more.png"},
             {src:"assets/common/buttons/retry.png"},
             {src:"assets/common/buttons/resume.png"},
             {src:"assets/common/buttons/back.png"},
@@ -3112,6 +3118,7 @@ function publishScoreToFB(level, stars){
 /* globals GameOverScreen:true  */
 /* globals PauseScreen:true  */
 /* globals OptionsScreen:true  */
+/* globals EndScreen:true  */
 /* globals Bird:true  */
 
 
@@ -3277,6 +3284,8 @@ var stage, world, debug, preload, gameData;
 
         $(document).on("keydown",function(e){
 
+            //console.log(e.which);
+
             if(e.which >= 37 && e.which <= 39){
                self.keypressCount++;
                 if(self.keypressCount > 3){
@@ -3293,8 +3302,9 @@ var stage, world, debug, preload, gameData;
             else if(e.which === 37){
                 self.gameContainer.bird.moveLeft();
             }
-            else if(e.which === 38){
-                self.gameContainer.bird.fly();
+            else if(e.which === 69){
+                self.screenManager.showScreen(ScreenManager.END);
+                self.screenManager.view.addEventListener(EndScreen.MENU, showLevelsScreen);
             }
         });
         $(document).on("keyup", function(){
@@ -3459,7 +3469,6 @@ var stage, world, debug, preload, gameData;
     }
 
     function showInstructionsScreen(instructionsData){
-        console.log(instructionsData);
         self.isPaused = true;
         self.screenManager.showInstructionsScreen(instructionsData);
         self.screenManager.view.addEventListener(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
@@ -3492,9 +3501,9 @@ var stage, world, debug, preload, gameData;
 
     function showNextLevelScreen(){
         if(!self.isPaused){
-
             if(self.stats.level >= gameData.getLevelCount()-1){
                 self.screenManager.showScreen(ScreenManager.END);
+                self.screenManager.view.addEventListener(EndScreen.MENU, showLevelsScreen);
             }else{
                 SoundManager.playSuccess();
                 gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED

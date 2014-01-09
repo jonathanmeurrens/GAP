@@ -13,7 +13,7 @@ var EndScreen = (function(){
         self = this;
 
         // EVENT TYPES
-        EndScreen.PLAY_AGAIN = "PLAY_AGAIN";
+        EndScreen.MENU = "MENU";
 
         this.view = new createjs.Container();
 
@@ -21,12 +21,12 @@ var EndScreen = (function(){
         this.view.addChild(background);
 
         // PLAY AGAIN BTN
-        var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 143;
-        playAgainBtn.view.y = this.height + 24;
+        var playAgainBtn = new Button(Button.PLAY_MORE);
+        playAgainBtn.view.x = 925;
+        playAgainBtn.view.y = 120;
         this.view.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
-            var event = new createjs.Event(EndScreen.PLAY_AGAIN, true);
+            var event = new createjs.Event(EndScreen.MENU, true);
             self.view.dispatchEvent(event);
         });
     }

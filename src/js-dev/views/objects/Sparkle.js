@@ -8,8 +8,12 @@ var Sparkle = (function(){
 
     function Sparkle(xPos, yPos, type, maxAmount){
 
-        self = this;
+        if(self != null && self.interval != null){
+            clearInterval(self.interval);
+            self.interval = null;
+        }
 
+        self = this;
         this.view = new createjs.Container();
 
         this.width = 27;
@@ -19,8 +23,6 @@ var Sparkle = (function(){
         this.amount = 0;
         this.interval = null;
 
-        clearInterval(self.interval);
-        self.interval = null;
 
         if(type === Sparkle.TAIL){
             this.interval = setInterval(function(){
@@ -41,6 +43,7 @@ var Sparkle = (function(){
     }
 
     function tailAnimation(sparkle){
+        console.log("[Sparkle] tailAnimation");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -64,6 +67,7 @@ var Sparkle = (function(){
     }
 
     function circleAnimation(sparkle){
+        console.log("[Sparkle] circle");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -80,9 +84,9 @@ var Sparkle = (function(){
             });
 
         if(sparkle.amount >= sparkle.maxAmount && sparkle.view != null){
-            clearInterval(self.interval);
+            clearInterval(sparkle.interval);
             sparkle.interval = null;
-            sparkle.view.parent.removeChild(sparkle.view);
+            //sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 

@@ -68,7 +68,7 @@ var GameOverScreen = (function(){
         });
 
 
-        $("body").on("keydown", function(e){
+        document.addEventListener("keydown", function(e){
             if(e.which === 13){
                 var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
                 self.view.dispatchEvent(event);

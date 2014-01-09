@@ -1404,8 +1404,12 @@ var Sparkle = (function(){
 
     function Sparkle(xPos, yPos, type, maxAmount){
 
-        self = this;
+        if(self != null && self.interval != null){
+            clearInterval(self.interval);
+            self.interval = null;
+        }
 
+        self = this;
         this.view = new createjs.Container();
 
         this.width = 27;
@@ -1415,8 +1419,6 @@ var Sparkle = (function(){
         this.amount = 0;
         this.interval = null;
 
-        clearInterval(self.interval);
-        self.interval = null;
 
         if(type === Sparkle.TAIL){
             this.interval = setInterval(function(){
@@ -1437,6 +1439,7 @@ var Sparkle = (function(){
     }
 
     function tailAnimation(sparkle){
+        console.log("[Sparkle] tailAnimation");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -1460,6 +1463,7 @@ var Sparkle = (function(){
     }
 
     function circleAnimation(sparkle){
+        console.log("[Sparkle] circle");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -1476,9 +1480,9 @@ var Sparkle = (function(){
             });
 
         if(sparkle.amount >= sparkle.maxAmount && sparkle.view != null){
-            clearInterval(self.interval);
+            clearInterval(sparkle.interval);
             sparkle.interval = null;
-            sparkle.view.parent.removeChild(sparkle.view);
+            //sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 
@@ -2031,7 +2035,7 @@ var GameOverScreen = (function(){
         });
 
 
-        $("body").on("keydown", function(e){
+        document.addEventListener("keydown", function(e){
             if(e.which === 13){
                 var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
                 self.view.dispatchEvent(event);
@@ -2289,7 +2293,7 @@ var NextLevelScreen = (function(){
         levelNest.view.x = 125;
         levelNest.view.y = 20;
 
-        $("body").on("keydown", function(e){
+        document.addEventListener("keydown", function(e){
             if(e.which === 13){
                 var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
                 self.view.dispatchEvent(event);
@@ -2536,7 +2540,7 @@ var PauseScreen = (function(){
             self.view.dispatchEvent(event);
         });
 
-        $("body").on("keydown", function(e){
+        document.addEventListener("keydown", function(e){
             if(e.which === 13){
                 var event = new createjs.Event(PauseScreen.RESUME, true);
                 self.view.dispatchEvent(event);
@@ -3080,37 +3084,6 @@ window.fbAsyncInit = function() {
         cookie     : true, // enable cookies to allow the server to access the session
         xfbml      : true  // parse XFBML
     });
-
-
-// Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
-// for any authentication related change, such as login, logout or session refresh. This means that
-// whenever someone who was previously logged out tries to log in again, the correct case below
-// will be handled.
-/*FB.Event.subscribe('auth.authResponseChange', function(response) {
-    // Here we specify what we do with the response anytime this event occurs.
-    if (response.status === 'connected') {
-    // The response object is returned with a status field that lets the app know the current
-    // login status of the person. In this case, we're handling the situation where they
-    // have logged in to the app.
-    testAPI();
-    } else if (response.status === 'not_authorized') {
-    // In this case, the person is logged into Facebook, but not into the app, so we call
-    // FB.login() to prompt them to do so.
-    // In real-life usage, you wouldn't want to immediately prompt someone to login
-    // like this, for two reasons:
-    // (1) JavaScript created popup windows are blocked by most browsers unless they
-    // result from direct interaction from people using the app (such as a mouse click)
-    // (2) it is a bad experience to be continually prompted to login upon page load.
-    FB.login();
-    } else {
-    // In this case, the person is not logged into Facebook, so we call the login()
-    // function to prompt them to do so. Note that at this stage there is no indication
-    // of whether they are logged into the app. If they aren't then they'll see the Login
-    // dialog right after they log in to Facebook.
-    // The same caveats as above apply to the FB.login() call here.
-    FB.login();
-    }
-});*/
 };
 
 // Load the SDK asynchronously
@@ -3133,13 +3106,6 @@ function testAPI() {
 }
 
 function publishScoreToFB(level, stars){
-    /*FB.api('/me/feed', 'post',{
-       message:'Tjilp',
-       name: 'Post name',
-       description:'description'
-    }, function(data){
-        console.log(data);
-    });*/
     FB.ui(
         {
             method: 'stream.publish',
@@ -3155,10 +3121,8 @@ function publishScoreToFB(level, stars){
         },
         function(response) {
             if (response && response.post_id) {
-                //alert('Post was published.');
                 console.log('Post was published');
             } else {
-                //alert('Post was not published.');
                 console.log('Post NOT published');
             }
         }

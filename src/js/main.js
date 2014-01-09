@@ -2278,8 +2278,8 @@ var NextLevelScreen = (function(){
 
         // NEXT LEVEL
         var nextLevelBtn = new Button(Button.NEXT_LEVEL);
-        nextLevelBtn.view.x = 265;
-        nextLevelBtn.view.y = playAgainBtn.view.y + 10;
+        nextLevelBtn.view.x = 297;
+        nextLevelBtn.view.y = playAgainBtn.view.y + 8;
         this.container.addChild(nextLevelBtn.view);
         nextLevelBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);

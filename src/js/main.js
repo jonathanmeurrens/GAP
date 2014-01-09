@@ -2349,16 +2349,16 @@ var OptionsScreen = (function(){
         // MUSIC MUTE
         var mute_data = {
             images: ["assets/common/buttons/music_spritesheet.png"],
-            frames: {width:184, height:53},
+            frames: {width:449/2, height:43},
             animations: {on:[1], mute:[0]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
         this.view.addChild(this.muteBtnSprite);
-        this.muteBtnSprite.x = 625;
-        this.muteBtnSprite.y = 287;
+        this.muteBtnSprite.x = 614;
+        this.muteBtnSprite.y = 286;
         this.muteBtnSprite.regX = 184/2;
-        this.muteBtnSprite.regY = 53/2;
+        this.muteBtnSprite.regY = 54/2;
         this.muteBtnSprite.scaleX = 0.7;
         this.muteBtnSprite.scaleY = 0.7;
         this.muteBtnSprite.cursor = 'pointer';
@@ -2380,14 +2380,14 @@ var OptionsScreen = (function(){
         // FX MUTE
         var fx_mute_data = {
             images: ["assets/common/buttons/soundfx_spritesheet.png"],
-            frames: {width:202.5, height:54},
+            frames: {width:449/2, height:43},
             animations: {on:[1], mute:[0]}
         };
         var fx_muteBtnspritesheet = new createjs.SpriteSheet(fx_mute_data);
         this.fx_muteBtnSprite = new createjs.Sprite(fx_muteBtnspritesheet);
         this.view.addChild(this.fx_muteBtnSprite);
-        this.fx_muteBtnSprite.x = 625;
-        this.fx_muteBtnSprite.y = 355;
+        this.fx_muteBtnSprite.x = 650;
+        this.fx_muteBtnSprite.y = 354;
         this.fx_muteBtnSprite.regX = 202/2;
         this.fx_muteBtnSprite.regY = 54/2;
         this.fx_muteBtnSprite.scaleX = 0.7;
@@ -2411,7 +2411,7 @@ var OptionsScreen = (function(){
         // RESET BTN
         var resetBtn = new Button(Button.RESET_LEVELS);
         this.view.addChild(resetBtn.view);
-        resetBtn.view.x = 714;
+        resetBtn.view.x = 730;
         resetBtn.view.y = 456;
         resetBtn.view.addEventListener("click", function(){
             var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);

@@ -153,7 +153,7 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.createBranch = function(url, xPos, yPos){
-        var branch = new Branch(url, xPos, translateYPos(yPos), 23, 97);
+        var branch = new Branch(url, xPos, translateYPos(yPos), 10, 70);
         this.view.addChild(branch.view);
         this.obstacles.push(branch);
     };
@@ -527,8 +527,8 @@ var Bird = (function(){
             return;
         }
 
-        this.view.x = this.view.body.GetPosition().x * SCALE;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 3;
+        this.view.y = this.view.body.GetPosition().y * SCALE - 3;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
 
         if(!self.isDead && (this.view.x > stage.canvas.width || this.view.x < 0 || this.view.y > stage.canvas.height)){
@@ -679,8 +679,8 @@ var Branch = (function(){
     }
 
     Branch.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 56;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 9;
+        this.view.y = this.view.body.GetPosition().y * SCALE + 20;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 
@@ -1413,10 +1413,19 @@ var Sparkle = (function(){
         this.type = type;
         this.maxAmount = maxAmount;
         this.amount = 0;
+        this.interval = null;
+
+        clearInterval(self.interval);
+        self.interval = null;
+
         if(type === Sparkle.TAIL){
-            this.interval = setInterval(tailAnimation, 100);
+            this.interval = setInterval(function(){
+                tailAnimation(self);
+            }, 100);
         }else if(type === Sparkle.CIRCLE){
-            this.interval = setInterval(circleAnimation, 150);
+            this.interval = setInterval(function(){
+                circleAnimation(self);
+            }, 150);
         }
 
         this.view.regX = this.width/2;
@@ -1427,14 +1436,14 @@ var Sparkle = (function(){
         this.view.scaleX = this.view.scaleY = 0.6 + Math.random()*0.4;
     }
 
-    function tailAnimation(){
-        self.amount++;
+    function tailAnimation(sparkle){
+        sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
         star.regX = 27/2;
         star.regY = 27/2;
         star.y = Math.random()*20;
-        self.view.addChild(star);
+        sparkle.view.addChild(star);
 
         var toX =  50 + Math.random() * 100;
 
@@ -1443,15 +1452,15 @@ var Sparkle = (function(){
                 this.parent.removeChild(this);
             });
 
-        if(self.amount > self.maxAmount){
-            clearInterval(self.interval);
-            self.interval = null;
-            self.view.parent.removeChild(self.view);
+        if(sparkle.amount >= sparkle.maxAmount){
+            clearInterval(sparkle.interval);
+            sparkle.interval = null;
+            sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 
-    function circleAnimation(){
-        self.amount++;
+    function circleAnimation(sparkle){
+        sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
         star.y = Math.random()* 120;
@@ -1459,17 +1468,17 @@ var Sparkle = (function(){
         star.regX = 27/2;
         star.regY = 27/2;
         star.scaleX = star.scaleY = 0;
-        self.view.addChild(star);
+        sparkle.view.addChild(star);
 
         createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  300)
             .call(function(){
                 this.parent.removeChild(this);
             });
 
-        if(self.amount > self.maxAmount && self.view != null){
+        if(sparkle.amount >= sparkle.maxAmount && sparkle.view != null){
             clearInterval(self.interval);
-            self.interval = null;
-            self.view.parent.removeChild(self.view);
+            sparkle.interval = null;
+            sparkle.view.parent.removeChild(sparkle.view);
         }
     }
 
@@ -1862,7 +1871,7 @@ var Statistics = (function(){
         var extra = this.maxTime/10;
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
-            var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y + 5, Sparkle.TAIL, 15);
+            var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y - 7, Sparkle.TAIL, 15);
             self.view.addChild(sparkle.view);
         }
     };
@@ -1879,7 +1888,7 @@ var Statistics = (function(){
 
     Statistics.prototype.showStats = function(){
         this.statsContainer.y = -200;
-        createjs.Tween.get(this.statsContainer).to({y:0}, 700, createjs.Ease.cubicOut);
+        createjs.Tween.get(this.statsContainer).to({y:-17}, 700, createjs.Ease.cubicOut);
     };
 
     Statistics.prototype.hideStats = function(){
@@ -2105,7 +2114,7 @@ var LevelsScreen = (function(){
 
     var self;
 
-    function LevelsScreen(fromPause){
+    function LevelsScreen(){
 
         self = this;
 
@@ -2117,16 +2126,14 @@ var LevelsScreen = (function(){
         var background = new createjs.Bitmap(preload.getResult('assets/common/bg.png'));
         this.view.addChild(background);
 
-        //if(fromPause){
-            var backBtn = new Button(Button.BACK);
-            this.view.addChild(backBtn.view);
-            backBtn.view.x = 100;
-            backBtn.view.y = 70;
-            backBtn.view.addEventListener("click", function(){
-                var event = new createjs.Event(LevelsScreen.BACK, true);
-                self.view.dispatchEvent(event);
-            });
-        //}
+        var backBtn = new Button(Button.BACK);
+        this.view.addChild(backBtn.view);
+        backBtn.view.x = 100;
+        backBtn.view.y = 70;
+        backBtn.view.addEventListener("click", function(){
+            var event = new createjs.Event(LevelsScreen.BACK, true);
+            self.view.dispatchEvent(event);
+        });
 
         $("body").on("keydown",function(e){
             if(e.which === 49){ //1
@@ -2843,11 +2850,9 @@ var ScreenManager = (function(){
         });
     };
 
-    ScreenManager.prototype.showLevelsScreen = function(fromPause){
-        //if(fromPause){
-            self.removeScreen();
-        //}
-        this.screen = new LevelsScreen(fromPause);
+    ScreenManager.prototype.showLevelsScreen = function(){
+        self.removeScreen();
+        this.screen = new LevelsScreen();
         this.view.addChild(this.screen.view);
         this.screen.view.addEventListener(LevelNest.LEVEL_SELECTED, function(){
             self.removeScreen();
@@ -2855,7 +2860,6 @@ var ScreenManager = (function(){
         this.screen.view.addEventListener(LevelsScreen.BACK, function(){
             self.removeScreen();
             self.showScreen(ScreenManager.START);
-            //self.showScreen(ScreenManager.PAUSE);
         });
 
     };
@@ -3498,11 +3502,8 @@ var stage, world, debug, preload, gameData;
         });
     }
 
-    function showLevelsScreen(fromPause){
-        if(!fromPause){
-            self.isPaused = true;
-        }
-        self.screenManager.showLevelsScreen(fromPause);
+    function showLevelsScreen(){
+        self.screenManager.showLevelsScreen();
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             gameData.pauseGame = false;
             self.stats.setLevel(e.levelIndex);
@@ -3617,7 +3618,7 @@ var stage, world, debug, preload, gameData;
         stage.update();
 
         if(!gameData.pauseGame){
-            world.DrawDebugData();
+            //world.DrawDebugData();
             world.Step(1/60, 10, 10);
             world.ClearForces();
         }

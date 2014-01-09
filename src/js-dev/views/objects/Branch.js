@@ -39,8 +39,8 @@ var Branch = (function(){
     }
 
     Branch.prototype.updateView = function(){
-        this.view.x = this.view.body.GetPosition().x * SCALE - 56;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 9;
+        this.view.y = this.view.body.GetPosition().y * SCALE + 20;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
 

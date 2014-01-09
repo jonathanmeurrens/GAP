@@ -134,7 +134,7 @@ var Statistics = (function(){
         var extra = this.maxTime/10;
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
-            var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y + 5, Sparkle.TAIL, 15);
+            var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y - 7, Sparkle.TAIL, 15);
             self.view.addChild(sparkle.view);
         }
     };
@@ -151,7 +151,7 @@ var Statistics = (function(){
 
     Statistics.prototype.showStats = function(){
         this.statsContainer.y = -200;
-        createjs.Tween.get(this.statsContainer).to({y:0}, 700, createjs.Ease.cubicOut);
+        createjs.Tween.get(this.statsContainer).to({y:-17}, 700, createjs.Ease.cubicOut);
     };
 
     Statistics.prototype.hideStats = function(){

@@ -80,8 +80,8 @@ var Bird = (function(){
             return;
         }
 
-        this.view.x = this.view.body.GetPosition().x * SCALE;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
+        this.view.x = this.view.body.GetPosition().x * SCALE - 3;
+        this.view.y = this.view.body.GetPosition().y * SCALE - 3;
         this.view.rotation = (this.view.body.GetAngle()) * (180 / Math.PI);
 
         if(!self.isDead && (this.view.x > stage.canvas.width || this.view.x < 0 || this.view.y > stage.canvas.height)){

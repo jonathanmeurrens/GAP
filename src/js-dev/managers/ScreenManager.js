@@ -79,11 +79,9 @@ var ScreenManager = (function(){
         });
     };
 
-    ScreenManager.prototype.showLevelsScreen = function(fromPause){
-        //if(fromPause){
-            self.removeScreen();
-        //}
-        this.screen = new LevelsScreen(fromPause);
+    ScreenManager.prototype.showLevelsScreen = function(){
+        self.removeScreen();
+        this.screen = new LevelsScreen();
         this.view.addChild(this.screen.view);
         this.screen.view.addEventListener(LevelNest.LEVEL_SELECTED, function(){
             self.removeScreen();
@@ -91,7 +89,6 @@ var ScreenManager = (function(){
         this.screen.view.addEventListener(LevelsScreen.BACK, function(){
             self.removeScreen();
             self.showScreen(ScreenManager.START);
-            //self.showScreen(ScreenManager.PAUSE);
         });
 
     };

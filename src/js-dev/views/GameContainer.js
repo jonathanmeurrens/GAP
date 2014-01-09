@@ -151,7 +151,7 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.createBranch = function(url, xPos, yPos){
-        var branch = new Branch(url, xPos, translateYPos(yPos), 23, 97);
+        var branch = new Branch(url, xPos, translateYPos(yPos), 10, 70);
         this.view.addChild(branch.view);
         this.obstacles.push(branch);
     };

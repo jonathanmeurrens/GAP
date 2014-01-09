@@ -335,11 +335,8 @@ var stage, world, debug, preload, gameData;
         });
     }
 
-    function showLevelsScreen(fromPause){
-        if(!fromPause){
-            self.isPaused = true;
-        }
-        self.screenManager.showLevelsScreen(fromPause);
+    function showLevelsScreen(){
+        self.screenManager.showLevelsScreen();
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
             gameData.pauseGame = false;
             self.stats.setLevel(e.levelIndex);
@@ -454,7 +451,7 @@ var stage, world, debug, preload, gameData;
         stage.update();
 
         if(!gameData.pauseGame){
-            world.DrawDebugData();
+            //world.DrawDebugData();
             world.Step(1/60, 10, 10);
             world.ClearForces();
         }

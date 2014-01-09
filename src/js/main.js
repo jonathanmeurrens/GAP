@@ -57,7 +57,6 @@ var GameContainer = (function(){
             createjs.Tween.get(this.spacebar_instruction).to({alpha:1}, 400);
         }else{
             this.removeSpacebarInstruction();
-            this.showSpacebarInstruction();
         }
     };
 
@@ -453,6 +452,7 @@ var Balloon = (function(){
 /* globals box2d:true  */
 /* globals Twirl:true  */
 /* globals gameData:true  */
+/* globals Sparkle:true  */
 
 var Bird = (function(){
 
@@ -514,6 +514,9 @@ var Bird = (function(){
         fixDef.shape = circle1;
         fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
+
+        var sparkle = new Sparkle(this.view.x + 70, this.view.y - 20, Sparkle.CIRCLE, 15);
+        this.view.addChild(sparkle.view);
 
         $(this.view).on('tick', $.proxy( tick, this ));
     }
@@ -1391,6 +1394,87 @@ var Rock = (function(){
 
 })();
 
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals preload:true  */
+
+var Sparkle = (function(){
+
+    var self;
+
+    function Sparkle(xPos, yPos, type, maxAmount){
+
+        self = this;
+
+        this.view = new createjs.Container();
+
+        this.width = 27;
+        this.height = 26;
+        this.type = type;
+        this.maxAmount = maxAmount;
+        this.amount = 0;
+        if(type === Sparkle.TAIL){
+            this.interval = setInterval(tailAnimation, 100);
+        }else if(type === Sparkle.CIRCLE){
+            this.interval = setInterval(circleAnimation, 100);
+        }
+
+        this.view.regX = this.width/2;
+        this.view.regY = this.height/2;
+
+        this.view.x = xPos - 90;
+        this.view.y = yPos;
+        this.view.scaleX = this.view.scaleY = 0.6 + Math.random()*0.4;
+    }
+
+    function tailAnimation(){
+        self.amount++;
+
+        var star = new createjs.Bitmap(preload.getResult("star-particle"));
+        star.y = Math.random()*20;
+        self.view.addChild(star);
+
+        var toX =  50 + Math.random() * 100;
+
+        createjs.Tween.get(star).to({scaleX:0, scaleY:0, rotate: 20 + Math.random()*30, x: toX},  400)
+            .call(function(){
+                this.parent.removeChild(this);
+            });
+
+        if(self.amount > self.maxAmount){
+            clearInterval(self.interval);
+            self.interval = null;
+            self.view.parent.removeChild(self.view);
+        }
+    }
+
+    function circleAnimation(){
+        self.amount++;
+
+        var star = new createjs.Bitmap(preload.getResult("star-particle"));
+        star.y = Math.random()* 120;
+        star.x = Math.random()* 120;
+        star.scaleX = star.scaleY = 0;
+        self.view.addChild(star);
+
+        createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  200)
+            .call(function(){
+                this.parent.removeChild(this);
+            });
+
+        if(self.amount > self.maxAmount && self.view !== null){
+            clearInterval(self.interval);
+            self.interval = null;
+            self.view.parent.removeChild(self.view);
+        }
+    }
+
+    return Sparkle;
+})();
+
+Sparkle.TAIL = "TAIL";
+Sparkle.CIRCLE = "CIRCLE";
+
 /* globals preload:true  */
 /* globals SCALE:true  */
 
@@ -1643,6 +1727,7 @@ var LevelNest = (function(){
 /* globals createjs:true  */
 /* globals SoundManager:true  */
 /* globals Button:true  */
+/* globals Sparkle:true  */
 
 var Statistics = (function(){
 
@@ -1712,7 +1797,7 @@ var Statistics = (function(){
         // SOUND MUTE
         var mute_data = {
             images: ["assets/common/buttons/mute.png"],
-            frames: {width:27, height:37},
+            frames: {width:28.5, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
@@ -1738,10 +1823,11 @@ var Statistics = (function(){
         updateMuteBtnState();
 
         this.statsContainer.y = -200;
+        this.statsContainer.x = -15;
     }
 
     function updateMuteBtnState(){
-        if(SoundManager.playSounds){
+        if(SoundManager.playSounds || gameData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
         }else{
             self.muteBtnSprite.gotoAndStop("mute");
@@ -1773,6 +1859,8 @@ var Statistics = (function(){
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
         }
+        var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y, Sparkle.TAIL, 15);
+        self.view.addChild(sparkle.view);
     };
 
     Statistics.prototype.resetStats = function(){
@@ -1852,6 +1940,42 @@ var Statistics = (function(){
 
     return Statistics;
 
+})();
+
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals ScreenManager:true  */
+/* globals Button:true  */
+/* globals preload:true  */
+
+var EndScreen = (function(){
+
+    var self;
+
+    function EndScreen(){
+
+        self = this;
+
+        // EVENT TYPES
+        EndScreen.PLAY_AGAIN = "PLAY_AGAIN";
+
+        this.view = new createjs.Container();
+
+        var background = new createjs.Bitmap(preload.getResult("end-background"));
+        this.view.addChild(background);
+
+        // PLAY AGAIN BTN
+        var playAgainBtn = new Button(Button.PLAY_AGAIN);
+        playAgainBtn.view.x = 143;
+        playAgainBtn.view.y = this.height + 24;
+        this.view.addChild(playAgainBtn.view);
+        playAgainBtn.view.on("click", function(){
+            var event = new createjs.Event(EndScreen.PLAY_AGAIN, true);
+            self.view.dispatchEvent(event);
+        });
+    }
+
+    return EndScreen;
 })();
 
 /* globals stage:true  */
@@ -2007,8 +2131,8 @@ var LevelsScreen = (function(){
         if(fromPause){
             var backBtn = new Button(Button.BACK);
             this.view.addChild(backBtn.view);
-            backBtn.view.x = 40;
-            backBtn.view.y = 90;
+            backBtn.view.x = 100;
+            backBtn.view.y = 70;
             backBtn.view.addEventListener("click", function(){
                 var event = new createjs.Event(LevelsScreen.BACK, true);
                 self.view.dispatchEvent(event);
@@ -2067,7 +2191,7 @@ var LevelsScreen = (function(){
         var yPos = 0;
         var xPos = 0;
         for(var i=0; i < gameData.getLevelCount(); i++){
-            var locked = true;
+            var locked = false;
             if(i <= gameData.gamerData.levels.length)
             {
                 locked = false;
@@ -2518,12 +2642,15 @@ var PreloadManager = (function(){
         showPreloader();
         self.isPreloadingGame = true;
         var manifest = [
+            {src:"assets/common/dead-star-particle.png", id:"dead-star-particle"},
+            {src:"assets/common/star-particle.png", id:"star-particle"},
             {src:"assets/common/bg.png"},
             {src:"assets/common/startpage/bg.png"},
             {src:"assets/common/startpage/boom.png"},
             {src:"assets/common/startpage/bosjes_onderaan.png"},
             {src:"assets/common/startpage/tjilp.png"},
 
+            {src:"assets/common/end/bg.png", id:"end-background"},
             {src:"assets/common/pause/bg.png", id:"paused-background"},
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},
@@ -2629,6 +2756,7 @@ var PreloadManager = (function(){
 /* globals LevelNest:true  */
 /* globals OptionsScreen:true  */
 /* globals PauseScreen:true  */
+/* globals EndScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -2647,6 +2775,7 @@ var ScreenManager = (function(){
         ScreenManager.LEVELS = "LEVELS";
         ScreenManager.START = "START";
         ScreenManager.PAUSE = "PAUSE";
+        ScreenManager.END = "END";
     }
 
     ScreenManager.prototype.showScreen = function(screenType){
@@ -2658,7 +2787,7 @@ var ScreenManager = (function(){
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
             this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
-                    self.removeScreen();
+                self.removeScreen();
             });
         }
         else if(screenType === ScreenManager.INSTRUCTIONS){
@@ -2676,6 +2805,12 @@ var ScreenManager = (function(){
                 self.removeScreen();
             });
             this.screen.view.addEventListener(PauseScreen.PLAY_AGAIN, function(e){
+                self.removeScreen();
+            });
+        }
+        else if(screenType === ScreenManager.END){
+            this.screen = new EndScreen();
+            this.screen.view.on(EndScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }
@@ -3419,13 +3554,18 @@ var stage, world, debug, preload, gameData;
 
     function showNextLevelScreen(){
         if(!self.isPaused){
-            SoundManager.playSuccess();
-            gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-            self.isPaused = true;
-            self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
-            self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
-            self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
-            self.stats.hideStats();
+
+            if(self.stats.level >= 2){
+                self.screenManager.showScreen(ScreenManager.END);
+            }else{
+                SoundManager.playSuccess();
+                gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
+                self.isPaused = true;
+                self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
+                self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+                self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+                self.stats.hideStats();
+            }
         }
     }
 

@@ -55,7 +55,6 @@ var GameContainer = (function(){
             createjs.Tween.get(this.spacebar_instruction).to({alpha:1}, 400);
         }else{
             this.removeSpacebarInstruction();
-            this.showSpacebarInstruction();
         }
     };
 

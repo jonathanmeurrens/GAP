@@ -408,13 +408,18 @@ var stage, world, debug, preload, gameData;
 
     function showNextLevelScreen(){
         if(!self.isPaused){
-            SoundManager.playSuccess();
-            gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
-            self.isPaused = true;
-            self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
-            self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
-            self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
-            self.stats.hideStats();
+
+            if(self.stats.level >= 2){
+                self.screenManager.showScreen(ScreenManager.END);
+            }else{
+                SoundManager.playSuccess();
+                gameData.storeGamerLevelData(this.stats.level, this.stats.getStars()); // KEEP GAMER DATA STORED
+                self.isPaused = true;
+                self.screenManager.showNextLevelScreen(this.stats.level, this.stats.getStars());
+                self.screenManager.view.addEventListener(NextLevelScreen.NEXT_LEVEL, nextLevelHandler);
+                self.screenManager.view.addEventListener(NextLevelScreen.PLAY_AGAIN, restartLevelHandler);
+                self.stats.hideStats();
+            }
         }
     }
 

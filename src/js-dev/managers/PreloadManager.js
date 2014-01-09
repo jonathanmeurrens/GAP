@@ -47,12 +47,15 @@ var PreloadManager = (function(){
         showPreloader();
         self.isPreloadingGame = true;
         var manifest = [
+            {src:"assets/common/dead-star-particle.png", id:"dead-star-particle"},
+            {src:"assets/common/star-particle.png", id:"star-particle"},
             {src:"assets/common/bg.png"},
             {src:"assets/common/startpage/bg.png"},
             {src:"assets/common/startpage/boom.png"},
             {src:"assets/common/startpage/bosjes_onderaan.png"},
             {src:"assets/common/startpage/tjilp.png"},
 
+            {src:"assets/common/end/bg.png", id:"end-background"},
             {src:"assets/common/pause/bg.png", id:"paused-background"},
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},

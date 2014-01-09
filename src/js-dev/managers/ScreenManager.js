@@ -8,6 +8,7 @@
 /* globals LevelNest:true  */
 /* globals OptionsScreen:true  */
 /* globals PauseScreen:true  */
+/* globals EndScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -26,6 +27,7 @@ var ScreenManager = (function(){
         ScreenManager.LEVELS = "LEVELS";
         ScreenManager.START = "START";
         ScreenManager.PAUSE = "PAUSE";
+        ScreenManager.END = "END";
     }
 
     ScreenManager.prototype.showScreen = function(screenType){
@@ -37,7 +39,7 @@ var ScreenManager = (function(){
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
             this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
-                    self.removeScreen();
+                self.removeScreen();
             });
         }
         else if(screenType === ScreenManager.INSTRUCTIONS){
@@ -55,6 +57,12 @@ var ScreenManager = (function(){
                 self.removeScreen();
             });
             this.screen.view.addEventListener(PauseScreen.PLAY_AGAIN, function(e){
+                self.removeScreen();
+            });
+        }
+        else if(screenType === ScreenManager.END){
+            this.screen = new EndScreen();
+            this.screen.view.on(EndScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }

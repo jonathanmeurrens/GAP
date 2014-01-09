@@ -25,8 +25,8 @@ var LevelsScreen = (function(){
         if(fromPause){
             var backBtn = new Button(Button.BACK);
             this.view.addChild(backBtn.view);
-            backBtn.view.x = 40;
-            backBtn.view.y = 90;
+            backBtn.view.x = 100;
+            backBtn.view.y = 70;
             backBtn.view.addEventListener("click", function(){
                 var event = new createjs.Event(LevelsScreen.BACK, true);
                 self.view.dispatchEvent(event);
@@ -85,7 +85,7 @@ var LevelsScreen = (function(){
         var yPos = 0;
         var xPos = 0;
         for(var i=0; i < gameData.getLevelCount(); i++){
-            var locked = true;
+            var locked = false;
             if(i <= gameData.gamerData.levels.length)
             {
                 locked = false;

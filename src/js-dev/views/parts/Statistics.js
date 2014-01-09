@@ -3,6 +3,7 @@
 /* globals createjs:true  */
 /* globals SoundManager:true  */
 /* globals Button:true  */
+/* globals Sparkle:true  */
 
 var Statistics = (function(){
 
@@ -72,7 +73,7 @@ var Statistics = (function(){
         // SOUND MUTE
         var mute_data = {
             images: ["assets/common/buttons/mute.png"],
-            frames: {width:27, height:37},
+            frames: {width:28.5, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
@@ -98,10 +99,11 @@ var Statistics = (function(){
         updateMuteBtnState();
 
         this.statsContainer.y = -200;
+        this.statsContainer.x = -15;
     }
 
     function updateMuteBtnState(){
-        if(SoundManager.playSounds){
+        if(SoundManager.playSounds || gameData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
         }else{
             self.muteBtnSprite.gotoAndStop("mute");
@@ -133,6 +135,8 @@ var Statistics = (function(){
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
         }
+        var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y, Sparkle.TAIL, 15);
+        self.view.addChild(sparkle.view);
     };
 
     Statistics.prototype.resetStats = function(){

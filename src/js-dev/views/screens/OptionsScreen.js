@@ -39,16 +39,16 @@ var OptionsScreen = (function(){
         // MUSIC MUTE
         var mute_data = {
             images: ["assets/common/buttons/music_spritesheet.png"],
-            frames: {width:184, height:53},
+            frames: {width:449/2, height:43},
             animations: {on:[1], mute:[0]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
         this.view.addChild(this.muteBtnSprite);
-        this.muteBtnSprite.x = 625;
-        this.muteBtnSprite.y = 287;
+        this.muteBtnSprite.x = 614;
+        this.muteBtnSprite.y = 286;
         this.muteBtnSprite.regX = 184/2;
-        this.muteBtnSprite.regY = 53/2;
+        this.muteBtnSprite.regY = 54/2;
         this.muteBtnSprite.scaleX = 0.7;
         this.muteBtnSprite.scaleY = 0.7;
         this.muteBtnSprite.cursor = 'pointer';
@@ -70,14 +70,14 @@ var OptionsScreen = (function(){
         // FX MUTE
         var fx_mute_data = {
             images: ["assets/common/buttons/soundfx_spritesheet.png"],
-            frames: {width:202.5, height:54},
+            frames: {width:449/2, height:43},
             animations: {on:[1], mute:[0]}
         };
         var fx_muteBtnspritesheet = new createjs.SpriteSheet(fx_mute_data);
         this.fx_muteBtnSprite = new createjs.Sprite(fx_muteBtnspritesheet);
         this.view.addChild(this.fx_muteBtnSprite);
-        this.fx_muteBtnSprite.x = 625;
-        this.fx_muteBtnSprite.y = 355;
+        this.fx_muteBtnSprite.x = 650;
+        this.fx_muteBtnSprite.y = 354;
         this.fx_muteBtnSprite.regX = 202/2;
         this.fx_muteBtnSprite.regY = 54/2;
         this.fx_muteBtnSprite.scaleX = 0.7;
@@ -97,16 +97,36 @@ var OptionsScreen = (function(){
             createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
         });
 
-
-        // RESET BTN
-        var resetBtn = new Button(Button.RESET_LEVELS);
-        this.view.addChild(resetBtn.view);
-        resetBtn.view.x = 714;
-        resetBtn.view.y = 456;
-        resetBtn.view.addEventListener("click", function(){
+        // FX MUTE
+        var reset_data = {
+            images: ["assets/common/buttons/reset_levels.png"],
+            frames: {width:324/2, height:48},
+            animations: {default:[0], done:[1]}
+        };
+        var resetBtnspritesheet = new createjs.SpriteSheet(reset_data);
+        this.resetBtnSprite = new createjs.Sprite(resetBtnspritesheet);
+        this.view.addChild(this.resetBtnSprite);
+        this.resetBtnSprite.regX = 160/2;
+        this.resetBtnSprite.regY = 24/2;
+        this.resetBtnSprite.scaleX = 0.7;
+        this.resetBtnSprite.scaleY = 0.7;
+        this.resetBtnSprite.x = 648;
+        this.resetBtnSprite.y = 415;
+        this.resetBtnSprite.cursor = 'pointer';
+        this.resetBtnSprite.addEventListener("click", function(e){
             var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);
             self.view.dispatchEvent(event);
+            self.resetBtnSprite.gotoAndStop("done");
         });
+        createjs.Tween.get(this.resetBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
+        this.resetBtnSprite.addEventListener("mouseover", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.07, scaleY:1.07},  100);
+        });
+        this.resetBtnSprite.addEventListener("mouseout", function(e){
+            createjs.Tween.get(e.target).to({scaleX:1.0, scaleY:1.0},  100);
+        });
+
+
 
         // BACK BTN
         var backBtn = new Button(Button.BACK);

@@ -63,7 +63,7 @@ var NextLevelScreen = (function(){
         // NEXT LEVEL
         var nextLevelBtn = new Button(Button.NEXT_LEVEL);
         nextLevelBtn.view.x = 297;
-        nextLevelBtn.view.y = playAgainBtn.view.y + 8;
+        nextLevelBtn.view.y = playAgainBtn.view.y + 6;
         this.container.addChild(nextLevelBtn.view);
         nextLevelBtn.view.on("click", function(){
             var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);

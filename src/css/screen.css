@@ -1,4 +1,5 @@
 /*reset*/
+/* line 15, ../sass/screen.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -17,13 +18,17 @@ time, mark, audio, video {
   border: 0;
   font: inherit;
   font-size: 100%;
-  vertical-align: baseline; }
+  vertical-align: baseline;
+}
 
+/* line 26, ../sass/screen.scss */
 body {
   font-size: 62.5%;
   background: url("../assets/interface/bg_gradient.png") repeat-x center center;
-  height: 1000px; }
+  height: 1000px;
+}
 
+/* line 33, ../sass/screen.scss */
 #container {
   width: 1000px;
   height: 600px;
@@ -32,35 +37,40 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  margin: auto; }
+  margin: auto;
+}
 
-#header {
-  background: url("../assets/interface/tjilp.png") no-repeat center center;
+/*#header{
+  background: url('../assets/interface/tjilp.png') no-repeat center center;
   width: 295px;
   height: 113px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 85px; }
-
+  padding-top: 85px;
+}*/
+/* line 53, ../sass/screen.scss */
 #game {
-  border: 6px #D5EECB solid;
+  /*border: 6px #D5EECB solid;*/
   -webkit-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
   -ms-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
   -moz-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
   -o-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
   box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
   position: relative;
-  margin-top: 100px;
-  z-index: 1000; }
+  z-index: 1000;
+}
 
+/* line 64, ../sass/screen.scss */
 #footer {
   width: 100%;
   height: 1000px;
   position: absolute;
   z-index: 0;
   background: url("../assets/interface/bg_bottom.png") no-repeat center bottom;
-  background-size: cover; }
+  background-size: cover;
+}
 
+/* line 73, ../sass/screen.scss */
 #madeby {
   background: url("../assets/interface/credits.png") no-repeat center bottom;
   background-size: cover;
@@ -68,14 +78,19 @@ body {
   height: 167px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 730px; }
+  margin-top: 790px;
+}
 
+/* line 84, ../sass/screen.scss */
 #debug {
   position: absolute;
   top: 0;
-  display: none; }
+  display: none;
+}
 
+/* line 90, ../sass/screen.scss */
 #fb-login {
   position: absolute;
   top: 17px;
-  right: 0px; }
+  right: 0px;
+}

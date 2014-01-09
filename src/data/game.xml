@@ -31,7 +31,7 @@
         <instructions>
             <instruction img="assets/level2/instruction-2.1.png"/>
         </instructions>
-        <timeCoin x="440" y="229"></timeCoin>
+        <timeCoin x="220" y="329"></timeCoin>
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <tree img="assets/level2/boom_links.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level2/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>

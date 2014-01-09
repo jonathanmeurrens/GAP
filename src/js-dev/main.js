@@ -326,7 +326,7 @@ var stage, world, debug, preload, gameData;
     function showPauseScreen(){
         self.screenManager.showScreen(ScreenManager.PAUSE);
         self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
-            showLevelsScreen();
+            showLevelsScreen(true);
         });
         self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
             gameData.pauseGame = false;
@@ -340,17 +340,20 @@ var stage, world, debug, preload, gameData;
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
-            showLevelsScreen();
+            showLevelsScreen(false);
         });
         self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
             showOptionsScreen();
         });
     }
 
-    function showLevelsScreen(){
-        self.isPaused = true;
-        self.screenManager.showLevelsScreen();
+    function showLevelsScreen(fromPause){
+        if(!fromPause){
+            self.isPaused = true;
+        }
+        self.screenManager.showLevelsScreen(fromPause);
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
+            gameData.pauseGame = false;
             self.stats.setLevel(e.levelIndex);
             preloadLevel(e.levelIndex);
         });
@@ -393,6 +396,7 @@ var stage, world, debug, preload, gameData;
 
     function showGameOverScreen(){
         if(!self.isPaused){
+            console.log("[MAIN] show game over screen");
             SoundManager.playGameOver();
             self.screenManager.showScreen(ScreenManager.GAME_OVER);
             self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);

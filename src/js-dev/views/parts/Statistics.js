@@ -83,22 +83,10 @@ var Statistics = (function(){
             updateMuteBtnState();
         });
 
-
-        // LEVELS PANEL BTN
-        /*var levelsBtn = new Button(Button.LEVELS);
-        levelsBtn.view.x = 150;
-        levelsBtn.view.y = 74;
-        this.view.addChild(levelsBtn.view);
-        levelsBtn.view.addEventListener("click", function(e){
-            var event = new createjs.Event(Statistics.LEVELS_CLICKED);
-            self.view.dispatchEvent(event);
-        });*/
-
-
         // PAUZE BTN
         var pauzeBtn = new Button(Button.PAUSE);
-        pauzeBtn.view.x = 150;
-        pauzeBtn.view.y = 74;
+        pauzeBtn.view.x = 90;
+        pauzeBtn.view.y = 38;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.PAUSE);

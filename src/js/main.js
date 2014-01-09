@@ -1723,22 +1723,10 @@ var Statistics = (function(){
             updateMuteBtnState();
         });
 
-
-        // LEVELS PANEL BTN
-        /*var levelsBtn = new Button(Button.LEVELS);
-        levelsBtn.view.x = 150;
-        levelsBtn.view.y = 74;
-        this.view.addChild(levelsBtn.view);
-        levelsBtn.view.addEventListener("click", function(e){
-            var event = new createjs.Event(Statistics.LEVELS_CLICKED);
-            self.view.dispatchEvent(event);
-        });*/
-
-
         // PAUZE BTN
         var pauzeBtn = new Button(Button.PAUSE);
-        pauzeBtn.view.x = 150;
-        pauzeBtn.view.y = 74;
+        pauzeBtn.view.x = 90;
+        pauzeBtn.view.y = 38;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.PAUSE);
@@ -1998,19 +1986,34 @@ var InstructionsScreen = (function(){
 /* globals ScreenManager:true  */
 /* globals LevelNest:true  */
 /* globals preload:true  */
+/* globals Button:true  */
 
 var LevelsScreen = (function(){
 
     var self;
 
-    function LevelsScreen(){
+    function LevelsScreen(fromPause){
 
         self = this;
+
+        // EVENT TYPES
+        LevelsScreen.BACK = "BACK";
 
         this.view = new createjs.Container();
 
         var background = new createjs.Bitmap(preload.getResult('assets/common/bg.png'));
         this.view.addChild(background);
+
+        if(fromPause){
+            var backBtn = new Button(Button.BACK);
+            this.view.addChild(backBtn.view);
+            backBtn.view.x = 40;
+            backBtn.view.y = 90;
+            backBtn.view.addEventListener("click", function(){
+                var event = new createjs.Event(LevelsScreen.BACK, true);
+                self.view.dispatchEvent(event);
+            });
+        }
 
         $("body").on("keydown",function(e){
             if(e.which === 49){ //1
@@ -2072,15 +2075,15 @@ var LevelsScreen = (function(){
             var nest = new LevelNest(i,gameData.gamerData.levels[i],!locked);
             nest.view.x = xPos;
             nest.view.y = yPos;
-            xPos += 140;
-            if(i%3 >= 2){
-                yPos+=110;
+            xPos += 160;
+            if(i%4 >= 3){
+                yPos+=120;
                 xPos = 0;
             }
             levelsContainer.addChild(nest.view);
         }
-        levelsContainer.x = 314;
-        levelsContainer.y = 130;
+        levelsContainer.x = 215;
+        levelsContainer.y = 100;
     }
 
     return LevelsScreen;
@@ -2669,10 +2672,10 @@ var ScreenManager = (function(){
         }
         else if(screenType === ScreenManager.PAUSE){
             this.screen = new PauseScreen();
-            this.screen.view.on(PauseScreen.RESUME, function(e){
+            this.screen.view.addEventListener(PauseScreen.RESUME, function(e){
                 self.removeScreen();
             });
-            this.screen.view.on(PauseScreen.PLAY_AGAIN, function(e){
+            this.screen.view.addEventListener(PauseScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }
@@ -2683,27 +2686,33 @@ var ScreenManager = (function(){
         self.removeScreen();
         this.screen = new OptionsScreen(gamerData);
         this.view.addChild(this.screen.view);
-        this.screen.view.on(OptionsScreen.CANCEL, function(e){
+        this.screen.view.addEventListener(OptionsScreen.CANCEL, function(e){
             self.removeScreen();
             self.showScreen(ScreenManager.START);
         });
-        /*this.screen.view.on(OptionsScreen.SAVE, function(e){
-            self.removeScreen();
-        });*/
     };
 
-    ScreenManager.prototype.showLevelsScreen = function(){
-        this.screen = new LevelsScreen();
+    ScreenManager.prototype.showLevelsScreen = function(fromPause){
+        if(fromPause){
+            self.removeScreen();
+            console.log("[ScreenManager] remove pause screen");
+        }
+        this.screen = new LevelsScreen(fromPause);
         this.view.addChild(this.screen.view);
-        this.screen.view.on(LevelNest.LEVEL_SELECTED, function(e){
+        this.screen.view.addEventListener(LevelNest.LEVEL_SELECTED, function(){
             self.removeScreen();
         });
+        this.screen.view.addEventListener(LevelsScreen.BACK, function(){
+            self.removeScreen();
+            self.showScreen(ScreenManager.PAUSE);
+        });
+
     };
 
     ScreenManager.prototype.showInstructionsScreen = function(instructionsData){
         this.screen = new InstructionsScreen(instructionsData);
         this.view.addChild(this.screen.view);
-        this.screen.view.on(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
+        this.screen.view.addEventListener(InstructionsScreen.INSTRUCTIONS_DONE, function(e){
             self.removeScreen();
         });
     };
@@ -2711,11 +2720,11 @@ var ScreenManager = (function(){
     ScreenManager.prototype.showNextLevelScreen = function(level, stars){
         this.screen = new NextLevelScreen(level, stars);
         this.view.addChild(this.screen.view);
-        this.screen.view.on(NextLevelScreen.NEXT_LEVEL, function(e){
+        this.screen.view.addEventListener(NextLevelScreen.NEXT_LEVEL, function(e){
             self.removeScreen();
 
         });
-        this.screen.view.on(NextLevelScreen.PLAY_AGAIN, function(e){
+        this.screen.view.addEventListener(NextLevelScreen.PLAY_AGAIN, function(e){
             self.removeScreen();
         });
     };
@@ -3328,7 +3337,7 @@ var stage, world, debug, preload, gameData;
     function showPauseScreen(){
         self.screenManager.showScreen(ScreenManager.PAUSE);
         self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
-            showLevelsScreen();
+            showLevelsScreen(true);
         });
         self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
             gameData.pauseGame = false;
@@ -3342,17 +3351,20 @@ var stage, world, debug, preload, gameData;
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
-            showLevelsScreen();
+            showLevelsScreen(false);
         });
         self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
             showOptionsScreen();
         });
     }
 
-    function showLevelsScreen(){
-        self.isPaused = true;
-        self.screenManager.showLevelsScreen();
+    function showLevelsScreen(fromPause){
+        if(!fromPause){
+            self.isPaused = true;
+        }
+        self.screenManager.showLevelsScreen(fromPause);
         self.screenManager.view.addEventListener(LevelNest.LEVEL_SELECTED, function(e){
+            gameData.pauseGame = false;
             self.stats.setLevel(e.levelIndex);
             preloadLevel(e.levelIndex);
         });
@@ -3395,6 +3407,7 @@ var stage, world, debug, preload, gameData;
 
     function showGameOverScreen(){
         if(!self.isPaused){
+            console.log("[MAIN] show game over screen");
             SoundManager.playGameOver();
             self.screenManager.showScreen(ScreenManager.GAME_OVER);
             self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);

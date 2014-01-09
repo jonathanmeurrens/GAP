@@ -31,7 +31,7 @@ var TimeCoin = (function(){
         bodyDef.type = box2d.b2Body.b2_kinematicBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
-        //bodyDef.userData = 'timeCoin'+index;
+        bodyDef.userData = 'timeCoin'+index;
 
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData('timeCoin'+index);
@@ -44,7 +44,6 @@ var TimeCoin = (function(){
 
         this.updateView();
         animate(this.view);
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     function animate(view){
@@ -54,10 +53,6 @@ var TimeCoin = (function(){
                 animate(this);
             });
         });
-    }
-
-    function tick(e){
-        this.updateView();
     }
 
     TimeCoin.prototype.updateView = function(){

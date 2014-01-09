@@ -125,13 +125,13 @@ var stage, world, debug, preload, gameData;
 
             if(colliderA !== null && colliderB !== null){
                 if(colliderA.indexOf("timeCoin") !== -1 || colliderB.indexOf("timeCoin") !== -1){
+                    self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
                     if(colliderA.indexOf("timeCoin") !== -1){
                         self.gameContainer.removeTimeCoinWithUserData(colliderA);
                     }
                     else{
                         self.gameContainer.removeTimeCoinWithUserData(colliderB);
                     }
-                    self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
                 }
             }
         };
@@ -178,8 +178,6 @@ var stage, world, debug, preload, gameData;
         createjs.Ticker.useRAF = true;
 
         $(document).on("keydown",function(e){
-
-            //console.log(e.which);
 
             if(e.which >= 37 && e.which <= 39){
                self.keypressCount++;

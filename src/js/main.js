@@ -162,6 +162,7 @@ var GameContainer = (function(){
         for(var n=0; n < this.timeCoins.length; n++){
             var timeCoin = this.timeCoins[n];
             if(timeCoin.view.body.GetUserData() === userData){
+                console.log("[GameContainer] removed timecoin");
                 world.DestroyBody(timeCoin.view.body);
                 this.view.removeChild(timeCoin.view);
                 this.timeCoins.splice(n,1);
@@ -231,6 +232,8 @@ var GameContainer = (function(){
             var timeCoin = this.timeCoins.pop();
             world.DestroyBody(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
+            console.log("[GameContainer] removed timecoin!");
+            console.log(this.timeCoins.length);
         }
         length = this.nests.length;
         for(var x=0; x < length; x++){
@@ -279,7 +282,6 @@ var GameContainer = (function(){
     GameContainer.prototype.handleEndContact = function(contact){
         var colliderA = contact.GetFixtureA().GetBody().GetUserData();
         var colliderB = contact.GetFixtureB().GetBody().GetUserData();
-        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 
         if(colliderA === "leaf" || colliderB === "leaf"){
             for(var i=0; i < this.leafs.length; i++){
@@ -1530,7 +1532,7 @@ var TimeCoin = (function(){
         bodyDef.type = box2d.b2Body.b2_kinematicBody;
         bodyDef.position.x = this.x / SCALE;
         bodyDef.position.y = this.y / SCALE;
-        //bodyDef.userData = 'timeCoin'+index;
+        bodyDef.userData = 'timeCoin'+index;
 
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.SetUserData('timeCoin'+index);
@@ -1543,7 +1545,6 @@ var TimeCoin = (function(){
 
         this.updateView();
         animate(this.view);
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     function animate(view){
@@ -1553,10 +1554,6 @@ var TimeCoin = (function(){
                 animate(this);
             });
         });
-    }
-
-    function tick(e){
-        this.updateView();
     }
 
     TimeCoin.prototype.updateView = function(){
@@ -3230,13 +3227,13 @@ var stage, world, debug, preload, gameData;
 
             if(colliderA !== null && colliderB !== null){
                 if(colliderA.indexOf("timeCoin") !== -1 || colliderB.indexOf("timeCoin") !== -1){
+                    self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
                     if(colliderA.indexOf("timeCoin") !== -1){
                         self.gameContainer.removeTimeCoinWithUserData(colliderA);
                     }
                     else{
                         self.gameContainer.removeTimeCoinWithUserData(colliderB);
                     }
-                    self.gameContainer.view.addEventListener(GameContainer.COIN_REMOVED, catchedCoinHandler);
                 }
             }
         };
@@ -3283,8 +3280,6 @@ var stage, world, debug, preload, gameData;
         createjs.Ticker.useRAF = true;
 
         $(document).on("keydown",function(e){
-
-            //console.log(e.which);
 
             if(e.which >= 37 && e.which <= 39){
                self.keypressCount++;

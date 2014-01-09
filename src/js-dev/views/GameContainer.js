@@ -160,6 +160,7 @@ var GameContainer = (function(){
         for(var n=0; n < this.timeCoins.length; n++){
             var timeCoin = this.timeCoins[n];
             if(timeCoin.view.body.GetUserData() === userData){
+                console.log("[GameContainer] removed timecoin");
                 world.DestroyBody(timeCoin.view.body);
                 this.view.removeChild(timeCoin.view);
                 this.timeCoins.splice(n,1);
@@ -229,6 +230,8 @@ var GameContainer = (function(){
             var timeCoin = this.timeCoins.pop();
             world.DestroyBody(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
+            console.log("[GameContainer] removed timecoin!");
+            console.log(this.timeCoins.length);
         }
         length = this.nests.length;
         for(var x=0; x < length; x++){
@@ -277,7 +280,6 @@ var GameContainer = (function(){
     GameContainer.prototype.handleEndContact = function(contact){
         var colliderA = contact.GetFixtureA().GetBody().GetUserData();
         var colliderB = contact.GetFixtureB().GetBody().GetUserData();
-        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 
         if(colliderA === "leaf" || colliderB === "leaf"){
             for(var i=0; i < this.leafs.length; i++){

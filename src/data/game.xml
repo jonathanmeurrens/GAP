@@ -5,7 +5,7 @@
 
 <levels>
 
-    <level time="20">
+    <level time="14"> <!--lvl 1-->
         <instructions>
             <instruction img="assets/level1/instruction-1.1.png"/>
             <instruction img="assets/level1/instruction-1.2.png"/>
@@ -14,22 +14,23 @@
         </instructions>
         <timeCoin x="200" y="380"></timeCoin>
         <timeCoin x="500" y="400"></timeCoin>
-        <egg maxRotations="100" evolution="1 " x="90" y="400"></egg>
+        <egg maxRotations="100" evolution="1 " x="150" y="325"></egg>
         <tree img="assets/level1/tree_left.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level1/tree_right.png" x="960" y="10" width="284" height="608"></tree>
-        <leaf x="240" y="150" rotation="0" restitution="1"></leaf>
-        <leaf x="454" y="231" rotation="0" restitution="1"></leaf>
+        <leaf x="240" y="150" rotation="0" restitution="1.1"></leaf>
+        <leaf x="454" y="231" rotation="0" restitution="1.1"></leaf>
         <leaf x="685" y="308" rotation="0" restitution="1"></leaf>
-        <nest y="385" x="53" start="true"></nest>
+        <nest y="315" x="108" start="true"></nest>
         <nest y="298" x="914"></nest>
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
         <background img="assets/level1/background.png"></background>
     </level>
-    <level time="30">
+    <level time="14"> <!--lvl 2-->
         <instructions>
             <instruction img="assets/level2/instruction-2.1.png"/>
         </instructions>
+        <timeCoin x="440" y="229"></timeCoin>
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <tree img="assets/level2/boom_links.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level2/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>
@@ -44,8 +45,9 @@
         <ground img="assets/level1/ground.png" height="162"></ground>
         <background img="assets/level1/background2.png"></background>
     </level>
-    <level time="40">
+    <level time="15"> <!--lvl 3-->
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
+        <timeCoin x="795" y="442"></timeCoin>
         <tree img="assets/level3/boom_links.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level3/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>
         <leaf x="200" y="180" rotation="15" restitution="0.8"></leaf>
@@ -55,61 +57,59 @@
         <nest y="485" x="108" start="true"></nest>
         <nest y="300" x="914"></nest>
         <ground img="assets/level3/ground.png" height="162"></ground>
+        <background img="assets/level1/background2.png"></background>
         <background img="assets/level3/achterstuk.png"></background>
     </level>
-    <level time="40">
+    <level time="14"> <!--lvl 4-->
         <instructions>
             <instruction img="assets/level4/instruction-4.1.png"/>
         </instructions>
-        <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
+        <egg maxRotations="100" evolution="1" x="157" y="510"></egg>
         <tree img="assets/level4/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level4/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
         <leaf x="200" y="30" rotation="0" restitution="0.84"></leaf>
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
         <rock x="500" y="159" img="assets/common/rock.png" width="475" height="358"></rock>
-        <nest y="485" x="108" start="true"></nest>
+        <nest y="497" x="115" start="true"></nest>
         <nest y="80" x="914"></nest>
         <background img="assets/level4/background.png"></background>
     </level>
-    <level time="40">
-        <egg maxRotations="100" evolution="1" x="130" y="500"></egg>
+    <level time="12"> <!--lvl 5-->
+        <egg maxRotations="100" evolution="1" x="147" y="510"></egg>
         <tree img="assets/level5/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level5/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
         <leaf x="150" y="130" rotation="25" restitution="0.84"></leaf>
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
-        <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
+        <timeCoin x="493" y="321"></timeCoin>
         <enemyBird x="30" y="260" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <rock x="350" y="0" img="assets/common/rock.png" width="475" height="358"></rock>
         <rock x="650" y="0" img="assets/common/rock.png" width="475" height="358"></rock>
         <rock x="500" y="60" img="assets/common/rock.png" width="475" height="358"></rock>
+        <nest y="497" x="108" start="true"></nest>
         <nest y="80" x="914"></nest>
-        <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level5/background.png"></background>
     </level>
-    <level time="50">
-        <egg maxRotations="100" evolution="1" x="130" y="500"></egg>
+    <level time="16"> <!--lvl 6-->
+        <egg maxRotations="100" evolution="1" x="135" y="558"></egg>
         <tree img="assets/level6/boomlinks.png" x="80" width="284" height="608"></tree>
         <tree img="assets/level6/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
         <leaf x="150" y="130" rotation="25" restitution="0.9"></leaf>
         <leaf x="800" y="100" rotation="0" restitution="0.7"></leaf>
-        <leaf x="488" y="110" rotation="0" restitution="1"></leaf>
+        <leaf x="508" y="110" rotation="0" restitution="1"></leaf>
+        <timeCoin x="498" y="171"></timeCoin>
         <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
         <enemyBird x="30" y="260" direction="right" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <enemyBird x="1380" y="140" direction="left" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <enemyBird x="1580" y="380" direction="left" img="assets/common/enemyBird-spritesheet.png"></enemyBird>
         <rock x="350" y="80" img="assets/common/rock.png" width="475" height="358"></rock>
         <rock x="650" y="80" img="assets/common/rock.png" width="475" height="358"></rock>
+        <nest y="550" x="100" start="true"></nest>
         <nest y="80" x="914"></nest>
         <!--<ground img="assets/level1/ground.png" height="162"></ground>-->
         <background img="assets/level5/background.png"></background>
     </level>
 
-
-    <!--______________________-->
-    <!-- VANAF HIER BLOK 2 -->
-    <!--______________________-->
-
-    <level time="30"> <!--Level 7-->
+    <level time="16"> <!--Level 7-->
         <instructions>
             <instruction img="assets/level7/instruction-7.1.png" />
             <instruction img="assets/level7/instruction-7.2.png"/>
@@ -118,7 +118,7 @@
         <egg maxRotations="100" evolution="1" x="130" y="400"></egg>
         <leaf x="280" y="130" rotation="13" restitution="0.9"></leaf>
         <leaf x="600" y="200" rotation="13" restitution="0.7"></leaf>
-
+        <timeCoin x="596" y="326"></timeCoin>
         <!--<balloon x="480" y="450" direction="left" img="assets/level1/balloon.png"></balloon>-->
         <cloud x="100" y="400" img="assets/level7/wolkjes/wolk2.png"></cloud>
         <cloud x="330" y="230" img="assets/level7/wolkjes/wolk3.png"></cloud>
@@ -130,16 +130,16 @@
         <background img="assets/level7/background.png"></background>
         <background img="assets/level7/voorstuk.png"></background>
     </level>
-    <level time="40"> <!--Level 8-->
+    <level time="16"> <!--Level 8-->
         <instructions>
             <instruction img="assets/level8/instruction-8.1.png"/>
         </instructions>
         <egg maxRotations="100" evolution="1" x="30" y="560"></egg>
-        <leaf x="180" y="130" rotation="13" restitution="0.7"></leaf>
+        <leaf x="180" y="130" rotation="13" restitution="0.9"></leaf>
         <leaf x="280" y="330" rotation="13" restitution="0.7"></leaf>
         <leaf x="600" y="200" rotation="13" restitution="0.7"></leaf>
-
-        <balloon x="430" y="290" direction="left" img="assets/common/balloon.png"></balloon>
+        <timeCoin x="276" y="425"></timeCoin>
+        <balloon x="430" y="330" direction="left" img="assets/common/balloon.png"></balloon>
         <cloud x="60" y="537" img="assets/level8/wolkjes/wolk1.png"></cloud>
         <cloud x="9" y="320" img="assets/level8/wolkjes/wolk2.png"></cloud>
         <cloud x="262" y="137" img="assets/level8/wolkjes/wolk3.png"></cloud>
@@ -149,6 +149,147 @@
         <cloud x="675" y="386" img="assets/level8/wolkjes/wolk7.png"></cloud>
         <cloud x="962" y="516" img="assets/level8/wolkjes/wolk8.png"></cloud>
         <nest y="180" x="914"></nest>
+        <background img="assets/level7/background.png"></background>
+        <background img="assets/level7/voorstuk.png"></background>
+    </level>
+    <level time="14"> <!--Level 9-->
+        <egg maxRotations="100" evolution="1" x="30" y="560"></egg>$
+        <timeCoin x="360" y="340"></timeCoin>
+        <leaf x="180" y="130" rotation="13" restitution="0.7"></leaf>
+        <leaf x="550" y="135" rotation="13" restitution="0.7"></leaf>
+        <leaf x="750" y="130" rotation="0" restitution="1"></leaf>
+
+        <balloon x="360" y="220" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="130" y="550" direction="left" img="assets/common/balloon.png"></balloon>
+        <cloud x="61" y="537" img="assets/level9/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="641" img="assets/level9/wolkjes/wolk2.png"></cloud>
+        <cloud x="731" y="631" img="assets/level9/wolkjes/wolk3.png"></cloud>
+        <cloud x="76" y="157" img="assets/level9/wolkjes/wolk4.png"></cloud>
+        <cloud x="948" y="176" img="assets/level9/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="398" img="assets/level9/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="306" img="assets/level9/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="467" img="assets/level9/wolkjes/wolk8.png"></cloud>
+        <nest y="180" x="914"></nest>
+        <background img="assets/level7/background.png"></background>
+        <background img="assets/level7/voorstuk.png"></background>
+    </level>
+    <level time="14"> <!--Level 10-->
+        <egg maxRotations="100" evolution="1" x="730" y="560"></egg>$
+        <timeCoin x="460" y="140"></timeCoin>
+        <leaf x="180" y="130" rotation="13" restitution="0.7"></leaf>
+        <leaf x="750" y="130" rotation="-45" restitution="1"></leaf>
+
+        <balloon x="160" y="370" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="630" y="450" direction="left" img="assets/common/balloon.png"></balloon>
+        <balloon x="460" y="310" direction="left" img="assets/common/balloon.png"></balloon>
+        <cloud x="761" y="537" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="641" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="531" y="631" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="176" y="97" img="assets/level10/wolkjes/wolk4.png"></cloud>
+        <cloud x="118" y="176" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="398" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="306" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="467" img="assets/level10/wolkjes/wolk8.png"></cloud>
+        <nest y="180" x="114"></nest>
+        <background img="assets/level7/background.png"></background>
+        <background img="assets/level7/voorstuk.png"></background>
+    </level>
+    <level time="14"> <!--Level 11-->
+        <instructions>
+            <instruction img="assets/level11/instruction-11.1.png"/>
+        </instructions>
+        <egg maxRotations="100" evolution="1" x="70" y="460"></egg>$
+        <timeCoin x="260" y="1040"></timeCoin>
+        <timeCoin x="740" y="1140"></timeCoin>
+        <leaf x="770" y="1080" rotation="0" restitution="1.2"></leaf>
+        <leaf x="170" y="1080" rotation="0" restitution="1.2"></leaf>
+        <leaf x="370" y="880" rotation="0" restitution="1.2"></leaf>
+        <leaf x="570" y="1280" rotation="0" restitution="1.2"></leaf>
+        <leaf x="770" y="1380" rotation="0" restitution="1.4"></leaf>
+        <leaf x="690" y="680" rotation="0" restitution="1.2"></leaf>
+
+        <nest x="545" y="1430"></nest>
+
+        <balloon x="860" y="1700" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="260" y="1770" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="560" y="1870" direction="right" img="assets/common/balloon.png"></balloon>
+        <!--<balloon x="630" y="450" direction="left" img="assets/common/balloon.png"></balloon>-->
+        <!--<balloon x="460" y="310" direction="left" img="assets/common/balloon.png"></balloon>-->
+        <cloud x="761" y="537" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="641" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="531" y="631" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="76" y="197" img="assets/level10/wolkjes/wolk4.png"></cloud>
+        <cloud x="918" y="176" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="398" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="306" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="467" img="assets/level10/wolkjes/wolk8.png"></cloud>
+
+        <cloud x="761" y="1037" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="1141" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="531" y="1131" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="176" y="597" img="assets/level10/wolkjes/wolk4.png"></cloud>
+        <cloud x="918" y="676" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="898" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="806" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="967" img="assets/level10/wolkjes/wolk8.png"></cloud>
+
+        <cloud x="561" y="1400" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="1791" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="831" y="1631" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="918" y="1376" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="1498" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="1706" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="2367" img="assets/level10/wolkjes/wolk8.png"></cloud>
+         <tornado y="580" x="214" img="assets/common/tornado.png"></tornado>
+        <background img="assets/level7/background.png"></background>
+        <background img="assets/level7/voorstuk.png"></background>
+    </level>
+    <level time="20"> <!--Level 12-->
+        <egg maxRotations="100" evolution="1" x="470" y="460"></egg>$
+        <timeCoin x="660" y="1480"></timeCoin>
+        <timeCoin x="900" y="1040"></timeCoin>
+        <leaf x="270" y="1580" rotation="0" restitution="1.2"></leaf>
+        <leaf x="370" y="1480" rotation="0" restitution="1.2"></leaf>
+        <leaf x="470" y="1380" rotation="0" restitution="1.2"></leaf>
+        <leaf x="570" y="1280" rotation="0" restitution="1.2"></leaf>
+        <leaf x="670" y="1180" rotation="0" restitution="1.2"></leaf>
+        <leaf x="770" y="1080" rotation="0" restitution="1.2"></leaf>
+        <!--<leaf x="870" y="980" rotation="0" restitution="1.2"></leaf>
+        <leaf x="970" y="880" rotation="0" restitution="1.2"></leaf>-->
+
+        <nest x="170" y="1680"></nest>
+
+        <balloon x="860" y="1700" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="660" y="1370" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="560" y="1870" direction="right" img="assets/common/balloon.png"></balloon>
+        <balloon x="260" y="2000" direction="right" img="assets/common/balloon.png"></balloon>
+        <!--<balloon x="630" y="450" direction="left" img="assets/common/balloon.png"></balloon>-->
+        <!--<balloon x="460" y="310" direction="left" img="assets/common/balloon.png"></balloon>-->
+        <cloud x="761" y="537" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="641" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="531" y="631" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="76" y="197" img="assets/level10/wolkjes/wolk4.png"></cloud>
+        <cloud x="918" y="176" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="436" y="438" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="106" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="952" y="467" img="assets/level10/wolkjes/wolk8.png"></cloud>
+
+        <cloud x="761" y="1037" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="181" y="1141" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="531" y="1131" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="176" y="597" img="assets/level10/wolkjes/wolk4.png"></cloud>
+        <cloud x="918" y="676" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="898" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="806" img="assets/level10/wolkjes/wolk7.png"></cloud>
+        <cloud x="752" y="967" img="assets/level10/wolkjes/wolk8.png"></cloud>
+
+        <cloud x="561" y="1400" img="assets/level10/wolkjes/wolk1.png"></cloud>
+        <cloud x="161" y="1670" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="831" y="1631" img="assets/level10/wolkjes/wolk3.png"></cloud>
+        <cloud x="918" y="1376" img="assets/level10/wolkjes/wolk5.png"></cloud>
+        <cloud x="266" y="1498" img="assets/level10/wolkjes/wolk6.png"></cloud>
+        <cloud x="568" y="1706" img="assets/level10/wolkjes/wolk7.png"></cloud>
+         <tornado y="580" x="514" img="assets/common/tornado.png"></tornado>
         <background img="assets/level7/background.png"></background>
         <background img="assets/level7/voorstuk.png"></background>
     </level>

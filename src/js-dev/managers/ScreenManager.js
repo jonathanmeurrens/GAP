@@ -7,6 +7,7 @@
 /* globals LevelsScreen:true  */
 /* globals LevelNest:true  */
 /* globals OptionsScreen:true  */
+/* globals PauseScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -24,6 +25,7 @@ var ScreenManager = (function(){
         ScreenManager.NEXT_LEVEL = "NEXT_LEVEL";
         ScreenManager.LEVELS = "LEVELS";
         ScreenManager.START = "START";
+        ScreenManager.PAUSE = "PAUSE";
     }
 
     ScreenManager.prototype.showScreen = function(screenType){
@@ -44,6 +46,15 @@ var ScreenManager = (function(){
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
             this.screen.view.on(StartScreen.START, function(e){
+                self.removeScreen();
+            });
+        }
+        else if(screenType === ScreenManager.PAUSE){
+            this.screen = new PauseScreen();
+            this.screen.view.on(PauseScreen.RESUME, function(e){
+                self.removeScreen();
+            });
+            this.screen.view.on(PauseScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }

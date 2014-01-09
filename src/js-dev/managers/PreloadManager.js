@@ -53,6 +53,7 @@ var PreloadManager = (function(){
             {src:"assets/common/startpage/bosjes_onderaan.png"},
             {src:"assets/common/startpage/tjilp.png"},
 
+            {src:"assets/common/pause/bg.png", id:"paused-background"},
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},
             {src:"assets/common/time-coin.png", id:"time-coin"},
@@ -69,6 +70,8 @@ var PreloadManager = (function(){
             {src:"assets/common/progressbar/levels_spritesheet.png"},
             {src:"assets/common/progressbar/bg.png"},
 
+            {src:"assets/common/buttons/retry.png"},
+            {src:"assets/common/buttons/resume.png"},
             {src:"assets/common/buttons/back.png"},
             {src:"assets/common/buttons/facebook.png"},
             {src:"assets/common/buttons/next_level.png"},

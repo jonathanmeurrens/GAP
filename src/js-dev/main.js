@@ -11,6 +11,7 @@
 /* globals InstructionsScreen:true  */
 /* globals NextLevelScreen:true  */
 /* globals GameOverScreen:true  */
+/* globals PauseScreen:true  */
 /* globals OptionsScreen:true  */
 /* globals Bird:true  */
 
@@ -307,6 +308,7 @@ var stage, world, debug, preload, gameData;
         this.stats = new Statistics(20, 20);
         this.stats.view.addEventListener(Statistics.LEVELS_CLICKED, showLevelsScreen);
         this.stats.view.addEventListener(Statistics.TIME_OUT, showGameOverScreen);
+        this.stats.view.addEventListener(Statistics.PAUSE, showPauseScreen);
         stage.addChild(this.stats.view);
     }
 
@@ -320,6 +322,20 @@ var stage, world, debug, preload, gameData;
     //
     //
     // --------------- GAME NAVIGATION HANDLERS
+
+    function showPauseScreen(){
+        self.screenManager.showScreen(ScreenManager.PAUSE);
+        self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
+            showLevelsScreen();
+        });
+        self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
+            gameData.pauseGame = false;
+        });
+        self.screenManager.view.addEventListener(PauseScreen.PLAY_AGAIN, function(e){
+            gameData.pauseGame = false;
+            startGame();
+        });
+    }
 
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);

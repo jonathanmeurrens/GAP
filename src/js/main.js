@@ -742,8 +742,12 @@ var Button = (function(){
             this.height = 41;
         }
         else if(button_type === Button.PAUSE){
-            this.width = 68;
+            this.width = 42;
             this.height = 41;
+        }
+        else if(button_type === Button.RESUME){
+            this.width = 81;
+            this.height = 67;
         }
 
         this.view.regX = this.width/2;
@@ -783,6 +787,7 @@ Button.OPTIONS = "OPTIONS";
 Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
 Button.PAUSE = "PAUSE";
+Button.RESUME = "RESUME";
 
 /* globals preload:true  */
 /* globals SCALE:true  */
@@ -1649,6 +1654,7 @@ var Statistics = (function(){
 
         Statistics.LEVELS_CLICKED = "LEVELS_CLICKED";
         Statistics.TIME_OUT = "TIME_OUT";
+        Statistics.PAUSE = "PAUSE";
 
         this.view = new createjs.Container();
         this.view.x = x;
@@ -1719,14 +1725,14 @@ var Statistics = (function(){
 
 
         // LEVELS PANEL BTN
-        var levelsBtn = new Button(Button.LEVELS);
+        /*var levelsBtn = new Button(Button.LEVELS);
         levelsBtn.view.x = 150;
         levelsBtn.view.y = 74;
         this.view.addChild(levelsBtn.view);
         levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
             self.view.dispatchEvent(event);
-        });
+        });*/
 
 
         // PAUZE BTN
@@ -1735,6 +1741,8 @@ var Statistics = (function(){
         pauzeBtn.view.y = 74;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
+            var event = new createjs.Event(Statistics.PAUSE);
+            self.view.dispatchEvent(event);
             gameData.pauseGame = true;
         });
 
@@ -2316,6 +2324,82 @@ var OptionsScreen = (function(){
 /* globals stage:true  */
 /* globals createjs:true  */
 /* globals ScreenManager:true  */
+/* globals Button:true  */
+/* globals preload:true  */
+/* globals publishScoreToFB:true  */
+
+var PauseScreen = (function(){
+
+    var self;
+
+    function PauseScreen(){
+
+        self = this;
+
+        // EVENT TYPES
+        PauseScreen.LEVELS = "LEVELS";
+        PauseScreen.RESUME = "RESUME";
+        PauseScreen.PLAY_AGAIN = "PLAY_AGAIN";
+
+        this.width = 370;
+        this.height = 211;
+        this.view = new createjs.Container();
+
+        this.container = new createjs.Container();
+        this.container.regX = this.width/2;
+        this.container.regY = this.height/2;
+        this.container.x = stage.canvas.width/2;
+        this.container.y = stage.canvas.height/2 - 35;
+
+        var colorPanel = new createjs.Shape();
+        colorPanel.graphics.beginFill(createjs.Graphics.getRGB(0,0,0));
+        colorPanel.graphics.drawRect(0,0,stage.canvas.width,stage.canvas.height);
+        colorPanel.alpha = 0.5;
+        this.view.addChild(colorPanel);
+
+        this.view.addChild(this.container);
+
+        var background = new createjs.Bitmap(preload.getResult("paused-background"));
+        this.container.addChild(background);
+
+
+        // RESUME BTN
+        var resumeBtn = new Button(Button.RESUME);
+        resumeBtn.view.x = 230;
+        resumeBtn.view.y = this.height - 20;
+        this.container.addChild(resumeBtn.view);
+        resumeBtn.view.on("click", function(){
+            var event = new createjs.Event(PauseScreen.RESUME, true);
+            self.view.dispatchEvent(event);
+        });
+
+        // PLAY AGAIN BTN
+        var playAgainBtn = new Button(Button.PLAY_AGAIN);
+        playAgainBtn.view.x = 145;
+        playAgainBtn.view.y = this.height - 20;
+        this.container.addChild(playAgainBtn.view);
+        playAgainBtn.view.on("click", function(){
+            var event = new createjs.Event(PauseScreen.PLAY_AGAIN, true);
+            self.view.dispatchEvent(event);
+        });
+
+        // MENU BTN
+        var menuBtn = new Button(Button.LEVELS);
+        menuBtn.view.x = 320;
+        menuBtn.view.y = this.height - 20;
+        this.container.addChild(menuBtn.view);
+        menuBtn.view.on("click", function(){
+            var event = new createjs.Event(PauseScreen.LEVELS, true);
+            self.view.dispatchEvent(event);
+        });
+    }
+
+    return PauseScreen;
+})();
+
+/* globals stage:true  */
+/* globals createjs:true  */
+/* globals ScreenManager:true  */
 /* globals preload:true  */
 /* globals Button:true  */
 
@@ -2437,6 +2521,7 @@ var PreloadManager = (function(){
             {src:"assets/common/startpage/bosjes_onderaan.png"},
             {src:"assets/common/startpage/tjilp.png"},
 
+            {src:"assets/common/pause/bg.png", id:"paused-background"},
             {src:"assets/common/succeed_1.png", id:"success-background"},
             {src:"assets/common/failed.png", id:"failed-background"},
             {src:"assets/common/time-coin.png", id:"time-coin"},
@@ -2453,6 +2538,8 @@ var PreloadManager = (function(){
             {src:"assets/common/progressbar/levels_spritesheet.png"},
             {src:"assets/common/progressbar/bg.png"},
 
+            {src:"assets/common/buttons/retry.png"},
+            {src:"assets/common/buttons/resume.png"},
             {src:"assets/common/buttons/back.png"},
             {src:"assets/common/buttons/facebook.png"},
             {src:"assets/common/buttons/next_level.png"},
@@ -2538,6 +2625,7 @@ var PreloadManager = (function(){
 /* globals LevelsScreen:true  */
 /* globals LevelNest:true  */
 /* globals OptionsScreen:true  */
+/* globals PauseScreen:true  */
 
 var ScreenManager = (function(){
 
@@ -2555,6 +2643,7 @@ var ScreenManager = (function(){
         ScreenManager.NEXT_LEVEL = "NEXT_LEVEL";
         ScreenManager.LEVELS = "LEVELS";
         ScreenManager.START = "START";
+        ScreenManager.PAUSE = "PAUSE";
     }
 
     ScreenManager.prototype.showScreen = function(screenType){
@@ -2575,6 +2664,15 @@ var ScreenManager = (function(){
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
             this.screen.view.on(StartScreen.START, function(e){
+                self.removeScreen();
+            });
+        }
+        else if(screenType === ScreenManager.PAUSE){
+            this.screen = new PauseScreen();
+            this.screen.view.on(PauseScreen.RESUME, function(e){
+                self.removeScreen();
+            });
+            this.screen.view.on(PauseScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }
@@ -2915,6 +3013,7 @@ function publishScoreToFB(level, stars){
 /* globals InstructionsScreen:true  */
 /* globals NextLevelScreen:true  */
 /* globals GameOverScreen:true  */
+/* globals PauseScreen:true  */
 /* globals OptionsScreen:true  */
 /* globals Bird:true  */
 
@@ -3211,6 +3310,7 @@ var stage, world, debug, preload, gameData;
         this.stats = new Statistics(20, 20);
         this.stats.view.addEventListener(Statistics.LEVELS_CLICKED, showLevelsScreen);
         this.stats.view.addEventListener(Statistics.TIME_OUT, showGameOverScreen);
+        this.stats.view.addEventListener(Statistics.PAUSE, showPauseScreen);
         stage.addChild(this.stats.view);
     }
 
@@ -3224,6 +3324,20 @@ var stage, world, debug, preload, gameData;
     //
     //
     // --------------- GAME NAVIGATION HANDLERS
+
+    function showPauseScreen(){
+        self.screenManager.showScreen(ScreenManager.PAUSE);
+        self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
+            showLevelsScreen();
+        });
+        self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
+            gameData.pauseGame = false;
+        });
+        self.screenManager.view.addEventListener(PauseScreen.PLAY_AGAIN, function(e){
+            gameData.pauseGame = false;
+            startGame();
+        });
+    }
 
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);

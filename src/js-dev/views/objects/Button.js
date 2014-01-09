@@ -55,8 +55,12 @@ var Button = (function(){
             this.height = 41;
         }
         else if(button_type === Button.PAUSE){
-            this.width = 68;
+            this.width = 42;
             this.height = 41;
+        }
+        else if(button_type === Button.RESUME){
+            this.width = 81;
+            this.height = 67;
         }
 
         this.view.regX = this.width/2;
@@ -96,3 +100,4 @@ Button.OPTIONS = "OPTIONS";
 Button.RESET_LEVELS = "RESET_LEVELS";
 Button.BACK = "BACK";
 Button.PAUSE = "PAUSE";
+Button.RESUME = "RESUME";

@@ -14,6 +14,7 @@ var Statistics = (function(){
 
         Statistics.LEVELS_CLICKED = "LEVELS_CLICKED";
         Statistics.TIME_OUT = "TIME_OUT";
+        Statistics.PAUSE = "PAUSE";
 
         this.view = new createjs.Container();
         this.view.x = x;
@@ -84,14 +85,14 @@ var Statistics = (function(){
 
 
         // LEVELS PANEL BTN
-        var levelsBtn = new Button(Button.LEVELS);
+        /*var levelsBtn = new Button(Button.LEVELS);
         levelsBtn.view.x = 150;
         levelsBtn.view.y = 74;
         this.view.addChild(levelsBtn.view);
         levelsBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.LEVELS_CLICKED);
             self.view.dispatchEvent(event);
-        });
+        });*/
 
 
         // PAUZE BTN
@@ -100,6 +101,8 @@ var Statistics = (function(){
         pauzeBtn.view.y = 74;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
+            var event = new createjs.Event(Statistics.PAUSE);
+            self.view.dispatchEvent(event);
             gameData.pauseGame = true;
         });
 

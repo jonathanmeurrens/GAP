@@ -45,13 +45,13 @@ var Statistics = (function(){
         this.levelTxt.alpha = 0;
         var levelSprite_data = {
             images: ["assets/common/progressbar/levels_spritesheet.png"],
-            frames: {width:66, height:28.8}
+            frames: {width:74, height:28.8}
         };
         var levelsSpritesheet = new createjs.SpriteSheet(levelSprite_data);
         this.levelsSprite = new createjs.Sprite(levelsSpritesheet);
         this.statsContainer.addChild(this.levelsSprite);
         this.levelsSprite.regX = 66/2;
-        this.levelsSprite.x = stage.canvas.width/2;
+        this.levelsSprite.x = stage.canvas.width/2 - 3;
         this.levelsSprite.y = 22;
 
         // TIME IND
@@ -103,9 +103,11 @@ var Statistics = (function(){
     }
 
     function updateMuteBtnState(){
-        if(SoundManager.playSounds || gameData.isMusicOn){
+        console.log(gameData.gamerData.isMusicOn);
+        if(gameData.gamerData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
-        }else{
+        }
+        if(!SoundManager.playSounds){
             self.muteBtnSprite.gotoAndStop("mute");
         }
     }

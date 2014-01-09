@@ -56,6 +56,13 @@ var GameOverScreen = (function(){
             var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
             self.view.dispatchEvent(event);
         });
+
+        $("body").on("keydown", function(e){
+            if(e.which === 13){
+                var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
+                self.view.dispatchEvent(event);
+            }
+        });
     }
 
     function postOnFbHandler(e){

@@ -11,6 +11,7 @@ var GameData = (function(){
         this.pauseGame = false;
 
         this.gamerData = this.getStoredGamerData();
+        console.log(this.gamerData);
         if(this.gamerData == null){
             this.gamerData = new UserData();
         }

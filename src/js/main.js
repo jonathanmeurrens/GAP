@@ -1436,7 +1436,7 @@ var Sparkle = (function(){
 
         var toX =  50 + Math.random() * 100;
 
-        createjs.Tween.get(star).to({scaleX:0, scaleY:0, rotate: 20 + Math.random()*30, x: toX},  400)
+        createjs.Tween.get(star).to({scaleX:0, scaleY:0, rotate: 20 + Math.random()*30, x: toX},  500)
             .call(function(){
                 this.parent.removeChild(this);
             });
@@ -1457,12 +1457,12 @@ var Sparkle = (function(){
         star.scaleX = star.scaleY = 0;
         self.view.addChild(star);
 
-        createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  200)
+        createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  250)
             .call(function(){
                 this.parent.removeChild(this);
             });
 
-        if(self.amount > self.maxAmount && self.view !== null){
+        if(self.amount > self.maxAmount && self.view != null){
             clearInterval(self.interval);
             self.interval = null;
             self.view.parent.removeChild(self.view);
@@ -1708,8 +1708,8 @@ var LevelNest = (function(){
 
         if(isPlayable){
             this.view.cursor = 'pointer';
-            this.view.addEventListener("click", $.proxy( clickHandler, this ));
         }
+        this.view.addEventListener("click", $.proxy( clickHandler, this ));
     }
 
     function clickHandler(e){
@@ -1769,13 +1769,13 @@ var Statistics = (function(){
         this.levelTxt.alpha = 0;
         var levelSprite_data = {
             images: ["assets/common/progressbar/levels_spritesheet.png"],
-            frames: {width:66, height:28.8}
+            frames: {width:74, height:28.8}
         };
         var levelsSpritesheet = new createjs.SpriteSheet(levelSprite_data);
         this.levelsSprite = new createjs.Sprite(levelsSpritesheet);
         this.statsContainer.addChild(this.levelsSprite);
         this.levelsSprite.regX = 66/2;
-        this.levelsSprite.x = stage.canvas.width/2;
+        this.levelsSprite.x = stage.canvas.width/2 - 3;
         this.levelsSprite.y = 22;
 
         // TIME IND
@@ -1827,9 +1827,11 @@ var Statistics = (function(){
     }
 
     function updateMuteBtnState(){
-        if(SoundManager.playSounds || gameData.isMusicOn){
+        console.log(gameData.gamerData.isMusicOn);
+        if(gameData.gamerData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
-        }else{
+        }
+        if(!SoundManager.playSounds){
             self.muteBtnSprite.gotoAndStop("mute");
         }
     }
@@ -2036,6 +2038,13 @@ var GameOverScreen = (function(){
             var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
             self.view.dispatchEvent(event);
         });
+
+        $("body").on("keydown", function(e){
+            if(e.which === 13){
+                var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
+                self.view.dispatchEvent(event);
+            }
+        });
     }
 
     function postOnFbHandler(e){
@@ -2191,7 +2200,7 @@ var LevelsScreen = (function(){
         var yPos = 0;
         var xPos = 0;
         for(var i=0; i < gameData.getLevelCount(); i++){
-            var locked = false;
+            var locked = true;
             if(i <= gameData.gamerData.levels.length)
             {
                 locked = false;
@@ -2293,12 +2302,12 @@ var NextLevelScreen = (function(){
         levelNest.view.x = 125;
         levelNest.view.y = 20;
 
-        // TEMP
-        /*$("body").on("keydown", function(e){
+        $("body").on("keydown", function(e){
             if(e.which === 13){
-                nextLevelHandler(e);
+                var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
+                self.view.dispatchEvent(event);
             }
-        });*/
+        });
     }
 
     function postOnFbHandler(e){
@@ -2350,7 +2359,7 @@ var OptionsScreen = (function(){
         var mute_data = {
             images: ["assets/common/buttons/music_spritesheet.png"],
             frames: {width:449/2, height:43},
-            animations: {on:[1], mute:[0]}
+            animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
@@ -2381,7 +2390,7 @@ var OptionsScreen = (function(){
         var fx_mute_data = {
             images: ["assets/common/buttons/soundfx_spritesheet.png"],
             frames: {width:449/2, height:43},
-            animations: {on:[1], mute:[0]}
+            animations: {on:[0], mute:[1]}
         };
         var fx_muteBtnspritesheet = new createjs.SpriteSheet(fx_mute_data);
         this.fx_muteBtnSprite = new createjs.Sprite(fx_muteBtnspritesheet);
@@ -2538,6 +2547,13 @@ var PauseScreen = (function(){
         menuBtn.view.on("click", function(){
             var event = new createjs.Event(PauseScreen.LEVELS, true);
             self.view.dispatchEvent(event);
+        });
+
+        $("body").on("keydown", function(e){
+            if(e.which === 13){
+                var event = new createjs.Event(PauseScreen.RESUME, true);
+                self.view.dispatchEvent(event);
+            }
         });
     }
 
@@ -2964,6 +2980,7 @@ var GameData = (function(){
         this.pauseGame = false;
 
         this.gamerData = this.getStoredGamerData();
+        console.log(this.gamerData);
         if(this.gamerData == null){
             this.gamerData = new UserData();
         }

@@ -85,7 +85,7 @@ var LevelsScreen = (function(){
         var yPos = 0;
         var xPos = 0;
         for(var i=0; i < gameData.getLevelCount(); i++){
-            var locked = false;
+            var locked = true;
             if(i <= gameData.gamerData.levels.length)
             {
                 locked = false;

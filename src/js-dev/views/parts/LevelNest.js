@@ -34,8 +34,8 @@ var LevelNest = (function(){
 
         if(isPlayable){
             this.view.cursor = 'pointer';
-            this.view.addEventListener("click", $.proxy( clickHandler, this ));
         }
+        this.view.addEventListener("click", $.proxy( clickHandler, this ));
     }
 
     function clickHandler(e){

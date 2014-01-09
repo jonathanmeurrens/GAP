@@ -40,7 +40,7 @@ var Sparkle = (function(){
 
         var toX =  50 + Math.random() * 100;
 
-        createjs.Tween.get(star).to({scaleX:0, scaleY:0, rotate: 20 + Math.random()*30, x: toX},  400)
+        createjs.Tween.get(star).to({scaleX:0, scaleY:0, rotate: 20 + Math.random()*30, x: toX},  500)
             .call(function(){
                 this.parent.removeChild(this);
             });
@@ -61,12 +61,12 @@ var Sparkle = (function(){
         star.scaleX = star.scaleY = 0;
         self.view.addChild(star);
 
-        createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  200)
+        createjs.Tween.get(star).to({scaleX:1, scaleY:1, rotate: 20 + Math.random()*30},  250)
             .call(function(){
                 this.parent.removeChild(this);
             });
 
-        if(self.amount > self.maxAmount && self.view !== null){
+        if(self.amount > self.maxAmount && self.view != null){
             clearInterval(self.interval);
             self.interval = null;
             self.view.parent.removeChild(self.view);

@@ -77,12 +77,12 @@ var NextLevelScreen = (function(){
         levelNest.view.x = 125;
         levelNest.view.y = 20;
 
-        // TEMP
-        /*$("body").on("keydown", function(e){
+        $("body").on("keydown", function(e){
             if(e.which === 13){
-                nextLevelHandler(e);
+                var event = new createjs.Event(NextLevelScreen.NEXT_LEVEL, true);
+                self.view.dispatchEvent(event);
             }
-        });*/
+        });
     }
 
     function postOnFbHandler(e){

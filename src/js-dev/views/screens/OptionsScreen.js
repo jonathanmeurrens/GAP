@@ -40,7 +40,7 @@ var OptionsScreen = (function(){
         var mute_data = {
             images: ["assets/common/buttons/music_spritesheet.png"],
             frames: {width:449/2, height:43},
-            animations: {on:[1], mute:[0]}
+            animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
         this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
@@ -71,7 +71,7 @@ var OptionsScreen = (function(){
         var fx_mute_data = {
             images: ["assets/common/buttons/soundfx_spritesheet.png"],
             frames: {width:449/2, height:43},
-            animations: {on:[1], mute:[0]}
+            animations: {on:[0], mute:[1]}
         };
         var fx_muteBtnspritesheet = new createjs.SpriteSheet(fx_mute_data);
         this.fx_muteBtnSprite = new createjs.Sprite(fx_muteBtnspritesheet);

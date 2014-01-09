@@ -39,23 +39,34 @@ var GameOverScreen = (function(){
         this.container.addChild(background);
 
         // FACEBOOK
-        var facebookBtn = new Button(Button.FACEBOOK);
+       /* var facebookBtn = new Button(Button.FACEBOOK);
         facebookBtn.view.x = 260;
         facebookBtn.view.y = 50;
         facebookBtn.view.y = facebookBtn.view.y;
         this.container.addChild(facebookBtn.view);
-        facebookBtn.view.on("click", postOnFbHandler);
+        facebookBtn.view.on("click", postOnFbHandler);*/
 
 
         // PLAY AGAIN BTN
         var playAgainBtn = new Button(Button.PLAY_AGAIN);
-        playAgainBtn.view.x = 143;
-        playAgainBtn.view.y = this.height + 24;
+        playAgainBtn.view.x = 140;
+        playAgainBtn.view.y = this.height + 21;
         this.container.addChild(playAgainBtn.view);
         playAgainBtn.view.on("click", function(){
             var event = new createjs.Event(GameOverScreen.RESTART_LEVEL, true);
             self.view.dispatchEvent(event);
         });
+
+        // MENU BTN
+        var menuBtn = new Button(Button.LEVELS);
+        menuBtn.view.x = 305;
+        menuBtn.view.y = this.height + 21;
+        this.container.addChild(menuBtn.view);
+        menuBtn.view.on("click", function(){
+            var event = new createjs.Event(GameOverScreen.MENU, true);
+            self.view.dispatchEvent(event);
+        });
+
 
         $("body").on("keydown", function(e){
             if(e.which === 13){
@@ -63,10 +74,7 @@ var GameOverScreen = (function(){
                 self.view.dispatchEvent(event);
             }
         });
-    }
 
-    function postOnFbHandler(e){
-        publishScoreToFB(1,3);
     }
 
     return GameOverScreen;

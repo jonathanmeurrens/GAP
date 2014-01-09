@@ -17,7 +17,7 @@
         <timeCoin x="500" y="400"></timeCoin>
         <egg maxRotations="100" evolution="1 " x="150" y="325"></egg>
         <tree img="assets/level1/tree_left.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level1/tree_right.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level1/tree_right.png" x="960" width="284" height="608"></tree>
         <leaf x="240" y="150" rotation="0" restitution="1.1"></leaf>
         <leaf x="454" y="231" rotation="0" restitution="1.1"></leaf>
         <leaf x="685" y="308" rotation="0" restitution="1"></leaf>
@@ -34,7 +34,7 @@
         <timeCoin x="220" y="329"></timeCoin>
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <tree img="assets/level2/boom_links.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level2/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level2/boom_rechts.png" x="960" width="284" height="608"></tree>
         <leaf x="250" y="200" rotation="45" restitution="1.1"></leaf>
         <leaf x="650" y="200" rotation="-45" restitution="1.1"></leaf>
         <leaf x="450" y="150" rotation="0" restitution="0.7"></leaf>
@@ -50,7 +50,7 @@
         <egg maxRotations="100" evolution="1" x="150" y="500"></egg>
         <timeCoin x="795" y="442"></timeCoin>
         <tree img="assets/level3/boom_links.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level3/boom_rechts.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level3/boom_rechts.png" x="960" width="284" height="608"></tree>
         <leaf x="200" y="180" rotation="15" restitution="0.8"></leaf>
         <leaf x="500" y="130" rotation="15" restitution="1"></leaf>
         <leaf x="700" y="260" rotation="0" restitution="1.2"></leaf>
@@ -67,7 +67,7 @@
         </instructions>
         <egg maxRotations="100" evolution="1" x="157" y="510"></egg>
         <tree img="assets/level4/boomlinks.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level4/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level4/boomrechts.png" x="960" width="284" height="608"></tree>
         <leaf x="200" y="30" rotation="0" restitution="0.84"></leaf>
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
         <rock x="500" y="159" img="assets/common/rock.png" width="475" height="358"></rock>
@@ -78,7 +78,7 @@
     <level time="12"> <!--lvl 5-->
         <egg maxRotations="100" evolution="1" x="147" y="510"></egg>
         <tree img="assets/level5/boomlinks.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level5/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level5/boomrechts.png" x="960" width="284" height="608"></tree>
         <leaf x="150" y="130" rotation="25" restitution="0.84"></leaf>
         <leaf x="780" y="30" rotation="0" restitution="0.7"></leaf>
         <timeCoin x="493" y="321"></timeCoin>
@@ -93,7 +93,7 @@
     <level time="16"> <!--lvl 6-->
         <egg maxRotations="100" evolution="1" x="135" y="558"></egg>
         <tree img="assets/level6/boomlinks.png" x="80" width="284" height="608"></tree>
-        <tree img="assets/level6/boomrechts.png" x="960" y="10" width="284" height="608"></tree>
+        <tree img="assets/level6/boomrechts.png" x="960" width="284" height="608"></tree>
         <leaf x="150" y="130" rotation="25" restitution="0.9"></leaf>
         <leaf x="800" y="100" rotation="0" restitution="0.7"></leaf>
         <leaf x="508" y="110" rotation="0" restitution="1"></leaf>

@@ -80,7 +80,6 @@ var stage, world, debug, preload, gameData;
 
             var colliderA = contact.GetFixtureA().GetUserData();
             var colliderB = contact.GetFixtureB().GetUserData();
-            //console.log("[MAIN] collision: ",contact.GetFixtureA().GetUserData(), contact.GetFixtureB().GetUserData());
 
             if(colliderA === "ground" || colliderB === "ground"){
                 if(!self.collisionDetected){
@@ -96,7 +95,6 @@ var stage, world, debug, preload, gameData;
             }
             else if(colliderA === "leaf" && colliderB === "bird" || colliderB === "bird" && colliderA === "leaf"){
                 if(!self.collisionDetected){
-                    // make leaf move a bit
                     SoundManager.playBounce();
                     self.stats.increaseBounce();
                 }
@@ -139,12 +137,6 @@ var stage, world, debug, preload, gameData;
         listener.EndContact = function(contact) {
             self.gameContainer.handleEndContact(contact);
         };
-        /*listener.PostSolve = function(contact, impulse) {
-
-        };
-        listener.PreSolve = function(contact, oldManifold) {
-
-        };*/
         world.SetContactListener(listener);
     }
 
@@ -204,10 +196,6 @@ var stage, world, debug, preload, gameData;
             }
             else if(e.which === 38){
                 self.gameContainer.bird.fly();
-            }
-            else if(e.which === 80){
-                //self.isPaused = !self.isPaused;
-                gameData.pauseGame = !gameData.pauseGame;
             }
         });
         $(document).on("keyup", function(){
@@ -396,10 +384,10 @@ var stage, world, debug, preload, gameData;
 
     function showGameOverScreen(){
         if(!self.isPaused){
-            console.log("[MAIN] show game over screen");
             SoundManager.playGameOver();
             self.screenManager.showScreen(ScreenManager.GAME_OVER);
             self.screenManager.view.addEventListener(GameOverScreen.RESTART_LEVEL, restartLevelHandler);
+            self.screenManager.view.addEventListener(GameOverScreen.MENU, showLevelsScreen);
             self.isPaused = true;
             self.gameContainer.bird.die();
             self.stats.hideStats();
@@ -409,7 +397,7 @@ var stage, world, debug, preload, gameData;
     function showNextLevelScreen(){
         if(!self.isPaused){
 
-            if(self.stats.level >= 2){
+            if(self.stats.level >= gameData.getLevelCount()-1){
                 self.screenManager.showScreen(ScreenManager.END);
             }else{
                 SoundManager.playSuccess();

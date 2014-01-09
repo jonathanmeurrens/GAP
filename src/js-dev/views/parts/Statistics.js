@@ -134,9 +134,9 @@ var Statistics = (function(){
         var extra = this.maxTime/10;
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
+            var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y + 5, Sparkle.TAIL, 15);
+            self.view.addChild(sparkle.view);
         }
-        var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y, Sparkle.TAIL, 15);
-        self.view.addChild(sparkle.view);
     };
 
     Statistics.prototype.resetStats = function(){

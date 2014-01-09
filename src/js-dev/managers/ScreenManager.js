@@ -38,7 +38,7 @@ var ScreenManager = (function(){
 
         if(screenType === ScreenManager.GAME_OVER){
             this.screen = new GameOverScreen();
-            this.screen.view.on(GameOverScreen.RESTART_LEVEL, function(e){
+            this.screen.view.addEventListener(GameOverScreen.RESTART_LEVEL, function(e){
                 self.removeScreen();
             });
         }
@@ -47,7 +47,7 @@ var ScreenManager = (function(){
         }
         else if(screenType === ScreenManager.START){
             this.screen = new StartScreen();
-            this.screen.view.on(StartScreen.START, function(e){
+            this.screen.view.addEventListener(StartScreen.START, function(e){
                 self.removeScreen();
             });
         }
@@ -62,7 +62,7 @@ var ScreenManager = (function(){
         }
         else if(screenType === ScreenManager.END){
             this.screen = new EndScreen();
-            this.screen.view.on(EndScreen.PLAY_AGAIN, function(e){
+            this.screen.view.addEventListener(EndScreen.PLAY_AGAIN, function(e){
                 self.removeScreen();
             });
         }
@@ -80,10 +80,9 @@ var ScreenManager = (function(){
     };
 
     ScreenManager.prototype.showLevelsScreen = function(fromPause){
-        if(fromPause){
+        //if(fromPause){
             self.removeScreen();
-            console.log("[ScreenManager] remove pause screen");
-        }
+        //}
         this.screen = new LevelsScreen(fromPause);
         this.view.addChild(this.screen.view);
         this.screen.view.addEventListener(LevelNest.LEVEL_SELECTED, function(){
@@ -91,7 +90,8 @@ var ScreenManager = (function(){
         });
         this.screen.view.addEventListener(LevelsScreen.BACK, function(){
             self.removeScreen();
-            self.showScreen(ScreenManager.PAUSE);
+            self.showScreen(ScreenManager.START);
+            //self.showScreen(ScreenManager.PAUSE);
         });
 
     };

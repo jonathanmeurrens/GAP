@@ -22,7 +22,7 @@ var LevelsScreen = (function(){
         var background = new createjs.Bitmap(preload.getResult('assets/common/bg.png'));
         this.view.addChild(background);
 
-        if(fromPause){
+        //if(fromPause){
             var backBtn = new Button(Button.BACK);
             this.view.addChild(backBtn.view);
             backBtn.view.x = 100;
@@ -31,7 +31,7 @@ var LevelsScreen = (function(){
                 var event = new createjs.Event(LevelsScreen.BACK, true);
                 self.view.dispatchEvent(event);
             });
-        }
+        //}
 
         $("body").on("keydown",function(e){
             if(e.which === 49){ //1

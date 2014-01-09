@@ -38,11 +38,6 @@ var Statistics = (function(){
         this.statsContainer.addChild(background);
 
         // LEVEL IND
-        this.levelTxt = new createjs.Text("", "14px Arial", "#000000");
-        //this.view.addChild(this.levelTxt);
-        this.levelTxt.x = stage.canvas.width/2 - 122/2;
-        this.levelTxt.y = 10;
-        this.levelTxt.alpha = 0;
         var levelSprite_data = {
             images: ["assets/common/progressbar/levels_spritesheet.png"],
             frames: {width:74, height:28.8}
@@ -55,10 +50,6 @@ var Statistics = (function(){
         this.levelsSprite.y = 22;
 
         // TIME IND
-        this.timeTxt = new createjs.Text("", "14px Arial", "#000000");
-        //this.view.addChild(this.timeTxt);
-        this.timeTxt.x = stage.canvas.width/2 - 170/2;
-        this.timeTxt.y = 40;
         var progressSprite_data = {
             images: ["assets/common/progressbar/progress_bar_spritesheet.png"],
             frames: {width:200, height:15}
@@ -87,7 +78,7 @@ var Statistics = (function(){
         // PAUZE BTN
         var pauzeBtn = new Button(Button.PAUSE);
         pauzeBtn.view.x = 90;
-        pauzeBtn.view.y = 38;
+        pauzeBtn.view.y = 39;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
             var event = new createjs.Event(Statistics.PAUSE);
@@ -96,18 +87,25 @@ var Statistics = (function(){
         });
 
         updateStats();
-        updateMuteBtnState();
+        setMuteButtonState();
 
         this.statsContainer.y = -200;
         this.statsContainer.x = -15;
     }
 
-    function updateMuteBtnState(){
-        console.log(gameData.gamerData.isMusicOn);
+    function setMuteButtonState(){
         if(gameData.gamerData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
+        }else{
+            self.muteBtnSprite.gotoAndStop("mute");
         }
-        if(!SoundManager.playSounds){
+    }
+
+    function updateMuteBtnState(){
+        if(SoundManager.playSounds){
+            self.muteBtnSprite.gotoAndStop("on");
+        }
+        else if(!SoundManager.playSounds){
             self.muteBtnSprite.gotoAndStop("mute");
         }
     }
@@ -162,33 +160,11 @@ var Statistics = (function(){
 
     Statistics.prototype.getStars = function(){
         var stars = Math.round(this.timeCount / (this.maxTime - this.maxTime/15) * 3);
-        console.log("[Statistics] stars:" + stars, this.timeCount, this.maxTime);
         return stars;
     };
 
     function updateStats(){
-
-        self.levelTxt.text = "level: " + (self.level + 1);
         self.levelsSprite.gotoAndStop(self.level);
-
-        /*var frame = "none";
-        switch(this.self.starsSprite){
-            case 0:
-                frame = "none";
-                break;
-            case 1:
-                frame = "one";
-                break;
-            case 2:
-                frame = "two";
-                break;
-            case 3:
-                frame = "three";
-                break;
-            default:
-                frame = "none";
-        }
-        self.starsSprite.gotoAndStop(frame);*/
     }
 
     function updateTime(){
@@ -198,15 +174,7 @@ var Statistics = (function(){
         }
 
        self.progressSprite.gotoAndStop(Math.round((self.timeCount / self.maxTime)*67));
-
-        var timeTxt = "time left: 00:";
-        if(self.timeCount<10){
-            timeTxt += "0";
-        }
-        timeTxt +=self.timeCount;
-        self.timeTxt.text = timeTxt;
-
-        self.timeCount--;
+       self.timeCount--;
 
         if(self.timeCount < 0){
             clearInterval(self.timer);

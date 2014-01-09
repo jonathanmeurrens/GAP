@@ -5,6 +5,7 @@
 /* globals box2d:true  */
 /* globals Twirl:true  */
 /* globals gameData:true  */
+/* globals Sparkle:true  */
 
 var Bird = (function(){
 
@@ -66,6 +67,9 @@ var Bird = (function(){
         fixDef.shape = circle1;
         fixDef.userData = "bird";
         this.view.body.CreateFixture(fixDef);
+
+        var sparkle = new Sparkle(this.view.x + 70, this.view.y - 20, Sparkle.CIRCLE, 15);
+        this.view.addChild(sparkle.view);
 
         $(this.view).on('tick', $.proxy( tick, this ));
     }

@@ -3,6 +3,7 @@
 /* globals createjs:true  */
 /* globals SoundManager:true  */
 /* globals Button:true  */
+/* globals Sparkle:true  */
 
 var Statistics = (function(){
 
@@ -14,6 +15,7 @@ var Statistics = (function(){
 
         Statistics.LEVELS_CLICKED = "LEVELS_CLICKED";
         Statistics.TIME_OUT = "TIME_OUT";
+        Statistics.PAUSE = "PAUSE";
 
         this.view = new createjs.Container();
         this.view.x = x;
@@ -71,7 +73,7 @@ var Statistics = (function(){
         // SOUND MUTE
         var mute_data = {
             images: ["assets/common/buttons/mute.png"],
-            frames: {width:27, height:37},
+            frames: {width:28.5, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
@@ -82,24 +84,14 @@ var Statistics = (function(){
             updateMuteBtnState();
         });
 
-
-        // LEVELS PANEL BTN
-        var levelsBtn = new Button(Button.LEVELS);
-        levelsBtn.view.x = 150;
-        levelsBtn.view.y = 74;
-        this.view.addChild(levelsBtn.view);
-        levelsBtn.view.addEventListener("click", function(e){
-            var event = new createjs.Event(Statistics.LEVELS_CLICKED);
-            self.view.dispatchEvent(event);
-        });
-
-
         // PAUZE BTN
         var pauzeBtn = new Button(Button.PAUSE);
-        pauzeBtn.view.x = 150;
-        pauzeBtn.view.y = 74;
+        pauzeBtn.view.x = 90;
+        pauzeBtn.view.y = 38;
         this.view.addChild(pauzeBtn.view);
         pauzeBtn.view.addEventListener("click", function(e){
+            var event = new createjs.Event(Statistics.PAUSE);
+            self.view.dispatchEvent(event);
             gameData.pauseGame = true;
         });
 
@@ -107,10 +99,11 @@ var Statistics = (function(){
         updateMuteBtnState();
 
         this.statsContainer.y = -200;
+        this.statsContainer.x = -15;
     }
 
     function updateMuteBtnState(){
-        if(SoundManager.playSounds){
+        if(SoundManager.playSounds || gameData.isMusicOn){
             self.muteBtnSprite.gotoAndStop("on");
         }else{
             self.muteBtnSprite.gotoAndStop("mute");
@@ -142,6 +135,8 @@ var Statistics = (function(){
         if(this.timeCount + extra < this.maxTime){
             this.timeCount += extra;
         }
+        var sparkle = new Sparkle(self.progressSprite.x + (180 * (this.timeCount/this.maxTime)), self.progressSprite.y, Sparkle.TAIL, 15);
+        self.view.addChild(sparkle.view);
     };
 
     Statistics.prototype.resetStats = function(){

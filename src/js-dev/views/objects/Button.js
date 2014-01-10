@@ -13,7 +13,6 @@ var Button = (function(){
         this.view = new createjs.Container();
 
         var url = 'assets/common/buttons/' + button_type.toLowerCase()+".png";
-        this.clickTimeout = null;
 
         this.width = 50;
         this.height = 50;

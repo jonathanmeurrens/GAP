@@ -39,8 +39,6 @@ var Rock = (function(){
         vertices.push(new box2d.b2Vec2(-5.5 * scaleX - (1-scaleX)*9, 3.3));
         fixDef.shape.SetAsVector(vertices, 3);
         fixDef.userData = "rock";
-        /*fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);*/
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 

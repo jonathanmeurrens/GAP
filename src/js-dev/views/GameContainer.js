@@ -254,44 +254,6 @@ var GameContainer = (function(){
         createjs.Tween.get(bg).to({x:bg.x-10}, 1000);
     };
 
-    GameContainer.prototype.handleBeginContact = function(contact){
-       /* var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();*/
-
-        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
-
-        /*if(colliderA === "leaf" || colliderB === "leaf"){
-            for(var i=0; i < this.leafs.length; i++){
-                var leaf = this.leafs[i];
-                leaf.handleBeginContact(contact);
-            }
-        }
-        else if(colliderA === "cloud" || colliderB === "cloud"){
-            for(var j=0; j < this.clouds.length; j++){
-                var cloud = this.clouds[j];
-                cloud.handleBeginContact(contact);
-            }
-        }*/
-    };
-
-    GameContainer.prototype.handleEndContact = function(contact){
-        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
-
-        if(colliderA === "leaf" || colliderB === "leaf"){
-            for(var i=0; i < this.leafs.length; i++){
-                var leaf = this.leafs[i];
-                leaf.handleEndContact(contact);
-            }
-        }
-        else if(colliderA === "cloud" || colliderB === "cloud"){
-            for(var j=0; j < this.clouds.length; j++){
-                var cloud = this.clouds[j];
-                cloud.handleEndContact(contact);
-            }
-        }
-    };
-
 
     function tick(e){
         if(self.bird != null){

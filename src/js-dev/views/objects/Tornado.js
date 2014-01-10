@@ -16,9 +16,6 @@ var Tornado = (function(){
 
         this.view = new createjs.Bitmap(preload.getResult(url));
 
-
-        console.log("[Tornado] pos", this.x, this.y);
-
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
         fixDef.friction = 0.5;
@@ -39,14 +36,7 @@ var Tornado = (function(){
         this.view.x = x;
         this.view.y = y;
 
-        //this.updateView();
     }
-
-    Tornado.prototype.updateView = function(){
-       /* this.view.x = this.view.body.GetPosition().x * SCALE;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
-        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);*/
-    };
 
     return Tornado;
 

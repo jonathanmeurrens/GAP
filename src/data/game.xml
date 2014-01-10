@@ -222,7 +222,7 @@
         <!--<balloon x="630" y="450" direction="left" img="assets/common/balloon.png"></balloon>-->
         <!--<balloon x="460" y="310" direction="left" img="assets/common/balloon.png"></balloon>-->
         <cloud x="761" y="537" img="assets/level10/wolkjes/wolk1.png"></cloud>
-        <cloud x="181" y="641" img="assets/level10/wolkjes/wolk2.png"></cloud>
+        <cloud x="90" y="430" img="assets/level10/wolkjes/wolk2.png"></cloud>
         <cloud x="531" y="631" img="assets/level10/wolkjes/wolk3.png"></cloud>
         <cloud x="76" y="197" img="assets/level10/wolkjes/wolk4.png"></cloud>
         <cloud x="918" y="176" img="assets/level10/wolkjes/wolk5.png"></cloud>

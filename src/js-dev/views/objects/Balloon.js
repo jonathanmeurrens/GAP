@@ -56,20 +56,8 @@ var Balloon = (function(){
         fixDef.userData = "balloon";
         this.view.body.CreateFixture(fixDef);
 
-        /*if(direction === "right"){
-            this.view.body.SetLinearVelocity(new box2d.b2Vec2(1,0));
-            this.view.scaleX = -1;
-        }else{
-            this.view.body.SetLinearVelocity(new box2d.b2Vec2(-1,0));
-        }*/
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
         this.updateView();
         animate(this.view);
-    }
-
-    function tick(e){
-        this.updateView();
     }
 
     Balloon.prototype.updateView = function(){
@@ -85,12 +73,6 @@ var Balloon = (function(){
                 animate(this);
             });
         });
-    }
-
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
     }
 
     return Balloon;

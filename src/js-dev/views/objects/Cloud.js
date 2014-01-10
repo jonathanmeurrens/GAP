@@ -57,23 +57,15 @@ var Cloud = (function(){
         fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        //applyImpulse(this.view.body, 0, 200);
-        //this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
-        //this.view.body.SetLinearDamping(10);
-
-
-         buoyancyController = new box2d.b2BuoyancyController();
-         buoyancyController.normal.Set(0,-1);
+         //buoyancyController = new box2d.b2BuoyancyController();
+         //buoyancyController.normal.Set(0,-1);
          //buoyancyController.offset=-180/SCALE;
-         buoyancyController.useDensity=true;
-         buoyancyController.density=2.0;
+         //buoyancyController.useDensity=true;
+         //buoyancyController.density=2.0;
          /*buoyancyController.linearDrag=5;
          buoyancyController.angularDrag=2;*/
-         world.AddController(buoyancyController);
+         //world.AddController(buoyancyController);
 
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
-        //this.updateView();
         this.updateView();
         animate(this.view);
     }
@@ -96,12 +88,6 @@ var Cloud = (function(){
         this.view.y = this.view.body.GetPosition().y * SCALE + 32;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
-
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
-    }
 
     Cloud.prototype.handleBeginContact = function(contact){
         var fixtureA = contact.GetFixtureA();

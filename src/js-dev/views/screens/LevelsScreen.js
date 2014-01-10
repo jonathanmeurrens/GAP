@@ -31,7 +31,7 @@ var LevelsScreen = (function(){
             self.view.dispatchEvent(event);
         });
 
-        $("body").on("keydown",function(e){
+        /*$("body").on("keydown",function(e){
             if(e.which === 49){ //1
                 levelSelected(0);
             }
@@ -65,7 +65,7 @@ var LevelsScreen = (function(){
             else if(e.which === 59){ //5
                 levelSelected(9);
             }
-        });
+        });*/
 
         showLevels();
     }

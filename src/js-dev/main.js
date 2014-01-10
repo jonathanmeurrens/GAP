@@ -78,7 +78,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
         var listener = new Box2D.Dynamics.b2ContactListener();
         listener.BeginContact = function(contact) {
 
-            self.gameContainer.handleBeginContact(contact);
+            //self.gameContainer.handleBeginContact(contact);
 
             var colliderA = contact.GetFixtureA().GetUserData();
             var colliderB = contact.GetFixtureB().GetUserData();
@@ -137,7 +137,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
             }
         };
         listener.EndContact = function(contact) {
-            self.gameContainer.handleEndContact(contact);
+            //self.gameContainer.handleEndContact(contact);
         };
         world.SetContactListener(listener);
     }
@@ -317,7 +317,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showPauseScreen(){
         self.screenManager.showScreen(ScreenManager.PAUSE);
         self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
-            showLevelsScreen(true);
+            showLevelsScreen();
         });
         self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
             gameData.pauseGame = false;
@@ -331,7 +331,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
-            showLevelsScreen(false);
+            showLevelsScreen();
         });
         self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
             showOptionsScreen();
@@ -350,12 +350,6 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showOptionsScreen(){
         self.isPaused = true;
         self.screenManager.showOptionsScreen();
-       /* self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
-            gameData.storeSettings();
-        });
-        self.screenManager.view.addEventListener(OptionsScreen.RESET_LEVELS, function(e){
-            gameData.resetStorage();
-        });*/
     }
 
     function preloadLevel(levelIndex){

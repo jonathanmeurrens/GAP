@@ -256,44 +256,6 @@ var GameContainer = (function(){
         createjs.Tween.get(bg).to({x:bg.x-10}, 1000);
     };
 
-    GameContainer.prototype.handleBeginContact = function(contact){
-       /* var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();*/
-
-        //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
-
-        /*if(colliderA === "leaf" || colliderB === "leaf"){
-            for(var i=0; i < this.leafs.length; i++){
-                var leaf = this.leafs[i];
-                leaf.handleBeginContact(contact);
-            }
-        }
-        else if(colliderA === "cloud" || colliderB === "cloud"){
-            for(var j=0; j < this.clouds.length; j++){
-                var cloud = this.clouds[j];
-                cloud.handleBeginContact(contact);
-            }
-        }*/
-    };
-
-    GameContainer.prototype.handleEndContact = function(contact){
-        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
-
-        if(colliderA === "leaf" || colliderB === "leaf"){
-            for(var i=0; i < this.leafs.length; i++){
-                var leaf = this.leafs[i];
-                leaf.handleEndContact(contact);
-            }
-        }
-        else if(colliderA === "cloud" || colliderB === "cloud"){
-            for(var j=0; j < this.clouds.length; j++){
-                var cloud = this.clouds[j];
-                cloud.handleEndContact(contact);
-            }
-        }
-    };
-
 
     function tick(e){
         if(self.bird != null){
@@ -403,20 +365,8 @@ var Balloon = (function(){
         fixDef.userData = "balloon";
         this.view.body.CreateFixture(fixDef);
 
-        /*if(direction === "right"){
-            this.view.body.SetLinearVelocity(new box2d.b2Vec2(1,0));
-            this.view.scaleX = -1;
-        }else{
-            this.view.body.SetLinearVelocity(new box2d.b2Vec2(-1,0));
-        }*/
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
         this.updateView();
         animate(this.view);
-    }
-
-    function tick(e){
-        this.updateView();
     }
 
     Balloon.prototype.updateView = function(){
@@ -432,12 +382,6 @@ var Balloon = (function(){
                 animate(this);
             });
         });
-    }
-
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
     }
 
     return Balloon;
@@ -472,9 +416,6 @@ var Bird = (function(){
         this.maxRotations = 0;
         this.evolution = 0;
         this.isDead = false;
-
-        //this.view = new createjs.Bitmap("img/egg.png");
-        //this.view.regX = this.view.regY = this.width/2; // put registration point in center
 
         this.view = new createjs.Container();
         var data = {
@@ -611,14 +552,6 @@ var Bird = (function(){
     };
 
     Bird.prototype.impulseAnimation = function(direction){
-        //console.log("[Bird] rotation:"+this.view.rotation % 90);
-        /*if(this.view.rotation < 0){
-            if(direction === Twirl.LEFT_DIRECTION){
-                direction = Twirl.RIGHT_DIRECTION;
-            }else{
-                direction = Twirl.LEFT_DIRECTION;
-            }
-        }*/
         var twirl = new Twirl(this.view.x + 60, this.view.y, direction);
         stage.addChild(twirl.view);
     };
@@ -702,7 +635,6 @@ var Button = (function(){
         this.view = new createjs.Container();
 
         var url = 'assets/common/buttons/' + button_type.toLowerCase()+".png";
-        this.clickTimeout = null;
 
         this.width = 50;
         this.height = 50;
@@ -855,23 +787,15 @@ var Cloud = (function(){
         fixDef.userData = "cloud";
         this.view.body.CreateFixture(fixDef);
 
-        //applyImpulse(this.view.body, 0, 200);
-        //this.view.body.SetLinearVelocity(new box2d.b2Vec2(0.5,0));
-        //this.view.body.SetLinearDamping(10);
-
-
-         buoyancyController = new box2d.b2BuoyancyController();
-         buoyancyController.normal.Set(0,-1);
+         //buoyancyController = new box2d.b2BuoyancyController();
+         //buoyancyController.normal.Set(0,-1);
          //buoyancyController.offset=-180/SCALE;
-         buoyancyController.useDensity=true;
-         buoyancyController.density=2.0;
+         //buoyancyController.useDensity=true;
+         //buoyancyController.density=2.0;
          /*buoyancyController.linearDrag=5;
          buoyancyController.angularDrag=2;*/
-         world.AddController(buoyancyController);
+         //world.AddController(buoyancyController);
 
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
-        //this.updateView();
         this.updateView();
         animate(this.view);
     }
@@ -894,12 +818,6 @@ var Cloud = (function(){
         this.view.y = this.view.body.GetPosition().y * SCALE + 32;
         this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);
     };
-
-    function applyImpulse(body, degrees, power) {
-        body.ApplyImpulse(new box2d.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-            Math.sin(degrees * (Math.PI / 180)) * power),
-            body.GetWorldCenter());
-    }
 
     Cloud.prototype.handleBeginContact = function(contact){
         var fixtureA = contact.GetFixtureA();
@@ -1089,25 +1007,6 @@ var Leaf = (function(){
         this.view.regX = this.width;
         this.view.regY = this.height;
 
-        //WATER
-
-       /* var fixDefWater = new box2d.b2FixtureDef();
-        fixDefWater.density = 1;
-        fixDefWater.friction = 0;
-        fixDefWater.restitution = 0;
-        fixDefWater.isSensor = true;
-
-        var bodyDefWater = new box2d.b2BodyDef();
-        bodyDefWater.type = box2d.b2Body.b2_staticBody;
-        bodyDefWater.position.x = this.x / SCALE;
-        bodyDefWater.position.y = (this.y + this.height*2) / SCALE;
-        bodyDefWater.userData = "water";
-        fixDefWater.shape = new box2d.b2PolygonShape();
-        fixDefWater.shape.SetAsBox((this.width * 1.5) / SCALE, (this.height * 1.5) / SCALE);
-        this.view.body = world.CreateBody(bodyDefWater);
-        this.view.body.CreateFixture(fixDefWater);*/
-
-
         // BLAADJE
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 0.1;
@@ -1148,13 +1047,6 @@ var Leaf = (function(){
         //distanceJointDef.localAnchorA.Set(0.0, 0.0);
         //distanceJointDef.localAnchorB.Set(0.0, 0.0);*/
 
-
-
-
-        //
-        //this.view.body.SetLinearDamping(10);
-
-
        /* buoyancyController = new box2d.b2BuoyancyController();
         buoyancyController.normal.Set(0,-1);
         buoyancyController.offset=-180/SCALE;
@@ -1170,7 +1062,6 @@ var Leaf = (function(){
         //this.view.body.CreateFixture(fixDef);
 
         $(this.view).on('tick', $.proxy( tick, this ));
-        //this.updateView();
     }
 
     Leaf.prototype.handleBeginContact = function(contact){
@@ -1314,8 +1205,6 @@ var Nest = (function(){
 
             var top_nest = new box2d.b2PolygonShape();
             top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
-            //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
-            //console.log("[Nest] position:"+top_nest.GetPosition());
             fixDef.shape = top_nest;
             fixDef.userData = "top-nest";
             this.view.body.CreateFixture(fixDef);
@@ -1325,8 +1214,6 @@ var Nest = (function(){
             this.view.x = this.x;
             this.view.y = this.y;
         }
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Nest.prototype.updateView = function(){
@@ -1380,8 +1267,6 @@ var Rock = (function(){
         vertices.push(new box2d.b2Vec2(-5.5 * scaleX - (1-scaleX)*9, 3.3));
         fixDef.shape.SetAsVector(vertices, 3);
         fixDef.userData = "rock";
-        /*fixDef.shape = new box2d.b2PolygonShape();
-        fixDef.shape.SetAsBox(this.width / SCALE, this.height / SCALE);*/
         this.view.body = world.CreateBody(bodyDef);
         this.view.body.CreateFixture(fixDef);
 
@@ -1443,7 +1328,6 @@ var Sparkle = (function(){
     }
 
     function tailAnimation(sparkle){
-        console.log("[Sparkle] tailAnimation");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -1467,7 +1351,6 @@ var Sparkle = (function(){
     }
 
     function circleAnimation(sparkle){
-        console.log("[Sparkle] circle");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -1581,9 +1464,6 @@ var Tornado = (function(){
 
         this.view = new createjs.Bitmap(preload.getResult(url));
 
-
-        console.log("[Tornado] pos", this.x, this.y);
-
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 1;
         fixDef.friction = 0.5;
@@ -1604,14 +1484,7 @@ var Tornado = (function(){
         this.view.x = x;
         this.view.y = y;
 
-        //this.updateView();
     }
-
-    Tornado.prototype.updateView = function(){
-       /* this.view.x = this.view.body.GetPosition().x * SCALE;
-        this.view.y = this.view.body.GetPosition().y * SCALE;
-        this.view.rotation = this.view.body.GetAngle * (180 / Math.PI);*/
-    };
 
     return Tornado;
 
@@ -2122,7 +1995,7 @@ var LevelsScreen = (function(){
             self.view.dispatchEvent(event);
         });
 
-        $("body").on("keydown",function(e){
+        /*$("body").on("keydown",function(e){
             if(e.which === 49){ //1
                 levelSelected(0);
             }
@@ -2156,7 +2029,7 @@ var LevelsScreen = (function(){
             else if(e.which === 59){ //5
                 levelSelected(9);
             }
-        });
+        });*/
 
         showLevels();
     }
@@ -2580,11 +2453,6 @@ var StartScreen = (function(){
         if(gameData.gamerData.isMusicOn){
             SoundManager.startMusic();
         }
-       /* $("body").on("keydown", function(e){
-            if(e.which === 83){
-                startHandler(e);
-            }
-        });*/
     }
 
     function startHandler(e){
@@ -3197,7 +3065,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
         var listener = new Box2D.Dynamics.b2ContactListener();
         listener.BeginContact = function(contact) {
 
-            self.gameContainer.handleBeginContact(contact);
+            //self.gameContainer.handleBeginContact(contact);
 
             var colliderA = contact.GetFixtureA().GetUserData();
             var colliderB = contact.GetFixtureB().GetUserData();
@@ -3256,7 +3124,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
             }
         };
         listener.EndContact = function(contact) {
-            self.gameContainer.handleEndContact(contact);
+            //self.gameContainer.handleEndContact(contact);
         };
         world.SetContactListener(listener);
     }
@@ -3436,7 +3304,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showPauseScreen(){
         self.screenManager.showScreen(ScreenManager.PAUSE);
         self.screenManager.view.addEventListener(PauseScreen.LEVELS, function(e){
-            showLevelsScreen(true);
+            showLevelsScreen();
         });
         self.screenManager.view.addEventListener(PauseScreen.RESUME, function(e){
             gameData.pauseGame = false;
@@ -3450,7 +3318,7 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showStartScreen(){
         self.screenManager.showScreen(ScreenManager.START);
         self.screenManager.view.addEventListener(StartScreen.START, function(e){
-            showLevelsScreen(false);
+            showLevelsScreen();
         });
         self.screenManager.view.addEventListener(StartScreen.OPTIONS, function(e){
             showOptionsScreen();
@@ -3469,12 +3337,6 @@ var stage, world, debug, preload, gameData, destroyedBodies;
     function showOptionsScreen(){
         self.isPaused = true;
         self.screenManager.showOptionsScreen();
-       /* self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
-            gameData.storeSettings();
-        });
-        self.screenManager.view.addEventListener(OptionsScreen.RESET_LEVELS, function(e){
-            gameData.resetStorage();
-        });*/
     }
 
     function preloadLevel(levelIndex){

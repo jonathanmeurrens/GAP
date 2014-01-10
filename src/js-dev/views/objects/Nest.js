@@ -43,8 +43,6 @@ var Nest = (function(){
 
             var top_nest = new box2d.b2PolygonShape();
             top_nest.SetAsOrientedBox((this.width - 5) / SCALE, 3 / SCALE, new box2d.b2Vec2(0,-0.5));
-            //top_nest.SetPosition(this.x / SCALE,  this.y / SCALE);
-            //console.log("[Nest] position:"+top_nest.GetPosition());
             fixDef.shape = top_nest;
             fixDef.userData = "top-nest";
             this.view.body.CreateFixture(fixDef);
@@ -54,8 +52,6 @@ var Nest = (function(){
             this.view.x = this.x;
             this.view.y = this.y;
         }
-
-        //$(this.view).on('tick', $.proxy( tick, this ));
     }
 
     Nest.prototype.updateView = function(){

@@ -51,11 +51,6 @@ var StartScreen = (function(){
         if(gameData.gamerData.isMusicOn){
             SoundManager.startMusic();
         }
-       /* $("body").on("keydown", function(e){
-            if(e.which === 83){
-                startHandler(e);
-            }
-        });*/
     }
 
     function startHandler(e){

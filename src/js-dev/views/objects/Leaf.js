@@ -23,25 +23,6 @@ var Leaf = (function(){
         this.view.regX = this.width;
         this.view.regY = this.height;
 
-        //WATER
-
-       /* var fixDefWater = new box2d.b2FixtureDef();
-        fixDefWater.density = 1;
-        fixDefWater.friction = 0;
-        fixDefWater.restitution = 0;
-        fixDefWater.isSensor = true;
-
-        var bodyDefWater = new box2d.b2BodyDef();
-        bodyDefWater.type = box2d.b2Body.b2_staticBody;
-        bodyDefWater.position.x = this.x / SCALE;
-        bodyDefWater.position.y = (this.y + this.height*2) / SCALE;
-        bodyDefWater.userData = "water";
-        fixDefWater.shape = new box2d.b2PolygonShape();
-        fixDefWater.shape.SetAsBox((this.width * 1.5) / SCALE, (this.height * 1.5) / SCALE);
-        this.view.body = world.CreateBody(bodyDefWater);
-        this.view.body.CreateFixture(fixDefWater);*/
-
-
         // BLAADJE
         var fixDef = new box2d.b2FixtureDef();
         fixDef.density = 0.1;
@@ -82,13 +63,6 @@ var Leaf = (function(){
         //distanceJointDef.localAnchorA.Set(0.0, 0.0);
         //distanceJointDef.localAnchorB.Set(0.0, 0.0);*/
 
-
-
-
-        //
-        //this.view.body.SetLinearDamping(10);
-
-
        /* buoyancyController = new box2d.b2BuoyancyController();
         buoyancyController.normal.Set(0,-1);
         buoyancyController.offset=-180/SCALE;
@@ -104,7 +78,6 @@ var Leaf = (function(){
         //this.view.body.CreateFixture(fixDef);
 
         $(this.view).on('tick', $.proxy( tick, this ));
-        //this.updateView();
     }
 
     Leaf.prototype.handleBeginContact = function(contact){

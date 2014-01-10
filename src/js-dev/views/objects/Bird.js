@@ -27,9 +27,6 @@ var Bird = (function(){
         this.evolution = 0;
         this.isDead = false;
 
-        //this.view = new createjs.Bitmap("img/egg.png");
-        //this.view.regX = this.view.regY = this.width/2; // put registration point in center
-
         this.view = new createjs.Container();
         var data = {
             images: ["assets/common/egg-spritesheet.png"],
@@ -165,14 +162,6 @@ var Bird = (function(){
     };
 
     Bird.prototype.impulseAnimation = function(direction){
-        //console.log("[Bird] rotation:"+this.view.rotation % 90);
-        /*if(this.view.rotation < 0){
-            if(direction === Twirl.LEFT_DIRECTION){
-                direction = Twirl.RIGHT_DIRECTION;
-            }else{
-                direction = Twirl.LEFT_DIRECTION;
-            }
-        }*/
         var twirl = new Twirl(this.view.x + 60, this.view.y, direction);
         stage.addChild(twirl.view);
     };

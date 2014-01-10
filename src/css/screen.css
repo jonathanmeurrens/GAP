@@ -50,12 +50,12 @@ body {
 }*/
 /* line 53, ../sass/screen.scss */
 #game {
-  /*border: 6px #D5EECB solid;*/
-  -webkit-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
-  -ms-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
-  -moz-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
-  -o-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
-  box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.21);
+  /*border: 6px #FFFFFF solid;*/
+  -webkit-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.28);
+  -ms-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.28);
+  -moz-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.28);
+  -o-box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 0 40px 5px rgba(0, 0, 0, 0.28);
   position: relative;
   z-index: 1000;
 }

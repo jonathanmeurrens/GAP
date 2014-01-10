@@ -43,7 +43,6 @@ var Sparkle = (function(){
     }
 
     function tailAnimation(sparkle){
-        console.log("[Sparkle] tailAnimation");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));
@@ -67,7 +66,6 @@ var Sparkle = (function(){
     }
 
     function circleAnimation(sparkle){
-        console.log("[Sparkle] circle");
         sparkle.amount++;
 
         var star = new createjs.Bitmap(preload.getResult("star-particle"));

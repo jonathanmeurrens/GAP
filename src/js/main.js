@@ -2,6 +2,7 @@
 
 /* globals stage:true  */
 /* globals world:true  */
+/* globals destroyedBodies:true  */
 /* globals createjs:true  */
 
 /* globals Background:true  */
@@ -162,8 +163,7 @@ var GameContainer = (function(){
         for(var n=0; n < this.timeCoins.length; n++){
             var timeCoin = this.timeCoins[n];
             if(timeCoin.view.body.GetUserData() === userData){
-                console.log("[GameContainer] removed timecoin");
-                world.DestroyBody(timeCoin.view.body);
+                destroyedBodies.push(timeCoin.view.body);
                 this.view.removeChild(timeCoin.view);
                 this.timeCoins.splice(n,1);
                 var event = new createjs.Event(GameContainer.COIN_REMOVED);
@@ -174,7 +174,7 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeBird = function(){
         if(this.bird != null){
-            world.DestroyBody(this.bird.view.body);
+            destroyedBodies.push(this.bird.view.body);
             this.view.removeChild(this.bird.view);
             this.bird = null;
         }
@@ -182,7 +182,7 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeGround = function(){
         if(this.ground != null){
-            world.DestroyBody(this.ground.view.body);
+            destroyedBodies.push(this.ground.view.body);
             this.view.removeChild(this.ground.view);
             this.ground = null;
         }
@@ -190,31 +190,30 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeNest = function(){
         if(this.nest != null){
-            world.DestroyBody(this.nest.view.body);
+            destroyedBodies.push(this.nest.view.body);
             this.view.removeChild(this.nest.view);
             this.nest = null;
         }
     };
 
     GameContainer.prototype.resetContainer = function(){
-
         var length = this.leafs.length;
         for(var q=0; q < length; q++){
             var leaf = this.leafs.pop();
-            world.DestroyBody(leaf.view.body);
+            destroyedBodies.push(leaf.view.body);
             this.view.removeChild(leaf.view);
         }
 
         length = this.obstacles.length;
         for(var j=0; j < length; j++){
             var obstacle = this.obstacles.pop();
-            world.DestroyBody(obstacle.view.body);
+            destroyedBodies.push(obstacle.view.body);
             this.view.removeChild(obstacle.view);
         }
         length = this.clouds.length;
         for(var k=0; k < length; k++){
             var cloud = this.clouds.pop();
-            world.DestroyBody(cloud.view.body);
+            destroyedBodies.push(cloud.view.body);
             this.view.removeChild(cloud.view);
         }
         length = this.trees.length;
@@ -230,16 +229,14 @@ var GameContainer = (function(){
         length = this.timeCoins.length;
         for(var n=0; n < length; n++){
             var timeCoin = this.timeCoins.pop();
-            world.DestroyBody(timeCoin.view.body);
+            destroyedBodies.push(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
-            console.log("[GameContainer] removed timecoin!");
-            console.log(this.timeCoins.length);
         }
         length = this.nests.length;
         for(var x=0; x < length; x++){
             var nest = this.nests.pop();
             if(!nest.isStart){
-                world.DestroyBody(nest.view.body);
+                destroyedBodies.push(nest.view.body);
             }
             this.view.removeChild(nest.view);
         }
@@ -260,8 +257,8 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.handleBeginContact = function(contact){
-        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+       /* var colliderA = contact.GetFixtureA().GetBody().GetUserData();
+        var colliderB = contact.GetFixtureB().GetBody().GetUserData();*/
 
         //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 
@@ -1805,13 +1802,14 @@ var Statistics = (function(){
         this.progressSprite.y = 68;
 
         // SOUND MUTE
+        SoundManager.playSounds = gameData.gamerData.isMusicOn;
         var mute_data = {
             images: ["assets/common/buttons/mute.png"],
             frames: {width:28.5, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
-        this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
+        this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
             SoundManager.toggleSound();
@@ -1837,7 +1835,8 @@ var Statistics = (function(){
     }
 
     function setMuteButtonState(){
-        if(gameData.gamerData.isMusicOn){
+        //console.log("[Stats] music on?"+gameData.gamerData.isMusicOn);
+        if(SoundManager.playSounds){
             self.muteBtnSprite.gotoAndStop("on");
         }else{
             self.muteBtnSprite.gotoAndStop("mute");
@@ -2291,6 +2290,7 @@ var NextLevelScreen = (function(){
 /* globals preload:true  */
 /* globals Button:true  */
 /* globals gameData:true  */
+/* globals SoundManager:true  */
 
 var OptionsScreen = (function(){
 
@@ -2299,7 +2299,6 @@ var OptionsScreen = (function(){
     function OptionsScreen(){
 
         // EVENT TYPES
-        OptionsScreen.SAVE = "SAVE";
         OptionsScreen.CANCEL = "CANCEL";
 
         self = this;
@@ -2341,9 +2340,14 @@ var OptionsScreen = (function(){
         this.muteBtnSprite.cursor = 'pointer';
         this.muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isMusicOn = !gameData.gamerData.isMusicOn;
+            SoundManager.isMusicOn = gameData.gamerData.isMusicOn;
+            if(gameData.gamerData.isMusicOn){
+                SoundManager.startMusic();
+            }else{
+                SoundManager.stopMusic();
+            }
+            gameData.storeSettings();
             updateButtonsStates();
-            var event = new createjs.Event(OptionsScreen.SAVE, true);
-            self.view.dispatchEvent(event);
         });
         createjs.Tween.get(this.muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
         this.muteBtnSprite.addEventListener("mouseover", function(e){
@@ -2372,9 +2376,12 @@ var OptionsScreen = (function(){
         this.fx_muteBtnSprite.cursor = 'pointer';
         this.fx_muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isFxOn = !gameData.gamerData.isFxOn;
+            SoundManager.isFxOn = gameData.gamerData.isFxOn;
+            if(SoundManager.isFxOn){
+                SoundManager.playSuccess();
+            }
+            gameData.storeSettings();
             updateButtonsStates();
-            var event = new createjs.Event(OptionsScreen.SAVE, true);
-            self.view.dispatchEvent(event);
         });
         createjs.Tween.get(this.fx_muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
         this.fx_muteBtnSprite.addEventListener("mouseover", function(e){
@@ -2401,8 +2408,7 @@ var OptionsScreen = (function(){
         this.resetBtnSprite.y = 415;
         this.resetBtnSprite.cursor = 'pointer';
         this.resetBtnSprite.addEventListener("click", function(e){
-            var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);
-            self.view.dispatchEvent(event);
+            gameData.resetStorage();
             self.resetBtnSprite.gotoAndStop("done");
         });
         createjs.Tween.get(this.resetBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
@@ -2526,6 +2532,8 @@ var PauseScreen = (function(){
 /* globals ScreenManager:true  */
 /* globals preload:true  */
 /* globals Button:true  */
+/* globals SoundManager:true  */
+/* globals gameData:true  */
 
 var StartScreen = (function(){
 
@@ -2569,12 +2577,14 @@ var StartScreen = (function(){
         optionsBtn.view.x = 710;
         optionsBtn.view.y = 453;
 
-
-        $("body").on("keydown", function(e){
+        if(gameData.gamerData.isMusicOn){
+            SoundManager.startMusic();
+        }
+       /* $("body").on("keydown", function(e){
             if(e.which === 83){
                 startHandler(e);
             }
-        });
+        });*/
     }
 
     function startHandler(e){
@@ -2880,25 +2890,32 @@ SoundManager.playSounds = false;
 
 SoundManager.toggleSound = function(){
 
+    console.log(SoundManager.playSounds);
     SoundManager.playSounds = !SoundManager.playSounds;
+    console.log(SoundManager.playSounds);
+
     if(SoundManager.playSounds){
-            // play
-            if(SoundManager.backgroundMusicInstance === null){
-                SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
-            }
-            else{
-                SoundManager.backgroundMusicInstance.setMute(false);
-            }
+        this.startMusic();
     }
-    else if(SoundManager.backgroundMusicInstance !== null){
-        // stop
-        SoundManager.backgroundMusicInstance.setMute(true);
+    else {
+        this.stopMusic();
     }
 };
 
-SoundManager.startSounds = function(){
-    if(SoundManager.backgroundMusicInstance == null && gameData.gamerData.isMusicOn){
-        this.toggleSound();
+SoundManager.startMusic = function(){
+    // play
+    if(SoundManager.backgroundMusicInstance === null){
+        SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
+    }
+    else if(SoundManager.backgroundMusicInstance != null){
+        SoundManager.backgroundMusicInstance.setMute(false);
+    }
+};
+
+SoundManager.stopMusic = function(){
+    // stop
+    if(SoundManager.backgroundMusicInstance != null){
+        SoundManager.backgroundMusicInstance.setMute(true);
     }
 };
 
@@ -3134,7 +3151,7 @@ var box2d = {
     b2BuoyancyController : Box2D.Dynamics.Controllers.b2BuoyancyController
 };
 var SCALE = 30;
-var stage, world, debug, preload, gameData;
+var stage, world, debug, preload, gameData, destroyedBodies;
 
 (function(){
 
@@ -3146,6 +3163,7 @@ var stage, world, debug, preload, gameData;
         stage = new createjs.Stage(document.getElementById("game"));
         stage.enableMouseOver();
         debug = document.getElementById('debug');
+        destroyedBodies = [];
         this.width = stage.canvas.width;
         this.height = stage.canvas.height;
         this.levelStarted = false;
@@ -3451,12 +3469,12 @@ var stage, world, debug, preload, gameData;
     function showOptionsScreen(){
         self.isPaused = true;
         self.screenManager.showOptionsScreen();
-        self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
+       /* self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
             gameData.storeSettings();
         });
         self.screenManager.view.addEventListener(OptionsScreen.RESET_LEVELS, function(e){
             gameData.resetStorage();
-        });
+        });*/
     }
 
     function preloadLevel(levelIndex){
@@ -3478,7 +3496,9 @@ var stage, world, debug, preload, gameData;
         self.collisionDetected = false;
         self.stats.resetStats();
         self.stats.showStats();
-        SoundManager.startSounds();
+        if(gameData.gamerData.isMusicOn){
+            SoundManager.startMusic();
+        }
         self.gameContainer.showSpacebarInstruction();
     }
 
@@ -3554,10 +3574,18 @@ var stage, world, debug, preload, gameData;
         stage.update();
 
         if(!gameData.pauseGame){
-            //world.DrawDebugData();
+            removeDestroyedBodies();
+            world.DrawDebugData();
             world.Step(1/60, 10, 10);
             world.ClearForces();
         }
+    }
+
+    function removeDestroyedBodies(){
+        for(var i=0; i<destroyedBodies.length; i++){
+            world.DestroyBody(destroyedBodies[i]);
+        }
+        destroyedBodies = [];
     }
 
     init();

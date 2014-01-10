@@ -62,13 +62,14 @@ var Statistics = (function(){
         this.progressSprite.y = 68;
 
         // SOUND MUTE
+        SoundManager.playSounds = gameData.gamerData.isMusicOn;
         var mute_data = {
             images: ["assets/common/buttons/mute.png"],
             frames: {width:28.5, height:37},
             animations: {on:[0], mute:[1]}
         };
         var muteBtnspritesheet = new createjs.SpriteSheet(mute_data);
-        this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet, "on");
+        this.muteBtnSprite = new createjs.Sprite(muteBtnspritesheet);
         this.view.addChild(this.muteBtnSprite);
         this.muteBtnSprite.addEventListener("click", function(e){
             SoundManager.toggleSound();
@@ -94,7 +95,8 @@ var Statistics = (function(){
     }
 
     function setMuteButtonState(){
-        if(gameData.gamerData.isMusicOn){
+        //console.log("[Stats] music on?"+gameData.gamerData.isMusicOn);
+        if(SoundManager.playSounds){
             self.muteBtnSprite.gotoAndStop("on");
         }else{
             self.muteBtnSprite.gotoAndStop("mute");

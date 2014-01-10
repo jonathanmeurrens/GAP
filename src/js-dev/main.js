@@ -32,7 +32,7 @@ var box2d = {
     b2BuoyancyController : Box2D.Dynamics.Controllers.b2BuoyancyController
 };
 var SCALE = 30;
-var stage, world, debug, preload, gameData;
+var stage, world, debug, preload, gameData, destroyedBodies;
 
 (function(){
 
@@ -44,6 +44,7 @@ var stage, world, debug, preload, gameData;
         stage = new createjs.Stage(document.getElementById("game"));
         stage.enableMouseOver();
         debug = document.getElementById('debug');
+        destroyedBodies = [];
         this.width = stage.canvas.width;
         this.height = stage.canvas.height;
         this.levelStarted = false;
@@ -349,12 +350,12 @@ var stage, world, debug, preload, gameData;
     function showOptionsScreen(){
         self.isPaused = true;
         self.screenManager.showOptionsScreen();
-        self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
+       /* self.screenManager.view.addEventListener(OptionsScreen.SAVE, function(e){
             gameData.storeSettings();
         });
         self.screenManager.view.addEventListener(OptionsScreen.RESET_LEVELS, function(e){
             gameData.resetStorage();
-        });
+        });*/
     }
 
     function preloadLevel(levelIndex){
@@ -376,7 +377,9 @@ var stage, world, debug, preload, gameData;
         self.collisionDetected = false;
         self.stats.resetStats();
         self.stats.showStats();
-        SoundManager.startSounds();
+        if(gameData.gamerData.isMusicOn){
+            SoundManager.startMusic();
+        }
         self.gameContainer.showSpacebarInstruction();
     }
 
@@ -452,10 +455,18 @@ var stage, world, debug, preload, gameData;
         stage.update();
 
         if(!gameData.pauseGame){
-            //world.DrawDebugData();
+            removeDestroyedBodies();
+            world.DrawDebugData();
             world.Step(1/60, 10, 10);
             world.ClearForces();
         }
+    }
+
+    function removeDestroyedBodies(){
+        for(var i=0; i<destroyedBodies.length; i++){
+            world.DestroyBody(destroyedBodies[i]);
+        }
+        destroyedBodies = [];
     }
 
     init();

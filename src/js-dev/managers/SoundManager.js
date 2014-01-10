@@ -8,25 +8,32 @@ SoundManager.playSounds = false;
 
 SoundManager.toggleSound = function(){
 
+    console.log(SoundManager.playSounds);
     SoundManager.playSounds = !SoundManager.playSounds;
+    console.log(SoundManager.playSounds);
+
     if(SoundManager.playSounds){
-            // play
-            if(SoundManager.backgroundMusicInstance === null){
-                SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
-            }
-            else{
-                SoundManager.backgroundMusicInstance.setMute(false);
-            }
+        this.startMusic();
     }
-    else if(SoundManager.backgroundMusicInstance !== null){
-        // stop
-        SoundManager.backgroundMusicInstance.setMute(true);
+    else {
+        this.stopMusic();
     }
 };
 
-SoundManager.startSounds = function(){
-    if(SoundManager.backgroundMusicInstance == null && gameData.gamerData.isMusicOn){
-        this.toggleSound();
+SoundManager.startMusic = function(){
+    // play
+    if(SoundManager.backgroundMusicInstance === null){
+        SoundManager.backgroundMusicInstance = createjs.Sound.play("music", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
+    }
+    else if(SoundManager.backgroundMusicInstance != null){
+        SoundManager.backgroundMusicInstance.setMute(false);
+    }
+};
+
+SoundManager.stopMusic = function(){
+    // stop
+    if(SoundManager.backgroundMusicInstance != null){
+        SoundManager.backgroundMusicInstance.setMute(true);
     }
 };
 

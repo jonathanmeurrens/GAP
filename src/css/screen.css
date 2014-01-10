@@ -81,14 +81,14 @@ body {
   margin-top: 790px;
 }
 
-/* line 84, ../sass/screen.scss */
+/* line 83, ../sass/screen.scss */
 #debug {
   position: absolute;
   top: 0;
   display: none;
 }
 
-/* line 90, ../sass/screen.scss */
+/* line 89, ../sass/screen.scss */
 #fb-login {
   position: absolute;
   top: 17px;

@@ -3,6 +3,8 @@
 /* globals ScreenManager:true  */
 /* globals preload:true  */
 /* globals Button:true  */
+/* globals SoundManager:true  */
+/* globals gameData:true  */
 
 var StartScreen = (function(){
 
@@ -46,12 +48,14 @@ var StartScreen = (function(){
         optionsBtn.view.x = 710;
         optionsBtn.view.y = 453;
 
-
-        $("body").on("keydown", function(e){
+        if(gameData.gamerData.isMusicOn){
+            SoundManager.startMusic();
+        }
+       /* $("body").on("keydown", function(e){
             if(e.which === 83){
                 startHandler(e);
             }
-        });
+        });*/
     }
 
     function startHandler(e){

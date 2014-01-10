@@ -4,6 +4,7 @@
 /* globals preload:true  */
 /* globals Button:true  */
 /* globals gameData:true  */
+/* globals SoundManager:true  */
 
 var OptionsScreen = (function(){
 
@@ -12,7 +13,6 @@ var OptionsScreen = (function(){
     function OptionsScreen(){
 
         // EVENT TYPES
-        OptionsScreen.SAVE = "SAVE";
         OptionsScreen.CANCEL = "CANCEL";
 
         self = this;
@@ -54,9 +54,14 @@ var OptionsScreen = (function(){
         this.muteBtnSprite.cursor = 'pointer';
         this.muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isMusicOn = !gameData.gamerData.isMusicOn;
+            SoundManager.isMusicOn = gameData.gamerData.isMusicOn;
+            if(gameData.gamerData.isMusicOn){
+                SoundManager.startMusic();
+            }else{
+                SoundManager.stopMusic();
+            }
+            gameData.storeSettings();
             updateButtonsStates();
-            var event = new createjs.Event(OptionsScreen.SAVE, true);
-            self.view.dispatchEvent(event);
         });
         createjs.Tween.get(this.muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
         this.muteBtnSprite.addEventListener("mouseover", function(e){
@@ -85,9 +90,12 @@ var OptionsScreen = (function(){
         this.fx_muteBtnSprite.cursor = 'pointer';
         this.fx_muteBtnSprite.addEventListener("click", function(e){
             gameData.gamerData.isFxOn = !gameData.gamerData.isFxOn;
+            SoundManager.isFxOn = gameData.gamerData.isFxOn;
+            if(SoundManager.isFxOn){
+                SoundManager.playSuccess();
+            }
+            gameData.storeSettings();
             updateButtonsStates();
-            var event = new createjs.Event(OptionsScreen.SAVE, true);
-            self.view.dispatchEvent(event);
         });
         createjs.Tween.get(this.fx_muteBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);
         this.fx_muteBtnSprite.addEventListener("mouseover", function(e){
@@ -114,8 +122,7 @@ var OptionsScreen = (function(){
         this.resetBtnSprite.y = 415;
         this.resetBtnSprite.cursor = 'pointer';
         this.resetBtnSprite.addEventListener("click", function(e){
-            var event = new createjs.Event(OptionsScreen.RESET_LEVELS, true);
-            self.view.dispatchEvent(event);
+            gameData.resetStorage();
             self.resetBtnSprite.gotoAndStop("done");
         });
         createjs.Tween.get(this.resetBtnSprite).to({scaleX:1, scaleY:1},  1400, createjs.Ease.elasticOut);

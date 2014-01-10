@@ -1,5 +1,6 @@
 /* globals stage:true  */
 /* globals world:true  */
+/* globals destroyedBodies:true  */
 /* globals createjs:true  */
 
 /* globals Background:true  */
@@ -160,8 +161,7 @@ var GameContainer = (function(){
         for(var n=0; n < this.timeCoins.length; n++){
             var timeCoin = this.timeCoins[n];
             if(timeCoin.view.body.GetUserData() === userData){
-                console.log("[GameContainer] removed timecoin");
-                world.DestroyBody(timeCoin.view.body);
+                destroyedBodies.push(timeCoin.view.body);
                 this.view.removeChild(timeCoin.view);
                 this.timeCoins.splice(n,1);
                 var event = new createjs.Event(GameContainer.COIN_REMOVED);
@@ -172,7 +172,7 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeBird = function(){
         if(this.bird != null){
-            world.DestroyBody(this.bird.view.body);
+            destroyedBodies.push(this.bird.view.body);
             this.view.removeChild(this.bird.view);
             this.bird = null;
         }
@@ -180,7 +180,7 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeGround = function(){
         if(this.ground != null){
-            world.DestroyBody(this.ground.view.body);
+            destroyedBodies.push(this.ground.view.body);
             this.view.removeChild(this.ground.view);
             this.ground = null;
         }
@@ -188,31 +188,30 @@ var GameContainer = (function(){
 
     GameContainer.prototype.removeNest = function(){
         if(this.nest != null){
-            world.DestroyBody(this.nest.view.body);
+            destroyedBodies.push(this.nest.view.body);
             this.view.removeChild(this.nest.view);
             this.nest = null;
         }
     };
 
     GameContainer.prototype.resetContainer = function(){
-
         var length = this.leafs.length;
         for(var q=0; q < length; q++){
             var leaf = this.leafs.pop();
-            world.DestroyBody(leaf.view.body);
+            destroyedBodies.push(leaf.view.body);
             this.view.removeChild(leaf.view);
         }
 
         length = this.obstacles.length;
         for(var j=0; j < length; j++){
             var obstacle = this.obstacles.pop();
-            world.DestroyBody(obstacle.view.body);
+            destroyedBodies.push(obstacle.view.body);
             this.view.removeChild(obstacle.view);
         }
         length = this.clouds.length;
         for(var k=0; k < length; k++){
             var cloud = this.clouds.pop();
-            world.DestroyBody(cloud.view.body);
+            destroyedBodies.push(cloud.view.body);
             this.view.removeChild(cloud.view);
         }
         length = this.trees.length;
@@ -228,16 +227,14 @@ var GameContainer = (function(){
         length = this.timeCoins.length;
         for(var n=0; n < length; n++){
             var timeCoin = this.timeCoins.pop();
-            world.DestroyBody(timeCoin.view.body);
+            destroyedBodies.push(timeCoin.view.body);
             this.view.removeChild(timeCoin.view);
-            console.log("[GameContainer] removed timecoin!");
-            console.log(this.timeCoins.length);
         }
         length = this.nests.length;
         for(var x=0; x < length; x++){
             var nest = this.nests.pop();
             if(!nest.isStart){
-                world.DestroyBody(nest.view.body);
+                destroyedBodies.push(nest.view.body);
             }
             this.view.removeChild(nest.view);
         }
@@ -258,8 +255,8 @@ var GameContainer = (function(){
     };
 
     GameContainer.prototype.handleBeginContact = function(contact){
-        var colliderA = contact.GetFixtureA().GetBody().GetUserData();
-        var colliderB = contact.GetFixtureB().GetBody().GetUserData();
+       /* var colliderA = contact.GetFixtureA().GetBody().GetUserData();
+        var colliderB = contact.GetFixtureB().GetBody().GetUserData();*/
 
         //console.log("[GameContainer] -- endContact -- " + colliderA + " / " + colliderB);
 

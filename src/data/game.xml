@@ -214,6 +214,7 @@
         <leaf x="690" y="680" rotation="0" restitution="1.2"></leaf>
 
         <nest x="545" y="1430"></nest>
+        <!--<nest x="30" y="455" start="true"></nest>-->
 
         <balloon x="860" y="1700" direction="right" img="assets/common/balloon.png"></balloon>
         <balloon x="260" y="1770" direction="right" img="assets/common/balloon.png"></balloon>
